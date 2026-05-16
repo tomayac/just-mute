@@ -319,6 +319,23 @@
 				text-align: center;
 			}
 
+			/* Install button — hidden until beforeinstallprompt fires */
+			#btn-install {
+				display: none;
+				width: 100%;
+				max-width: 420px;
+				margin-bottom: 16px;
+				background: transparent;
+				border: 2px solid var(--primary);
+				color: var(--primary);
+				font-weight: 700;
+				font-size: 1rem;
+				padding: 14px 16px;
+			}
+
+			#btn-install.visible { display: block; }
+			#btn-install:hover { background: var(--primary); color: #fff; }
+
 			footer {
 				margin-top: auto;
 				padding-top: 32px;
@@ -455,6 +472,9 @@
 			</div>
 		</div>
 
+		<!-- Install button (revealed by beforeinstallprompt) -->
+		<button id="btn-install">📲 Install app</button>
+
 		<footer>Rage-coded by Thomas Steiner (<a href="https://toot.cafe/@tomayac">@tomayac@toot.cafe</a>)
 			on a noisy commuter train, but with love ❤️.</footer>
 
@@ -556,7 +576,8 @@
 					play: "▶ Play", stop: "⏹ Stop",
 					share: "Share this app", showQr: "Show QR Code", hideQr: "Hide QR Code",
 					noVoices: "No voices available for this language", loadingVoices: "Loading voices…",
-					toDarkMode: "Switch to dark mode", toLightMode: "Switch to light mode"
+					toDarkMode: "Switch to dark mode", toLightMode: "Switch to light mode",
+					install: "📲 Install app"
 				},
 				bg: {
 					sub: "Пасивно-агресивен звуков контрол в обществения транспорт",
@@ -568,7 +589,8 @@
 					play: "▶ Пусни", stop: "⏹ Спри",
 					share: "Сподели приложението", showQr: "Покажи QR код", hideQr: "Скрий QR код",
 					noVoices: "Няма налични гласове за този език", loadingVoices: "Зареждане на гласовете…",
-					toDarkMode: "Превключи към тъмен режим", toLightMode: "Превключи към светъл режим"
+					toDarkMode: "Превключи към тъмен режим", toLightMode: "Превключи към светъл режим",
+					install: "📲 Инсталирай приложението"
 				},
 				ca: {
 					sub: "Polícia d'àudio passiva-agressiva per al transport públic",
@@ -580,7 +602,8 @@
 					play: "▶ Reproduir", stop: "⏹ Parar",
 					share: "Comparteix aquesta app", showQr: "Mostra el codi QR", hideQr: "Amaga el codi QR",
 					noVoices: "No hi ha veus disponibles per a aquest idioma", loadingVoices: "Carregant veus…",
-					toDarkMode: "Canvia al mode fosc", toLightMode: "Canvia al mode clar"
+					toDarkMode: "Canvia al mode fosc", toLightMode: "Canvia al mode clar",
+					install: "📲 Instal·la l'app"
 				},
 				hr: {
 					sub: "Pasivno-agresivna audio kontrola u javnom prijevozu",
@@ -592,7 +615,8 @@
 					play: "▶ Reproduciraj", stop: "⏹ Zaustavi",
 					share: "Podijeli ovu aplikaciju", showQr: "Prikaži QR kod", hideQr: "Sakrij QR kod",
 					noVoices: "Nema dostupnih glasova za ovaj jezik", loadingVoices: "Učitavanje glasova…",
-					toDarkMode: "Prebaci na tamni način", toLightMode: "Prebaci na svijetli način"
+					toDarkMode: "Prebaci na tamni način", toLightMode: "Prebaci na svijetli način",
+					install: "📲 Instaliraj aplikaciju"
 				},
 				cs: {
 					sub: "Pasivně-agresivní zvuková kontrola ve veřejné dopravě",
@@ -604,7 +628,8 @@
 					play: "▶ Přehrát", stop: "⏹ Zastavit",
 					share: "Sdílej tuto aplikaci", showQr: "Zobrazit QR kód", hideQr: "Skrýt QR kód",
 					noVoices: "Pro tento jazyk nejsou dostupné žádné hlasy", loadingVoices: "Načítání hlasů…",
-					toDarkMode: "Přepnout na tmavý režim", toLightMode: "Přepnout na světlý režim"
+					toDarkMode: "Přepnout na tmavý režim", toLightMode: "Přepnout na světlý režim",
+					install: "📲 Nainstalovat aplikaci"
 				},
 				da: {
 					sub: "Passiv-aggressiv lydkontrol i den offentlige transport",
@@ -616,7 +641,8 @@
 					play: "▶ Afspil", stop: "⏹ Stop",
 					share: "Del denne app", showQr: "Vis QR-kode", hideQr: "Skjul QR-kode",
 					noVoices: "Ingen stemmer tilgængelige for dette sprog", loadingVoices: "Indlæser stemmer…",
-					toDarkMode: "Skift til mørk tilstand", toLightMode: "Skift til lys tilstand"
+					toDarkMode: "Skift til mørk tilstand", toLightMode: "Skift til lys tilstand",
+					install: "📲 Installer app"
 				},
 				nl: {
 					sub: "Passief-agressieve geluidscontrole in het openbaar vervoer",
@@ -628,7 +654,8 @@
 					play: "▶ Afspelen", stop: "⏹ Stoppen",
 					share: "Deel deze app", showQr: "QR-code tonen", hideQr: "QR-code verbergen",
 					noVoices: "Geen stemmen beschikbaar voor deze taal", loadingVoices: "Stemmen laden…",
-					toDarkMode: "Overschakelen naar donkere modus", toLightMode: "Overschakelen naar lichte modus"
+					toDarkMode: "Overschakelen naar donkere modus", toLightMode: "Overschakelen naar lichte modus",
+					install: "📲 App installeren"
 				},
 				et: {
 					sub: "Passiiv-agressiivne helipolitsei ühistranspordis",
@@ -640,7 +667,8 @@
 					play: "▶ Esita", stop: "⏹ Peata",
 					share: "Jaga seda rakendust", showQr: "Näita QR-koodi", hideQr: "Peida QR-kood",
 					noVoices: "Selle keele jaoks pole hääli saadaval", loadingVoices: "Laen hääli…",
-					toDarkMode: "Lülita tumedasse režiimi", toLightMode: "Lülita heledasse režiimi"
+					toDarkMode: "Lülita tumedasse režiimi", toLightMode: "Lülita heledasse režiimi",
+					install: "📲 Installi rakendus"
 				},
 				fi: {
 					sub: "Passiivisaggressiivinen äänivalvonta julkisessa liikenteessä",
@@ -652,7 +680,8 @@
 					play: "▶ Toista", stop: "⏹ Pysäytä",
 					share: "Jaa tämä sovellus", showQr: "Näytä QR-koodi", hideQr: "Piilota QR-koodi",
 					noVoices: "Tälle kielelle ei ole ääniä saatavilla", loadingVoices: "Ladataan ääniä…",
-					toDarkMode: "Vaihda tummaan tilaan", toLightMode: "Vaihda vaaleaan tilaan"
+					toDarkMode: "Vaihda tummaan tilaan", toLightMode: "Vaihda vaaleaan tilaan",
+					install: "📲 Asenna sovellus"
 				},
 				fr: {
 					sub: "Contrôle audio passif-agressif pour les transports en commun",
@@ -664,7 +693,8 @@
 					play: "▶ Lancer", stop: "⏹ Arrêter",
 					share: "Partager cette application", showQr: "Afficher le QR code", hideQr: "Masquer le QR code",
 					noVoices: "Aucune voix disponible pour cette langue", loadingVoices: "Chargement des voix…",
-					toDarkMode: "Passer en mode sombre", toLightMode: "Passer en mode clair"
+					toDarkMode: "Passer en mode sombre", toLightMode: "Passer en mode clair",
+					install: "📲 Installer l'application"
 				},
 				de: {
 					sub: "Passiv-aggressive Audiokontrolle für den öffentlichen Nahverkehr",
@@ -676,7 +706,8 @@
 					play: "▶ Abspielen", stop: "⏹ Stoppen",
 					share: "Diese App teilen", showQr: "QR-Code anzeigen", hideQr: "QR-Code ausblenden",
 					noVoices: "Keine Stimmen für diese Sprache verfügbar", loadingVoices: "Stimmen werden geladen…",
-					toDarkMode: "Zum Dunkelmodus wechseln", toLightMode: "Zum Hellmodus wechseln"
+					toDarkMode: "Zum Dunkelmodus wechseln", toLightMode: "Zum Hellmodus wechseln",
+					install: "📲 App installieren"
 				},
 				el: {
 					sub: "Παθητικά-επιθετική ηχητική αστυνόμευση για δημόσιες μεταφορές",
@@ -688,7 +719,8 @@
 					play: "▶ Αναπαραγωγή", stop: "⏹ Διακοπή",
 					share: "Κοινοποίησε αυτήν την εφαρμογή", showQr: "Εμφάνιση QR κώδικα", hideQr: "Απόκρυψη QR κώδικα",
 					noVoices: "Δεν υπάρχουν διαθέσιμες φωνές για αυτήν τη γλώσσα", loadingVoices: "Φόρτωση φωνών…",
-					toDarkMode: "Μετάβαση σε σκοτεινή λειτουργία", toLightMode: "Μετάβαση σε φωτεινή λειτουργία"
+					toDarkMode: "Μετάβαση σε σκοτεινή λειτουργία", toLightMode: "Μετάβαση σε φωτεινή λειτουργία",
+					install: "📲 Εγκατάσταση εφαρμογής"
 				},
 				hu: {
 					sub: "Passzív-agresszív hangellenőrzés a tömegközlekedésben",
@@ -700,7 +732,8 @@
 					play: "▶ Lejátszás", stop: "⏹ Leállítás",
 					share: "Oszd meg ezt az alkalmazást", showQr: "QR-kód megjelenítése", hideQr: "QR-kód elrejtése",
 					noVoices: "Ehhez a nyelvhez nem áll rendelkezésre hang", loadingVoices: "Hangok betöltése…",
-					toDarkMode: "Váltás sötét módra", toLightMode: "Váltás világos módra"
+					toDarkMode: "Váltás sötét módra", toLightMode: "Váltás világos módra",
+					install: "📲 Alkalmazás telepítése"
 				},
 				it: {
 					sub: "Controllo audio passivo-aggressivo per i trasporti pubblici",
@@ -712,7 +745,8 @@
 					play: "▶ Avvia", stop: "⏹ Ferma",
 					share: "Condividi questa app", showQr: "Mostra QR Code", hideQr: "Nascondi QR Code",
 					noVoices: "Nessuna voce disponibile per questa lingua", loadingVoices: "Caricamento voci…",
-					toDarkMode: "Passa alla modalità scura", toLightMode: "Passa alla modalità chiara"
+					toDarkMode: "Passa alla modalità scura", toLightMode: "Passa alla modalità chiara",
+					install: "📲 Installa l'app"
 				},
 				lv: {
 					sub: "Pasīvi-agresīva skaņu kontrole sabiedriskajā transportā",
@@ -724,7 +758,8 @@
 					play: "▶ Atskaņot", stop: "⏹ Apturēt",
 					share: "Kopīgot šo lietotni", showQr: "Rādīt QR kodu", hideQr: "Paslēpt QR kodu",
 					noVoices: "Šai valodai nav pieejamu balsu", loadingVoices: "Ielādē balsis…",
-					toDarkMode: "Pārslēgties uz tumšo režīmu", toLightMode: "Pārslēgties uz gaišo režīmu"
+					toDarkMode: "Pārslēgties uz tumšo režīmu", toLightMode: "Pārslēgties uz gaišo režīmu",
+					install: "📲 Instalēt lietotni"
 				},
 				lt: {
 					sub: "Pasyviai agresyvi garso kontrolė viešajame transporte",
@@ -736,7 +771,8 @@
 					play: "▶ Leisti", stop: "⏹ Sustabdyti",
 					share: "Dalintis šia programa", showQr: "Rodyti QR kodą", hideQr: "Slėpti QR kodą",
 					noVoices: "Šiai kalbai nėra balso", loadingVoices: "Kraunami balsai…",
-					toDarkMode: "Perjungti į tamsų režimą", toLightMode: "Perjungti į šviesų režimą"
+					toDarkMode: "Perjungti į tamsų režimą", toLightMode: "Perjungti į šviesų režimą",
+					install: "📲 Įdiegti programą"
 				},
 				nb: {
 					sub: "Passiv-aggressiv lydkontroll i kollektivtrafikken",
@@ -748,7 +784,8 @@
 					play: "▶ Spill av", stop: "⏹ Stopp",
 					share: "Del denne appen", showQr: "Vis QR-kode", hideQr: "Skjul QR-kode",
 					noVoices: "Ingen stemmer tilgjengelige for dette språket", loadingVoices: "Laster inn stemmer…",
-					toDarkMode: "Bytt til mørk modus", toLightMode: "Bytt til lys modus"
+					toDarkMode: "Bytt til mørk modus", toLightMode: "Bytt til lys modus",
+					install: "📲 Installer app"
 				},
 				pl: {
 					sub: "Pasywno-agresywna kontrola dźwięku w transporcie publicznym",
@@ -760,7 +797,8 @@
 					play: "▶ Odtwórz", stop: "⏹ Zatrzymaj",
 					share: "Udostępnij tę aplikację", showQr: "Pokaż kod QR", hideQr: "Ukryj kod QR",
 					noVoices: "Brak głosów dostępnych dla tego języka", loadingVoices: "Ładowanie głosów…",
-					toDarkMode: "Przełącz na tryb ciemny", toLightMode: "Przełącz na tryb jasny"
+					toDarkMode: "Przełącz na tryb ciemny", toLightMode: "Przełącz na tryb jasny",
+					install: "📲 Zainstaluj aplikację"
 				},
 				pt: {
 					sub: "Controlo de áudio passivo-agressivo para transportes públicos",
@@ -772,7 +810,8 @@
 					play: "▶ Reproduzir", stop: "⏹ Parar",
 					share: "Partilhar esta aplicação", showQr: "Mostrar QR Code", hideQr: "Esconder QR Code",
 					noVoices: "Sem vozes disponíveis para este idioma", loadingVoices: "A carregar vozes…",
-					toDarkMode: "Mudar para modo escuro", toLightMode: "Mudar para modo claro"
+					toDarkMode: "Mudar para modo escuro", toLightMode: "Mudar para modo claro",
+					install: "📲 Instalar aplicação"
 				},
 				ro: {
 					sub: "Control audio pasiv-agresiv pentru transportul public",
@@ -784,7 +823,8 @@
 					play: "▶ Redare", stop: "⏹ Oprire",
 					share: "Partajează această aplicație", showQr: "Arată codul QR", hideQr: "Ascunde codul QR",
 					noVoices: "Nu există voci disponibile pentru această limbă", loadingVoices: "Se încarcă vocile…",
-					toDarkMode: "Comutare la modul întunecat", toLightMode: "Comutare la modul luminos"
+					toDarkMode: "Comutare la modul întunecat", toLightMode: "Comutare la modul luminos",
+					install: "📲 Instalează aplicația"
 				},
 				ru: {
 					sub: "Пассивно-агрессивный звуковой контроль в общественном транспорте",
@@ -796,7 +836,8 @@
 					play: "▶ Воспроизвести", stop: "⏹ Остановить",
 					share: "Поделиться этим приложением", showQr: "Показать QR-код", hideQr: "Скрыть QR-код",
 					noVoices: "Для этого языка голоса недоступны", loadingVoices: "Загрузка голосов…",
-					toDarkMode: "Переключить на тёмную тему", toLightMode: "Переключить на светлую тему"
+					toDarkMode: "Переключить на тёмную тему", toLightMode: "Переключить на светлую тему",
+					install: "📲 Установить приложение"
 				},
 				sk: {
 					sub: "Pasívno-agresívna zvuková kontrola vo verejnej doprave",
@@ -808,7 +849,8 @@
 					play: "▶ Prehrať", stop: "⏹ Zastaviť",
 					share: "Zdieľaj túto aplikáciu", showQr: "Zobraziť QR kód", hideQr: "Skryť QR kód",
 					noVoices: "Pre tento jazyk nie sú k dispozícii žiadne hlasy", loadingVoices: "Načítanie hlasov…",
-					toDarkMode: "Prepnúť na tmavý režim", toLightMode: "Prepnúť na svetlý režim"
+					toDarkMode: "Prepnúť na tmavý režim", toLightMode: "Prepnúť na svetlý režim",
+					install: "📲 Nainštalovať aplikáciu"
 				},
 				sl: {
 					sub: "Pasivno-agresivni zvočni nadzor v javnem prevozu",
@@ -820,7 +862,8 @@
 					play: "▶ Predvajaj", stop: "⏹ Ustavi",
 					share: "Deli to aplikacijo", showQr: "Prikaži QR kodo", hideQr: "Skrij QR kodo",
 					noVoices: "Za ta jezik ni razpoložljivih glasov", loadingVoices: "Nalaganje glasov…",
-					toDarkMode: "Preklopi na temni način", toLightMode: "Preklopi na svetli način"
+					toDarkMode: "Preklopi na temni način", toLightMode: "Preklopi na svetli način",
+					install: "📲 Namesti aplikacijo"
 				},
 				es: {
 					sub: "Control de audio pasivo-agresivo para el transporte público",
@@ -832,7 +875,8 @@
 					play: "▶ Reproducir", stop: "⏹ Detener",
 					share: "Comparte esta aplicación", showQr: "Mostrar código QR", hideQr: "Ocultar código QR",
 					noVoices: "No hay voces disponibles para este idioma", loadingVoices: "Cargando voces…",
-					toDarkMode: "Cambiar al modo oscuro", toLightMode: "Cambiar al modo claro"
+					toDarkMode: "Cambiar al modo oscuro", toLightMode: "Cambiar al modo claro",
+					install: "📲 Instalar la app"
 				},
 				sv: {
 					sub: "Passivt aggressiv ljudkontroll i kollektivtrafiken",
@@ -844,7 +888,8 @@
 					play: "▶ Spela upp", stop: "⏹ Stoppa",
 					share: "Dela denna app", showQr: "Visa QR-kod", hideQr: "Dölj QR-kod",
 					noVoices: "Inga röster tillgängliga för detta språk", loadingVoices: "Laddar röster…",
-					toDarkMode: "Byt till mörkt läge", toLightMode: "Byt till ljust läge"
+					toDarkMode: "Byt till mörkt läge", toLightMode: "Byt till ljust läge",
+					install: "📲 Installera appen"
 				},
 				tr: {
 					sub: "Toplu taşıma için pasif-agresif ses denetimi",
@@ -856,7 +901,8 @@
 					play: "▶ Oynat", stop: "⏹ Durdur",
 					share: "Bu uygulamayı paylaş", showQr: "QR Kodu Göster", hideQr: "QR Kodu Gizle",
 					noVoices: "Bu dil için ses yok", loadingVoices: "Sesler yükleniyor…",
-					toDarkMode: "Karanlık moda geç", toLightMode: "Aydınlık moda geç"
+					toDarkMode: "Karanlık moda geç", toLightMode: "Aydınlık moda geç",
+					install: "📲 Uygulamayı yükle"
 				},
 				uk: {
 					sub: "Пасивно-агресивний звуковий контроль у громадському транспорті",
@@ -868,7 +914,8 @@
 					play: "▶ Відтворити", stop: "⏹ Зупинити",
 					share: "Поділитися цим додатком", showQr: "Показати QR-код", hideQr: "Приховати QR-код",
 					noVoices: "Для цієї мови немає доступних голосів", loadingVoices: "Завантаження голосів…",
-					toDarkMode: "Переключити на темну тему", toLightMode: "Переключити на світлу тему"
+					toDarkMode: "Переключити на темну тему", toLightMode: "Переключити на світлу тему",
+					install: "📲 Встановити додаток"
 				}
 			};
 
@@ -888,6 +935,7 @@
 			const voiceSelect = document.getElementById("voice-select");
 			const btnPlay = document.getElementById("btn-play");
 			const btnStop = document.getElementById("btn-stop");
+			const btnInstall = document.getElementById("btn-install");
 			const statusDisplay = document.getElementById("status-display");
 			const currentTextEl = document.getElementById("current-text");
 			const intervalRange = document.getElementById("interval-range");
@@ -938,15 +986,31 @@
 					voiceSelect.appendChild(opt);
 				});
 
+				// Restore saved voice for this language, fall back to first Google voice
+				const savedVoiceName = localStorage.getItem("voice_" + lang);
+				if (savedVoiceName) {
+					const saved = matching.find(v => v.name === savedVoiceName);
+					if (saved) {
+						voiceSelect.value = voices.indexOf(saved);
+						return;
+					}
+				}
 				const googleVoice = matching.find(v => v.name.startsWith("Google"));
 				if (googleVoice) voiceSelect.value = voices.indexOf(googleVoice);
 			}
+
+			// Persist voice selection by name (indices shift when voices reload)
+			voiceSelect.addEventListener("change", () => {
+				const v = voices[voiceSelect.value];
+				if (v) localStorage.setItem("voice_" + currentLang, v.name);
+			});
 
 			document.querySelectorAll(".transport-btn").forEach(btn => {
 				btn.addEventListener("click", () => {
 					document.querySelectorAll(".transport-btn").forEach(b => b.classList.remove("active"));
 					btn.classList.add("active");
 					currentTransport = btn.dataset.transport;
+					localStorage.setItem("transport", currentTransport);
 					updateCurrentText();
 					if (isPlaying) speak();
 				});
@@ -964,6 +1028,7 @@
 			intervalRange.addEventListener("input", () => {
 				intervalSeconds = parseInt(intervalRange.value);
 				intervalValue.textContent = `${intervalSeconds}s`;
+				localStorage.setItem("interval", intervalSeconds);
 				if (isPlaying) speak();
 			});
 
@@ -1076,6 +1141,28 @@
 
 			window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", updateThemeIcon);
 
+			// Install prompt
+			let deferredPrompt = null;
+
+			window.addEventListener("beforeinstallprompt", (e) => {
+				e.preventDefault();
+				deferredPrompt = e;
+				btnInstall.classList.add("visible");
+			});
+
+			btnInstall.addEventListener("click", async () => {
+				if (!deferredPrompt) return;
+				deferredPrompt.prompt();
+				const { outcome } = await deferredPrompt.userChoice;
+				deferredPrompt = null;
+				if (outcome === "accepted") btnInstall.classList.remove("visible");
+			});
+
+			window.addEventListener("appinstalled", () => {
+				btnInstall.classList.remove("visible");
+				deferredPrompt = null;
+			});
+
 			// Apply all UI strings for the given language code
 			function applyUILanguage(lang) {
 				S = UI_STRINGS[lang] || UI_STRINGS.en;
@@ -1099,6 +1186,7 @@
 				document.getElementById("btn-stop").textContent = S.stop;
 				document.querySelector(".qr-row span").textContent = S.share;
 				btnQr.textContent = qrContainer.classList.contains("visible") ? S.hideQr : S.showQr;
+				btnInstall.textContent = S.install;
 
 				if (!isPlaying) {
 					statusDisplay.className = "status-display stopped";
@@ -1117,11 +1205,30 @@
 				return UI_STRINGS[mapped] ? mapped : "en";
 			}
 
-			// Bootstrap language
+			// Bootstrap: restore all persisted settings, then load voices
 			const initialLang = getInitialLang();
 			currentLang = initialLang;
 			langSelect.value = initialLang;
 			applyUILanguage(initialLang);
+
+			// Restore transport
+			const savedTransport = localStorage.getItem("transport");
+			if (savedTransport && TRANSPORT_EMOJI[savedTransport]) {
+				currentTransport = savedTransport;
+				document.querySelectorAll(".transport-btn").forEach(btn => {
+					btn.classList.toggle("active", btn.dataset.transport === savedTransport);
+				});
+			}
+
+			// Restore interval
+			const savedInterval = parseInt(localStorage.getItem("interval"));
+			if (savedInterval >= 5 && savedInterval <= 60) {
+				intervalSeconds = savedInterval;
+				intervalRange.value = savedInterval;
+				intervalValue.textContent = `${savedInterval}s`;
+			}
+
+			updateCurrentText();
 			loadVoices();
 		</script>
 
