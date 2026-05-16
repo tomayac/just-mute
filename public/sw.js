@@ -1,9 +1,8 @@
-const CACHE_NAME = "just-mute-v2";
+const CACHE_NAME = "just-mute-v3";
 const ASSETS = [
   "./",
   "./index.html",
-  "./manifest.json",
-  "https://cdn.jsdelivr.net/npm/qr-creator@1.0.0/dist/qr-creator.min.js"
+  "./manifest.json"
 ];
 
 self.addEventListener("install", (event) => {
