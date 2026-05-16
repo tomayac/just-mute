@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#6c3eb2">
+		<meta name="color-scheme" content="dark light">
+		<title>Just Mute 🤫</title>
+		<link rel="manifest" href="manifest.json">
+		<style>
+			:root {
+				color-scheme: dark light;
+				--primary: #6c3eb2;
+				--primary-light: #8b5cf6;
+				--bg: #f5f3fa;
+				--card: #ffffff;
+				--bg-input: #ffffff;
+				--border: #e5e7eb;
+				--active-bg: #ede9fe;
+				--text: #1a1a2e;
+				--text-light: #6b7280;
+				--danger: #ef4444;
+				--success: #10b981;
+				--radius: 16px;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) {
+					--bg: #0f0f1a;
+					--card: #1e1b2e;
+					--bg-input: #2a2540;
+					--border: #3d3558;
+					--active-bg: #3b2f6e;
+					--text: #e5e7eb;
+					--text-light: #9ca3af;
+				}
+			}
+
+			[data-theme="dark"] {
+				--bg: #0f0f1a;
+				--card: #1e1b2e;
+				--bg-input: #2a2540;
+				--border: #3d3558;
+				--active-bg: #3b2f6e;
+				--text: #e5e7eb;
+				--text-light: #9ca3af;
+			}
+
+			[data-theme="light"] {
+				--bg: #f5f3fa;
+				--card: #ffffff;
+				--bg-input: #ffffff;
+				--border: #e5e7eb;
+				--active-bg: #ede9fe;
+				--text: #1a1a2e;
+				--text-light: #6b7280;
+			}
+
+			* { margin: 0; padding: 0; box-sizing: border-box; }
+
+			body {
+				font-family: system-ui, sans-serif;
+				background: var(--bg);
+				color: var(--text);
+				min-height: 100dvh;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				padding: 24px 16px;
+				transition: background 0.2s, color 0.2s;
+			}
+
+			h1 {
+				font-size: 1.75rem;
+				margin-bottom: 4px;
+			}
+
+			.subtitle {
+				color: var(--text-light);
+				margin-bottom: 24px;
+				text-align: center;
+				font-size: 0.95rem;
+			}
+
+			.card {
+				background: var(--card);
+				border-radius: var(--radius);
+				padding: 20px;
+				width: 100%;
+				max-width: 420px;
+				box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+				margin-bottom: 16px;
+				transition: background 0.2s;
+			}
+
+			.card label {
+				display: block;
+				font-weight: 600;
+				margin-bottom: 10px;
+				font-size: 0.9rem;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				color: var(--text-light);
+			}
+
+			select, button {
+				width: 100%;
+				padding: 12px 16px;
+				border-radius: 12px;
+				border: 2px solid var(--border);
+				font-size: 1rem;
+				background: var(--bg-input);
+				color: var(--text);
+				cursor: pointer;
+				transition: border-color 0.2s, background 0.2s, color 0.2s;
+			}
+
+			select:focus, button:focus {
+				outline: none;
+				border-color: var(--primary-light);
+			}
+
+			/* Swipeable transport strip */
+			.transport-grid {
+				display: flex;
+				gap: 8px;
+				overflow-x: auto;
+				scroll-snap-type: x mandatory;
+				scrollbar-width: none;
+				-webkit-overflow-scrolling: touch;
+				margin: 0 -20px;
+				padding: 0 20px 4px;
+			}
+
+			.transport-grid::-webkit-scrollbar { display: none; }
+
+			.transport-btn {
+				flex: 0 0 68px;
+				scroll-snap-align: start;
+				background: var(--bg-input);
+				border: 2px solid var(--border);
+				border-radius: 12px;
+				padding: 12px 4px;
+				font-size: 1.6rem;
+				cursor: pointer;
+				text-align: center;
+				transition: all 0.2s;
+			}
+
+			.transport-btn.active {
+				border-color: var(--primary);
+				background: var(--active-bg);
+			}
+
+			.transport-btn:hover { border-color: var(--primary-light); }
+
+			.transport-label {
+				display: block;
+				font-size: 0.65rem;
+				margin-top: 4px;
+				color: var(--text-light);
+			}
+
+			.status-display {
+				text-align: center;
+				padding: 16px;
+				border-radius: 12px;
+				margin-bottom: 16px;
+				width: 100%;
+				max-width: 420px;
+				font-size: 0.9rem;
+				font-weight: 500;
+			}
+
+			.status-display.stopped {
+				background: #fef2f2;
+				color: var(--danger);
+			}
+
+			.status-display.playing {
+				background: #d1fae5;
+				color: var(--success);
+				animation: pulse 2s infinite;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) .status-display.stopped { background: #3b1010; }
+				:root:not([data-theme="light"]) .status-display.playing { background: #0d2e1e; }
+			}
+
+			[data-theme="dark"] .status-display.stopped { background: #3b1010; }
+			[data-theme="dark"] .status-display.playing { background: #0d2e1e; }
+
+			@keyframes pulse {
+				0%, 100% { opacity: 1; }
+				50% { opacity: 0.7; }
+			}
+
+			.controls {
+				display: flex;
+				gap: 12px;
+				width: 100%;
+				max-width: 420px;
+				margin-bottom: 16px;
+			}
+
+			.btn-play {
+				background: var(--primary);
+				color: #fff;
+				border: none;
+				font-weight: 700;
+				font-size: 1.1rem;
+				padding: 16px;
+			}
+
+			.btn-play:hover { background: var(--primary-light); }
+
+			.btn-stop {
+				background: var(--danger);
+				color: #fff;
+				border: none;
+				font-weight: 700;
+				font-size: 1.1rem;
+				padding: 16px;
+			}
+
+			.btn-stop:hover { background: #dc2626; }
+
+			.current-text {
+				width: 100%;
+				max-width: 420px;
+				text-align: center;
+				font-size: 1.15rem;
+				font-weight: 600;
+				padding: 20px;
+				background: var(--card);
+				border-radius: var(--radius);
+				box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+				margin-bottom: 16px;
+				min-height: 80px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background 0.2s;
+			}
+
+			.interval-control {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				width: 100%;
+				max-width: 420px;
+			}
+
+			.interval-control input[type="range"] {
+				flex: 1;
+				accent-color: var(--primary);
+			}
+
+			.interval-value {
+				font-weight: 700;
+				font-size: 0.9rem;
+				min-width: 40px;
+				text-align: right;
+			}
+
+			/* QR code card */
+			.qr-row {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 12px;
+			}
+
+			.qr-row span {
+				font-weight: 600;
+				font-size: 0.9rem;
+				color: var(--text-light);
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+
+			.btn-qr {
+				width: auto;
+				padding: 8px 14px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				background: var(--primary);
+				color: #fff;
+				border: none;
+				white-space: nowrap;
+			}
+
+			.btn-qr:hover { background: var(--primary-light); }
+
+			#qr-container {
+				display: none;
+				flex-direction: column;
+				align-items: center;
+				padding-top: 16px;
+				gap: 10px;
+			}
+
+			#qr-container.visible { display: flex; }
+
+			#qrcode {
+				background: #fff;
+				padding: 10px;
+				border-radius: 8px;
+				line-height: 0;
+			}
+
+			#qrcode svg { display: block; }
+
+			.qr-url {
+				font-size: 0.7rem;
+				color: var(--text-light);
+				word-break: break-all;
+				text-align: center;
+			}
+
+			footer {
+				margin-top: auto;
+				padding-top: 32px;
+				text-align: center;
+				color: var(--text-light);
+				font-size: 0.8rem;
+			}
+
+			footer a { color: var(--primary); text-decoration: none; }
+
+			.sr-only {
+				position: absolute; width: 1px; height: 1px;
+				padding: 0; margin: -1px; overflow: hidden;
+				clip: rect(0,0,0,0); border: 0;
+			}
+
+			#theme-toggle {
+				position: fixed;
+				top: 16px;
+				right: 16px;
+				width: 40px;
+				height: 40px;
+				padding: 0;
+				border-radius: 50%;
+				border: 2px solid var(--border);
+				background: var(--card);
+				font-size: 1.2rem;
+				cursor: pointer;
+				z-index: 100;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background 0.2s, border-color 0.2s;
+			}
+
+			#theme-toggle:hover { border-color: var(--primary-light); }
+		</style>
+	</head>
+	<body>
+
+		<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+
+		<h1>🤫 Just Mute</h1>
+		<p class="subtitle">Passive-aggressive audio policing for public transport</p>
+
+		<!-- Transport Picker -->
+		<div class="card">
+			<label id="transport-label">Where are you commuting?</label>
+			<div class="transport-grid" role="radiogroup" aria-labelledby="transport-label">
+				<button class="transport-btn active" data-transport="train" aria-label="Train">🚆<span class="transport-label">Train</span></button>
+				<button class="transport-btn" data-transport="bus" aria-label="Bus">🚌<span class="transport-label">Bus</span></button>
+				<button class="transport-btn" data-transport="tram" aria-label="Tram">🚊<span class="transport-label">Tram</span></button>
+				<button class="transport-btn" data-transport="plane" aria-label="Plane">✈️<span class="transport-label">Plane</span></button>
+				<button class="transport-btn" data-transport="subway" aria-label="Subway">🚇<span class="transport-label">Subway</span></button>
+				<button class="transport-btn" data-transport="ferry" aria-label="Ferry">⛴️<span class="transport-label">Ferry</span></button>
+				<button class="transport-btn" data-transport="cablecar" aria-label="Cable car">🚡<span class="transport-label">Cable car</span></button>
+			</div>
+		</div>
+
+		<!-- Language Picker -->
+		<div class="card">
+			<label for="lang-select">Language</label>
+			<select id="lang-select">
+				<option value="en">English</option>
+				<option value="bg">Български</option>
+				<option value="ca">Català</option>
+				<option value="hr">Hrvatski</option>
+				<option value="cs">Čeština</option>
+				<option value="da">Dansk</option>
+				<option value="nl">Nederlands</option>
+				<option value="et">Eesti</option>
+				<option value="fi">Suomi</option>
+				<option value="fr">Français</option>
+				<option value="de">Deutsch</option>
+				<option value="el">Ελληνικά</option>
+				<option value="hu">Magyar</option>
+				<option value="it">Italiano</option>
+				<option value="lv">Latviešu</option>
+				<option value="lt">Lietuvių</option>
+				<option value="nb">Norsk</option>
+				<option value="pl">Polski</option>
+				<option value="pt">Português</option>
+				<option value="ro">Română</option>
+				<option value="ru">Русский</option>
+				<option value="sk">Slovenčina</option>
+				<option value="sl">Slovenščina</option>
+				<option value="es">Español</option>
+				<option value="sv">Svenska</option>
+				<option value="tr">Türkçe</option>
+				<option value="uk">Українська</option>
+			</select>
+		</div>
+
+		<!-- Voice Picker -->
+		<div class="card">
+			<label for="voice-select">Voice</label>
+			<select id="voice-select">
+				<option value="">Loading voices…</option>
+			</select>
+		</div>
+
+		<!-- Interval Control -->
+		<div class="card">
+			<label for="interval-range">Loop interval</label>
+			<div class="interval-control">
+				<span id="label-fast">Fast</span>
+				<input type="range" id="interval-range" min="5" max="60" value="15" step="1">
+				<span id="label-slow">Slow</span>
+				<span class="interval-value" id="interval-value">15s</span>
+			</div>
+		</div>
+
+		<!-- Status -->
+		<div class="status-display stopped" id="status-display">⏹ Stopped</div>
+
+		<!-- Current phrase display -->
+		<div class="current-text" id="current-text">Select a language and press Play</div>
+
+		<!-- Play/Stop -->
+		<div class="controls">
+			<button class="btn-play" id="btn-play">▶ Play</button>
+			<button class="btn-stop" id="btn-stop">⏹ Stop</button>
+		</div>
+
+		<!-- QR Code share -->
+		<div class="card">
+			<div class="qr-row">
+				<span>Share this app</span>
+				<button class="btn-qr" id="btn-qr">Show QR Code</button>
+			</div>
+			<div id="qr-container" aria-live="polite">
+				<div id="qrcode"></div>
+				<p class="qr-url" id="qr-url"></p>
+			</div>
+		</div>
+
+		<footer>Rage-coded by Thomas Steiner (<a href="https://toot.cafe/@tomayac">@tomayac@toot.cafe</a>)
+			on a noisy commuter train, but with love ❤️.</footer>
+
+		<!-- QR code library (~7 KB), also pre-cached by the service worker -->
+		<script src="https://cdn.jsdelivr.net/npm/qr-creator@1.0.0/dist/qr-creator.min.js"></script>
+
+		<script>
+			const LOCALES = {
+				en: "en-US", bg: "bg-BG", ca: "ca-ES", hr: "hr-HR", cs: "cs-CZ",
+				da: "da-DK", nl: "nl-NL", et: "et-EE", fi: "fi-FI", fr: "fr-FR",
+				de: "de-DE", el: "el-GR", hu: "hu-HU", it: "it-IT", lv: "lv-LV",
+				lt: "lt-LT", nb: "nb-NO", pl: "pl-PL", pt: "pt-PT", ro: "ro-RO",
+				ru: "ru-RU", sk: "sk-SK", sl: "sl-SI", es: "es-ES", sv: "sv-SE",
+				tr: "tr-TR", uk: "uk-UA"
+			};
+
+			// Transport preposition phrases per language, keyed by transport id.
+			// For Finnish/Estonian/Latvian/Lithuanian these are locative case forms.
+			// For Turkish the value includes a leading capital as it starts the sentence.
+			const TRANSPORT_PREP = {
+				en: { train: "on the train", bus: "on the bus", tram: "on the tram", plane: "on the plane", subway: "on the subway", ferry: "on the ferry", cablecar: "on the cable car" },
+				bg: { train: "във влака", bus: "в автобуса", tram: "в трамвая", plane: "в самолета", subway: "в метрото", ferry: "на ферибота", cablecar: "на въжената линия" },
+				ca: { train: "al tren", bus: "a l'autobús", tram: "al tramvia", plane: "a l'avió", subway: "al metro", ferry: "al ferri", cablecar: "al telefèric" },
+				hr: { train: "u vlaku", bus: "u autobusu", tram: "u tramvaju", plane: "u zrakoplovu", subway: "u metrou", ferry: "na trajektu", cablecar: "u žičari" },
+				cs: { train: "ve vlaku", bus: "v autobuse", tram: "v tramvaji", plane: "v letadle", subway: "v metru", ferry: "na trajektu", cablecar: "v lanovce" },
+				da: { train: "i toget", bus: "i bussen", tram: "i sporvognen", plane: "i flyet", subway: "i metroen", ferry: "på færgen", cablecar: "i kabelbanen" },
+				nl: { train: "in de trein", bus: "in de bus", tram: "in de tram", plane: "in het vliegtuig", subway: "in de metro", ferry: "op de veerboot", cablecar: "in de kabelbaan" },
+				et: { train: "rongis", bus: "bussis", tram: "trammis", plane: "lennukis", subway: "metroos", ferry: "parvlaeval", cablecar: "köisteelil" },
+				fi: { train: "junassa", bus: "bussissa", tram: "raitiovaunussa", plane: "lentokoneessa", subway: "metrossa", ferry: "lautalla", cablecar: "köysiradalla" },
+				fr: { train: "dans le train", bus: "dans le bus", tram: "dans le tram", plane: "dans l'avion", subway: "dans le métro", ferry: "sur le ferry", cablecar: "dans le téléphérique" },
+				de: { train: "im Zug", bus: "im Bus", tram: "in der Straßenbahn", plane: "im Flugzeug", subway: "in der U-Bahn", ferry: "auf der Fähre", cablecar: "in der Seilbahn" },
+				el: { train: "στο τρένο", bus: "στο λεωφορείο", tram: "στο τραμ", plane: "στο αεροπλάνο", subway: "στο μετρό", ferry: "στο πλοίο", cablecar: "στο τελεφερίκ" },
+				hu: { train: "a vonaton", bus: "a buszon", tram: "a villamoson", plane: "a repülőn", subway: "a metrón", ferry: "a kompon", cablecar: "a drótkötélpályán" },
+				it: { train: "sul treno", bus: "sull'autobus", tram: "sul tram", plane: "sull'aereo", subway: "sulla metro", ferry: "sul traghetto", cablecar: "in funivia" },
+				lv: { train: "vilcienā", bus: "autobusā", tram: "tramvajā", plane: "lidmašīnā", subway: "metro", ferry: "prāmī", cablecar: "gaisa tramvajā" },
+				lt: { train: "traukinyje", bus: "autobuse", tram: "tramvajuje", plane: "lėktuve", subway: "metro", ferry: "keltu", cablecar: "lynų keliu" },
+				nb: { train: "på toget", bus: "på bussen", tram: "på trikken", plane: "på flyet", subway: "på T-banen", ferry: "på ferjen", cablecar: "i taubanen" },
+				pl: { train: "w pociągu", bus: "w autobusie", tram: "w tramwaju", plane: "w samolocie", subway: "w metrze", ferry: "na promie", cablecar: "w kolejce linowej" },
+				pt: { train: "no comboio", bus: "no autocarro", tram: "no elétrico", plane: "no avião", subway: "no metro", ferry: "no ferry", cablecar: "no teleférico" },
+				ro: { train: "în tren", bus: "în autobuz", tram: "în tramvai", plane: "în avion", subway: "la metrou", ferry: "pe feribot", cablecar: "în telecabină" },
+				ru: { train: "в поезде", bus: "в автобусе", tram: "в трамвае", plane: "в самолёте", subway: "в метро", ferry: "на пароме", cablecar: "в канатной дороге" },
+				sk: { train: "vo vlaku", bus: "v autobuse", tram: "v električke", plane: "v lietadle", subway: "v metre", ferry: "na trajekte", cablecar: "v lanovke" },
+				sl: { train: "v vlaku", bus: "v avtobusu", tram: "v tramvaju", plane: "v letalu", subway: "v metrou", ferry: "na trajektu", cablecar: "v žičnici" },
+				es: { train: "en el tren", bus: "en el autobús", tram: "en el tranvía", plane: "en el avión", subway: "en el metro", ferry: "en el ferry", cablecar: "en el teleférico" },
+				sv: { train: "på tåget", bus: "på bussen", tram: "på spårvagnen", plane: "på planet", subway: "på tunnelbanan", ferry: "på färjan", cablecar: "i linbanan" },
+				// Turkish: locative-case forms; capitalised because they begin the sentence
+				tr: { train: "Trende", bus: "Otobüste", tram: "Tramvayda", plane: "Uçakta", subway: "Metroda", ferry: "Feribotta", cablecar: "Teleferik kabininde" },
+				uk: { train: "у поїзді", bus: "в автобусі", tram: "у трамваї", plane: "у літаку", subway: "у метро", ferry: "на поромі", cablecar: "у канатній дорозі" }
+			};
+
+			const PHRASE_TEMPLATES = {
+				en: (p) => `No one ${p} wants to listen to what's playing on your phone. Can you just mute?`,
+				bg: (p) => `Никой ${p} не иска да чува какво свири на телефона ти. Можеш ли да го заглушиш?`,
+				ca: (p) => `Ningú ${p} vol escoltar el que sona al teu telèfon. El pots silenciar?`,
+				hr: (p) => `Nitko ${p} ne želi slušati što svira na vašem telefonu. Možete li ga utišati?`,
+				cs: (p) => `Nikdo ${p} nechce slyšet, co hraje na vašem telefonu. Můžete ho ztlumit?`,
+				da: (p) => `Ingen ${p} vil høre, hvad der spiller på din telefon. Kan du slå lyden fra?`,
+				nl: (p) => `Niemand ${p} wil horen wat er op uw telefoon speelt. Kunt u hem dempen?`,
+				et: (p) => `Keegi ${p} ei taha kuulda, mida sinu telefon mängib. Kas saaksid selle vaigistada?`,
+				fi: (p) => `Kukaan ${p} ei halua kuulla mitä puhelimessasi soi. Voisitko hiljentää sen?`,
+				fr: (p) => `Personne ${p} ne veut écouter ce qui passe sur ton téléphone. Tu peux juste mettre le son sur muet ?`,
+				de: (p) => `Niemand ${p} will zuhören, was auf deinem Telefon spielt. Kannst du es bitte stummschalten?`,
+				el: (p) => `Κανείς ${p} δεν θέλει να ακούει αυτό που παίζει στο τηλέφωνό σου. Μπορείς να το βάλεις στη σίγαση;`,
+				hu: (p) => `Senki ${p} sem akar hallani, ami a telefonján szól. El tudná némítani?`,
+				it: (p) => `Nessuno ${p} vuole ascoltare quello che suona sul tuo telefono. Puoi metterlo in silenzioso?`,
+				lv: (p) => `Neviens ${p} nevēlas dzirdēt, ko atskaņo tavs tālrunis. Vai tu vari to apklusināt?`,
+				lt: (p) => `Niekas ${p} nenori girdėti, kas groja jūsų telefone. Ar galite jį nutildyti?`,
+				nb: (p) => `Ingen ${p} ønsker å høre hva som spiller på telefonen din. Kan du dempe den?`,
+				pl: (p) => `Nikt ${p} nie chce słuchać tego, co gra na twoim telefonie. Czy możesz go wyciszyć?`,
+				pt: (p) => `Ninguém ${p} quer ouvir o que está a tocar no seu telemóvel. Pode silenciá-lo?`,
+				ro: (p) => `Nimeni ${p} nu vrea să audă ce sună pe telefonul tău. Poți să-l pui pe silențios?`,
+				ru: (p) => `Никто ${p} не хочет слышать то, что играет на вашем телефоне. Пожалуйста, поставьте его на беззвучный режим.`,
+				sk: (p) => `Nikto ${p} nechce počuť, čo hrá na vašom telefóne. Môžete ho stlmiť?`,
+				sl: (p) => `Nihče ${p} ne želi slišati, kaj igra na vašem telefonu. Ali ga lahko utišate?`,
+				es: (p) => `Nadie ${p} quiere escuchar lo que suena en tu teléfono. ¿Puedes silenciarlo?`,
+				sv: (p) => `Ingen ${p} vill höra vad som spelas på din telefon. Kan du stänga av ljudet?`,
+				// Turkish: prep is at sentence start (locative noun), rest follows naturally
+				tr: (p) => `${p} kimse telefonunuzdaki sesi duymak istemiyor. Lütfen sessize alır mısınız?`,
+				uk: (p) => `Ніхто ${p} не хоче чути те, що грає у вашому телефоні. Будь ласка, поставте його на беззвучний режим.`
+			};
+
+			function getPhrase(lang, transport) {
+				return PHRASE_TEMPLATES[lang](TRANSPORT_PREP[lang][transport]);
+			}
+
+			const TRANSPORT_EMOJI = {
+				train: "🚆", bus: "🚌", tram: "🚊", plane: "✈️",
+				subway: "🚇", ferry: "⛴️", cablecar: "🚡"
+			};
+
+			const UI_STRINGS = {
+				en: {
+					sub: "Passive-aggressive audio policing for public transport",
+					where: "Where are you commuting?",
+					tn: { train: "Train", bus: "Bus", tram: "Tram", plane: "Plane", subway: "Subway", ferry: "Ferry", cablecar: "Cable car" },
+					lang: "Language", voice: "Voice", interval: "Loop interval",
+					fast: "Fast", slow: "Slow",
+					stopped: "⏹ Stopped", speaking: "🔊 Speaking…", paused: "⏸ Paused between loops…",
+					play: "▶ Play", stop: "⏹ Stop",
+					share: "Share this app", showQr: "Show QR Code", hideQr: "Hide QR Code",
+					noVoices: "No voices available for this language", loadingVoices: "Loading voices…",
+					toDarkMode: "Switch to dark mode", toLightMode: "Switch to light mode"
+				},
+				bg: {
+					sub: "Пасивно-агресивен звуков контрол в обществения транспорт",
+					where: "С какво пътувате?",
+					tn: { train: "Влак", bus: "Автобус", tram: "Трамвай", plane: "Самолет", subway: "Метро", ferry: "Ферибот", cablecar: "Въжена линия" },
+					lang: "Език", voice: "Глас", interval: "Интервал на повторение",
+					fast: "Бързо", slow: "Бавно",
+					stopped: "⏹ Спряно", speaking: "🔊 Говори…", paused: "⏸ Пауза между цикли…",
+					play: "▶ Пусни", stop: "⏹ Спри",
+					share: "Сподели приложението", showQr: "Покажи QR код", hideQr: "Скрий QR код",
+					noVoices: "Няма налични гласове за този език", loadingVoices: "Зареждане на гласовете…",
+					toDarkMode: "Превключи към тъмен режим", toLightMode: "Превключи към светъл режим"
+				},
+				ca: {
+					sub: "Polícia d'àudio passiva-agressiva per al transport públic",
+					where: "On viatgeu?",
+					tn: { train: "Tren", bus: "Autobús", tram: "Tramvia", plane: "Avió", subway: "Metro", ferry: "Ferri", cablecar: "Telefèric" },
+					lang: "Idioma", voice: "Veu", interval: "Interval de bucle",
+					fast: "Ràpid", slow: "Lent",
+					stopped: "⏹ Aturat", speaking: "🔊 Parlant…", paused: "⏸ Pausat entre bucles…",
+					play: "▶ Reproduir", stop: "⏹ Parar",
+					share: "Comparteix aquesta app", showQr: "Mostra el codi QR", hideQr: "Amaga el codi QR",
+					noVoices: "No hi ha veus disponibles per a aquest idioma", loadingVoices: "Carregant veus…",
+					toDarkMode: "Canvia al mode fosc", toLightMode: "Canvia al mode clar"
+				},
+				hr: {
+					sub: "Pasivno-agresivna audio kontrola u javnom prijevozu",
+					where: "Čime putujete?",
+					tn: { train: "Vlak", bus: "Autobus", tram: "Tramvaj", plane: "Avion", subway: "Metro", ferry: "Trajekt", cablecar: "Žičara" },
+					lang: "Jezik", voice: "Glas", interval: "Interval petlje",
+					fast: "Brzo", slow: "Sporo",
+					stopped: "⏹ Zaustavljeno", speaking: "🔊 Govori…", paused: "⏸ Pauza između petlji…",
+					play: "▶ Reproduciraj", stop: "⏹ Zaustavi",
+					share: "Podijeli ovu aplikaciju", showQr: "Prikaži QR kod", hideQr: "Sakrij QR kod",
+					noVoices: "Nema dostupnih glasova za ovaj jezik", loadingVoices: "Učitavanje glasova…",
+					toDarkMode: "Prebaci na tamni način", toLightMode: "Prebaci na svijetli način"
+				},
+				cs: {
+					sub: "Pasivně-agresivní zvuková kontrola ve veřejné dopravě",
+					where: "Čím cestujete?",
+					tn: { train: "Vlak", bus: "Autobus", tram: "Tramvaj", plane: "Letadlo", subway: "Metro", ferry: "Trajekt", cablecar: "Lanovka" },
+					lang: "Jazyk", voice: "Hlas", interval: "Interval smyčky",
+					fast: "Rychle", slow: "Pomalu",
+					stopped: "⏹ Zastaveno", speaking: "🔊 Mluví…", paused: "⏸ Pauza mezi smyčkami…",
+					play: "▶ Přehrát", stop: "⏹ Zastavit",
+					share: "Sdílej tuto aplikaci", showQr: "Zobrazit QR kód", hideQr: "Skrýt QR kód",
+					noVoices: "Pro tento jazyk nejsou dostupné žádné hlasy", loadingVoices: "Načítání hlasů…",
+					toDarkMode: "Přepnout na tmavý režim", toLightMode: "Přepnout na světlý režim"
+				},
+				da: {
+					sub: "Passiv-aggressiv lydkontrol i den offentlige transport",
+					where: "Hvad pendler du med?",
+					tn: { train: "Tog", bus: "Bus", tram: "Sporvogn", plane: "Fly", subway: "Metro", ferry: "Færge", cablecar: "Kabelbane" },
+					lang: "Sprog", voice: "Stemme", interval: "Sløjfe-interval",
+					fast: "Hurtigt", slow: "Langsomt",
+					stopped: "⏹ Stoppet", speaking: "🔊 Taler…", paused: "⏸ Pause mellem sløjfer…",
+					play: "▶ Afspil", stop: "⏹ Stop",
+					share: "Del denne app", showQr: "Vis QR-kode", hideQr: "Skjul QR-kode",
+					noVoices: "Ingen stemmer tilgængelige for dette sprog", loadingVoices: "Indlæser stemmer…",
+					toDarkMode: "Skift til mørk tilstand", toLightMode: "Skift til lys tilstand"
+				},
+				nl: {
+					sub: "Passief-agressieve geluidscontrole in het openbaar vervoer",
+					where: "Waarmee reist u?",
+					tn: { train: "Trein", bus: "Bus", tram: "Tram", plane: "Vliegtuig", subway: "Metro", ferry: "Veerboot", cablecar: "Kabelbaan" },
+					lang: "Taal", voice: "Stem", interval: "Lusinterval",
+					fast: "Snel", slow: "Langzaam",
+					stopped: "⏹ Gestopt", speaking: "🔊 Spreekt…", paused: "⏸ Pauze tussen lussen…",
+					play: "▶ Afspelen", stop: "⏹ Stoppen",
+					share: "Deel deze app", showQr: "QR-code tonen", hideQr: "QR-code verbergen",
+					noVoices: "Geen stemmen beschikbaar voor deze taal", loadingVoices: "Stemmen laden…",
+					toDarkMode: "Overschakelen naar donkere modus", toLightMode: "Overschakelen naar lichte modus"
+				},
+				et: {
+					sub: "Passiiv-agressiivne helipolitsei ühistranspordis",
+					where: "Millega sõidate?",
+					tn: { train: "Rong", bus: "Buss", tram: "Tramm", plane: "Lennuk", subway: "Metro", ferry: "Parvlaev", cablecar: "Köistee" },
+					lang: "Keel", voice: "Hääl", interval: "Kordusintervall",
+					fast: "Kiiresti", slow: "Aeglaselt",
+					stopped: "⏹ Peatatud", speaking: "🔊 Räägib…", paused: "⏸ Paus tsüklite vahel…",
+					play: "▶ Esita", stop: "⏹ Peata",
+					share: "Jaga seda rakendust", showQr: "Näita QR-koodi", hideQr: "Peida QR-kood",
+					noVoices: "Selle keele jaoks pole hääli saadaval", loadingVoices: "Laen hääli…",
+					toDarkMode: "Lülita tumedasse režiimi", toLightMode: "Lülita heledasse režiimi"
+				},
+				fi: {
+					sub: "Passiivisaggressiivinen äänivalvonta julkisessa liikenteessä",
+					where: "Millä kuljet?",
+					tn: { train: "Juna", bus: "Bussi", tram: "Raitiovaunu", plane: "Lentokone", subway: "Metro", ferry: "Lautta", cablecar: "Köysirata" },
+					lang: "Kieli", voice: "Ääni", interval: "Toistoväli",
+					fast: "Nopeasti", slow: "Hitaasti",
+					stopped: "⏹ Pysäytetty", speaking: "🔊 Puhuu…", paused: "⏸ Tauko kierrosten välillä…",
+					play: "▶ Toista", stop: "⏹ Pysäytä",
+					share: "Jaa tämä sovellus", showQr: "Näytä QR-koodi", hideQr: "Piilota QR-koodi",
+					noVoices: "Tälle kielelle ei ole ääniä saatavilla", loadingVoices: "Ladataan ääniä…",
+					toDarkMode: "Vaihda tummaan tilaan", toLightMode: "Vaihda vaaleaan tilaan"
+				},
+				fr: {
+					sub: "Contrôle audio passif-agressif pour les transports en commun",
+					where: "Quel moyen de transport utilisez-vous ?",
+					tn: { train: "Train", bus: "Bus", tram: "Tram", plane: "Avion", subway: "Métro", ferry: "Ferry", cablecar: "Téléphérique" },
+					lang: "Langue", voice: "Voix", interval: "Intervalle de boucle",
+					fast: "Rapide", slow: "Lent",
+					stopped: "⏹ Arrêté", speaking: "🔊 En train de parler…", paused: "⏸ Pause entre les boucles…",
+					play: "▶ Lancer", stop: "⏹ Arrêter",
+					share: "Partager cette application", showQr: "Afficher le QR code", hideQr: "Masquer le QR code",
+					noVoices: "Aucune voix disponible pour cette langue", loadingVoices: "Chargement des voix…",
+					toDarkMode: "Passer en mode sombre", toLightMode: "Passer en mode clair"
+				},
+				de: {
+					sub: "Passiv-aggressive Audiokontrolle für den öffentlichen Nahverkehr",
+					where: "Womit fahren Sie?",
+					tn: { train: "Zug", bus: "Bus", tram: "Straßenbahn", plane: "Flugzeug", subway: "U-Bahn", ferry: "Fähre", cablecar: "Seilbahn" },
+					lang: "Sprache", voice: "Stimme", interval: "Schleifenintervall",
+					fast: "Schnell", slow: "Langsam",
+					stopped: "⏹ Gestoppt", speaking: "🔊 Spricht…", paused: "⏸ Pause zwischen den Schleifen…",
+					play: "▶ Abspielen", stop: "⏹ Stoppen",
+					share: "Diese App teilen", showQr: "QR-Code anzeigen", hideQr: "QR-Code ausblenden",
+					noVoices: "Keine Stimmen für diese Sprache verfügbar", loadingVoices: "Stimmen werden geladen…",
+					toDarkMode: "Zum Dunkelmodus wechseln", toLightMode: "Zum Hellmodus wechseln"
+				},
+				el: {
+					sub: "Παθητικά-επιθετική ηχητική αστυνόμευση για δημόσιες μεταφορές",
+					where: "Με τι μετακινείστε;",
+					tn: { train: "Τρένο", bus: "Λεωφορείο", tram: "Τραμ", plane: "Αεροπλάνο", subway: "Μετρό", ferry: "Πλοίο", cablecar: "Τελεφερίκ" },
+					lang: "Γλώσσα", voice: "Φωνή", interval: "Διάστημα επανάληψης",
+					fast: "Γρήγορα", slow: "Αργά",
+					stopped: "⏹ Σταματημένο", speaking: "🔊 Μιλάει…", paused: "⏸ Παύση μεταξύ επαναλήψεων…",
+					play: "▶ Αναπαραγωγή", stop: "⏹ Διακοπή",
+					share: "Κοινοποίησε αυτήν την εφαρμογή", showQr: "Εμφάνιση QR κώδικα", hideQr: "Απόκρυψη QR κώδικα",
+					noVoices: "Δεν υπάρχουν διαθέσιμες φωνές για αυτήν τη γλώσσα", loadingVoices: "Φόρτωση φωνών…",
+					toDarkMode: "Μετάβαση σε σκοτεινή λειτουργία", toLightMode: "Μετάβαση σε φωτεινή λειτουργία"
+				},
+				hu: {
+					sub: "Passzív-agresszív hangellenőrzés a tömegközlekedésben",
+					where: "Mivel ingázik?",
+					tn: { train: "Vonat", bus: "Busz", tram: "Villamos", plane: "Repülő", subway: "Metró", ferry: "Komp", cablecar: "Drótkötélpálya" },
+					lang: "Nyelv", voice: "Hang", interval: "Hurok időköz",
+					fast: "Gyors", slow: "Lassú",
+					stopped: "⏹ Megállítva", speaking: "🔊 Beszél…", paused: "⏸ Szünet a hurkok között…",
+					play: "▶ Lejátszás", stop: "⏹ Leállítás",
+					share: "Oszd meg ezt az alkalmazást", showQr: "QR-kód megjelenítése", hideQr: "QR-kód elrejtése",
+					noVoices: "Ehhez a nyelvhez nem áll rendelkezésre hang", loadingVoices: "Hangok betöltése…",
+					toDarkMode: "Váltás sötét módra", toLightMode: "Váltás világos módra"
+				},
+				it: {
+					sub: "Controllo audio passivo-aggressivo per i trasporti pubblici",
+					where: "Con quale mezzo stai viaggiando?",
+					tn: { train: "Treno", bus: "Autobus", tram: "Tram", plane: "Aereo", subway: "Metro", ferry: "Traghetto", cablecar: "Funivia" },
+					lang: "Lingua", voice: "Voce", interval: "Intervallo di loop",
+					fast: "Veloce", slow: "Lento",
+					stopped: "⏹ Fermo", speaking: "🔊 In riproduzione…", paused: "⏸ Pausa tra i loop…",
+					play: "▶ Avvia", stop: "⏹ Ferma",
+					share: "Condividi questa app", showQr: "Mostra QR Code", hideQr: "Nascondi QR Code",
+					noVoices: "Nessuna voce disponibile per questa lingua", loadingVoices: "Caricamento voci…",
+					toDarkMode: "Passa alla modalità scura", toLightMode: "Passa alla modalità chiara"
+				},
+				lv: {
+					sub: "Pasīvi-agresīva skaņu kontrole sabiedriskajā transportā",
+					where: "Ar ko jūs braucat?",
+					tn: { train: "Vilciens", bus: "Autobuss", tram: "Tramvajs", plane: "Lidmašīna", subway: "Metro", ferry: "Prāmis", cablecar: "Gaisa tramvajs" },
+					lang: "Valoda", voice: "Balss", interval: "Cilpas intervāls",
+					fast: "Ātri", slow: "Lēni",
+					stopped: "⏹ Apturēts", speaking: "🔊 Runā…", paused: "⏸ Pauze starp cilpām…",
+					play: "▶ Atskaņot", stop: "⏹ Apturēt",
+					share: "Kopīgot šo lietotni", showQr: "Rādīt QR kodu", hideQr: "Paslēpt QR kodu",
+					noVoices: "Šai valodai nav pieejamu balsu", loadingVoices: "Ielādē balsis…",
+					toDarkMode: "Pārslēgties uz tumšo režīmu", toLightMode: "Pārslēgties uz gaišo režīmu"
+				},
+				lt: {
+					sub: "Pasyviai agresyvi garso kontrolė viešajame transporte",
+					where: "Kuo keliaujate?",
+					tn: { train: "Traukinys", bus: "Autobusas", tram: "Tramvajus", plane: "Lėktuvas", subway: "Metro", ferry: "Keltas", cablecar: "Lynų kelias" },
+					lang: "Kalba", voice: "Balsas", interval: "Kilpos intervalas",
+					fast: "Greitai", slow: "Lėtai",
+					stopped: "⏹ Sustabdyta", speaking: "🔊 Kalba…", paused: "⏸ Pauzė tarp kilpų…",
+					play: "▶ Leisti", stop: "⏹ Sustabdyti",
+					share: "Dalintis šia programa", showQr: "Rodyti QR kodą", hideQr: "Slėpti QR kodą",
+					noVoices: "Šiai kalbai nėra balso", loadingVoices: "Kraunami balsai…",
+					toDarkMode: "Perjungti į tamsų režimą", toLightMode: "Perjungti į šviesų režimą"
+				},
+				nb: {
+					sub: "Passiv-aggressiv lydkontroll i kollektivtrafikken",
+					where: "Hva reiser du med?",
+					tn: { train: "Tog", bus: "Buss", tram: "Trikk", plane: "Fly", subway: "T-bane", ferry: "Ferje", cablecar: "Taubane" },
+					lang: "Språk", voice: "Stemme", interval: "Sløyfeintervall",
+					fast: "Raskt", slow: "Sakte",
+					stopped: "⏹ Stoppet", speaking: "🔊 Snakker…", paused: "⏸ Pause mellom sløyfene…",
+					play: "▶ Spill av", stop: "⏹ Stopp",
+					share: "Del denne appen", showQr: "Vis QR-kode", hideQr: "Skjul QR-kode",
+					noVoices: "Ingen stemmer tilgjengelige for dette språket", loadingVoices: "Laster inn stemmer…",
+					toDarkMode: "Bytt til mørk modus", toLightMode: "Bytt til lys modus"
+				},
+				pl: {
+					sub: "Pasywno-agresywna kontrola dźwięku w transporcie publicznym",
+					where: "Czym podróżujesz?",
+					tn: { train: "Pociąg", bus: "Autobus", tram: "Tramwaj", plane: "Samolot", subway: "Metro", ferry: "Prom", cablecar: "Kolejka linowa" },
+					lang: "Język", voice: "Głos", interval: "Interwał pętli",
+					fast: "Szybko", slow: "Wolno",
+					stopped: "⏹ Zatrzymano", speaking: "🔊 Mówi…", paused: "⏸ Pauza między pętlami…",
+					play: "▶ Odtwórz", stop: "⏹ Zatrzymaj",
+					share: "Udostępnij tę aplikację", showQr: "Pokaż kod QR", hideQr: "Ukryj kod QR",
+					noVoices: "Brak głosów dostępnych dla tego języka", loadingVoices: "Ładowanie głosów…",
+					toDarkMode: "Przełącz na tryb ciemny", toLightMode: "Przełącz na tryb jasny"
+				},
+				pt: {
+					sub: "Controlo de áudio passivo-agressivo para transportes públicos",
+					where: "Em que transporte vai?",
+					tn: { train: "Comboio", bus: "Autocarro", tram: "Elétrico", plane: "Avião", subway: "Metro", ferry: "Ferry", cablecar: "Teleférico" },
+					lang: "Idioma", voice: "Voz", interval: "Intervalo de ciclo",
+					fast: "Rápido", slow: "Lento",
+					stopped: "⏹ Parado", speaking: "🔊 A falar…", paused: "⏸ Pausa entre ciclos…",
+					play: "▶ Reproduzir", stop: "⏹ Parar",
+					share: "Partilhar esta aplicação", showQr: "Mostrar QR Code", hideQr: "Esconder QR Code",
+					noVoices: "Sem vozes disponíveis para este idioma", loadingVoices: "A carregar vozes…",
+					toDarkMode: "Mudar para modo escuro", toLightMode: "Mudar para modo claro"
+				},
+				ro: {
+					sub: "Control audio pasiv-agresiv pentru transportul public",
+					where: "Cu ce călătoriți?",
+					tn: { train: "Tren", bus: "Autobuz", tram: "Tramvai", plane: "Avion", subway: "Metrou", ferry: "Feribot", cablecar: "Telecabină" },
+					lang: "Limbă", voice: "Voce", interval: "Interval de buclă",
+					fast: "Repede", slow: "Lent",
+					stopped: "⏹ Oprit", speaking: "🔊 Vorbește…", paused: "⏸ Pauză între bucle…",
+					play: "▶ Redare", stop: "⏹ Oprire",
+					share: "Partajează această aplicație", showQr: "Arată codul QR", hideQr: "Ascunde codul QR",
+					noVoices: "Nu există voci disponibile pentru această limbă", loadingVoices: "Se încarcă vocile…",
+					toDarkMode: "Comutare la modul întunecat", toLightMode: "Comutare la modul luminos"
+				},
+				ru: {
+					sub: "Пассивно-агрессивный звуковой контроль в общественном транспорте",
+					where: "На чём вы едете?",
+					tn: { train: "Поезд", bus: "Автобус", tram: "Трамвай", plane: "Самолёт", subway: "Метро", ferry: "Паром", cablecar: "Канатная дорога" },
+					lang: "Язык", voice: "Голос", interval: "Интервал повтора",
+					fast: "Быстро", slow: "Медленно",
+					stopped: "⏹ Остановлено", speaking: "🔊 Воспроизводит…", paused: "⏸ Пауза между повторами…",
+					play: "▶ Воспроизвести", stop: "⏹ Остановить",
+					share: "Поделиться этим приложением", showQr: "Показать QR-код", hideQr: "Скрыть QR-код",
+					noVoices: "Для этого языка голоса недоступны", loadingVoices: "Загрузка голосов…",
+					toDarkMode: "Переключить на тёмную тему", toLightMode: "Переключить на светлую тему"
+				},
+				sk: {
+					sub: "Pasívno-agresívna zvuková kontrola vo verejnej doprave",
+					where: "Čím cestujete?",
+					tn: { train: "Vlak", bus: "Autobus", tram: "Električka", plane: "Lietadlo", subway: "Metro", ferry: "Trajekt", cablecar: "Lanovka" },
+					lang: "Jazyk", voice: "Hlas", interval: "Interval slučky",
+					fast: "Rýchlo", slow: "Pomaly",
+					stopped: "⏹ Zastavené", speaking: "🔊 Hovorí…", paused: "⏸ Pauza medzi slučkami…",
+					play: "▶ Prehrať", stop: "⏹ Zastaviť",
+					share: "Zdieľaj túto aplikáciu", showQr: "Zobraziť QR kód", hideQr: "Skryť QR kód",
+					noVoices: "Pre tento jazyk nie sú k dispozícii žiadne hlasy", loadingVoices: "Načítanie hlasov…",
+					toDarkMode: "Prepnúť na tmavý režim", toLightMode: "Prepnúť na svetlý režim"
+				},
+				sl: {
+					sub: "Pasivno-agresivni zvočni nadzor v javnem prevozu",
+					where: "S čim potujete?",
+					tn: { train: "Vlak", bus: "Avtobus", tram: "Tramvaj", plane: "Letalo", subway: "Metro", ferry: "Trajekt", cablecar: "Žičnica" },
+					lang: "Jezik", voice: "Glas", interval: "Interval zanke",
+					fast: "Hitro", slow: "Počasi",
+					stopped: "⏹ Ustavljeno", speaking: "🔊 Govori…", paused: "⏸ Pavza med zankami…",
+					play: "▶ Predvajaj", stop: "⏹ Ustavi",
+					share: "Deli to aplikacijo", showQr: "Prikaži QR kodo", hideQr: "Skrij QR kodo",
+					noVoices: "Za ta jezik ni razpoložljivih glasov", loadingVoices: "Nalaganje glasov…",
+					toDarkMode: "Preklopi na temni način", toLightMode: "Preklopi na svetli način"
+				},
+				es: {
+					sub: "Control de audio pasivo-agresivo para el transporte público",
+					where: "¿En qué transporte vas?",
+					tn: { train: "Tren", bus: "Autobús", tram: "Tranvía", plane: "Avión", subway: "Metro", ferry: "Ferry", cablecar: "Teleférico" },
+					lang: "Idioma", voice: "Voz", interval: "Intervalo de bucle",
+					fast: "Rápido", slow: "Lento",
+					stopped: "⏹ Detenido", speaking: "🔊 Hablando…", paused: "⏸ Pausa entre bucles…",
+					play: "▶ Reproducir", stop: "⏹ Detener",
+					share: "Comparte esta aplicación", showQr: "Mostrar código QR", hideQr: "Ocultar código QR",
+					noVoices: "No hay voces disponibles para este idioma", loadingVoices: "Cargando voces…",
+					toDarkMode: "Cambiar al modo oscuro", toLightMode: "Cambiar al modo claro"
+				},
+				sv: {
+					sub: "Passivt aggressiv ljudkontroll i kollektivtrafiken",
+					where: "Vilket transportmedel använder du?",
+					tn: { train: "Tåg", bus: "Buss", tram: "Spårvagn", plane: "Flyg", subway: "Tunnelbana", ferry: "Färja", cablecar: "Linbana" },
+					lang: "Språk", voice: "Röst", interval: "Slingintervall",
+					fast: "Snabbt", slow: "Långsamt",
+					stopped: "⏹ Stoppad", speaking: "🔊 Talar…", paused: "⏸ Paus mellan slingorna…",
+					play: "▶ Spela upp", stop: "⏹ Stoppa",
+					share: "Dela denna app", showQr: "Visa QR-kod", hideQr: "Dölj QR-kod",
+					noVoices: "Inga röster tillgängliga för detta språk", loadingVoices: "Laddar röster…",
+					toDarkMode: "Byt till mörkt läge", toLightMode: "Byt till ljust läge"
+				},
+				tr: {
+					sub: "Toplu taşıma için pasif-agresif ses denetimi",
+					where: "Hangi taşıtla seyahat ediyorsunuz?",
+					tn: { train: "Tren", bus: "Otobüs", tram: "Tramvay", plane: "Uçak", subway: "Metro", ferry: "Feribot", cablecar: "Teleferik" },
+					lang: "Dil", voice: "Ses", interval: "Döngü aralığı",
+					fast: "Hızlı", slow: "Yavaş",
+					stopped: "⏹ Durduruldu", speaking: "🔊 Konuşuyor…", paused: "⏸ Döngüler arası duraklıyor…",
+					play: "▶ Oynat", stop: "⏹ Durdur",
+					share: "Bu uygulamayı paylaş", showQr: "QR Kodu Göster", hideQr: "QR Kodu Gizle",
+					noVoices: "Bu dil için ses yok", loadingVoices: "Sesler yükleniyor…",
+					toDarkMode: "Karanlık moda geç", toLightMode: "Aydınlık moda geç"
+				},
+				uk: {
+					sub: "Пасивно-агресивний звуковий контроль у громадському транспорті",
+					where: "Чим ви їдете?",
+					tn: { train: "Поїзд", bus: "Автобус", tram: "Трамвай", plane: "Літак", subway: "Метро", ferry: "Пором", cablecar: "Канатна дорога" },
+					lang: "Мова", voice: "Голос", interval: "Інтервал циклу",
+					fast: "Швидко", slow: "Повільно",
+					stopped: "⏹ Зупинено", speaking: "🔊 Відтворює…", paused: "⏸ Пауза між циклами…",
+					play: "▶ Відтворити", stop: "⏹ Зупинити",
+					share: "Поділитися цим додатком", showQr: "Показати QR-код", hideQr: "Приховати QR-код",
+					noVoices: "Для цієї мови немає доступних голосів", loadingVoices: "Завантаження голосів…",
+					toDarkMode: "Переключити на темну тему", toLightMode: "Переключити на світлу тему"
+				}
+			};
+
+			// Active UI strings — set by applyUILanguage()
+			let S = UI_STRINGS.en;
+
+			let voices = [];
+			let currentUtterance = null;
+			let loopTimer = null;
+			let isPlaying = false;
+			let currentTransport = "train";
+			let currentLang = "en";
+			let intervalSeconds = 15;
+			let speakGen = 0;
+
+			const langSelect = document.getElementById("lang-select");
+			const voiceSelect = document.getElementById("voice-select");
+			const btnPlay = document.getElementById("btn-play");
+			const btnStop = document.getElementById("btn-stop");
+			const statusDisplay = document.getElementById("status-display");
+			const currentTextEl = document.getElementById("current-text");
+			const intervalRange = document.getElementById("interval-range");
+			const intervalValue = document.getElementById("interval-value");
+			const btnQr = document.getElementById("btn-qr");
+			const qrContainer = document.getElementById("qr-container");
+			const themeToggle = document.getElementById("theme-toggle");
+			const root = document.documentElement;
+
+			function loadVoices() {
+				voices = speechSynthesis.getVoices();
+				populateVoiceOptions();
+			}
+
+			if (speechSynthesis.onvoiceschanged !== undefined) {
+				speechSynthesis.onvoiceschanged = loadVoices;
+			}
+
+			function populateVoiceOptions() {
+				const lang = langSelect.value;
+				const langCode = LOCALES[lang].split("-")[0];
+
+				if (voices.length === 0) {
+					voiceSelect.innerHTML = `<option value="">${S.loadingVoices}</option>`;
+					return;
+				}
+
+				const matching = voices
+					.filter(v => v.lang.startsWith(langCode))
+					.sort((a, b) => {
+						const aG = a.name.startsWith("Google") ? 1 : 0;
+						const bG = b.name.startsWith("Google") ? 1 : 0;
+						return bG - aG || a.name.localeCompare(b.name);
+					});
+
+				voiceSelect.innerHTML = "";
+				if (matching.length === 0) {
+					voiceSelect.innerHTML = `<option value="">${S.noVoices}</option>`;
+					return;
+				}
+
+				matching.forEach((voice) => {
+					const globalIdx = voices.indexOf(voice);
+					const opt = document.createElement("option");
+					opt.value = globalIdx;
+					const star = voice.name.startsWith("Google") ? "⭐ " : "";
+					opt.textContent = `${star}${voice.name} (${voice.lang})`;
+					voiceSelect.appendChild(opt);
+				});
+
+				const googleVoice = matching.find(v => v.name.startsWith("Google"));
+				if (googleVoice) voiceSelect.value = voices.indexOf(googleVoice);
+			}
+
+			document.querySelectorAll(".transport-btn").forEach(btn => {
+				btn.addEventListener("click", () => {
+					document.querySelectorAll(".transport-btn").forEach(b => b.classList.remove("active"));
+					btn.classList.add("active");
+					currentTransport = btn.dataset.transport;
+					updateCurrentText();
+					if (isPlaying) speak();
+				});
+			});
+
+			langSelect.addEventListener("change", () => {
+				currentLang = langSelect.value;
+				localStorage.setItem("lang", currentLang);
+				applyUILanguage(currentLang);
+				populateVoiceOptions();
+				updateCurrentText();
+				if (isPlaying) speak();
+			});
+
+			intervalRange.addEventListener("input", () => {
+				intervalSeconds = parseInt(intervalRange.value);
+				intervalValue.textContent = `${intervalSeconds}s`;
+				if (isPlaying) speak();
+			});
+
+			function updateCurrentText() {
+				currentTextEl.textContent = `${TRANSPORT_EMOJI[currentTransport]} ${getPhrase(currentLang, currentTransport)}`;
+			}
+
+			function speak() {
+				clearTimeout(loopTimer);
+				loopTimer = null;
+				speechSynthesis.cancel();
+
+				const gen = ++speakGen;
+				const utterance = new SpeechSynthesisUtterance(getPhrase(currentLang, currentTransport));
+				utterance.lang = LOCALES[currentLang];
+
+				const selectedIdx = voiceSelect.value;
+				if (selectedIdx !== "" && voices[selectedIdx]) {
+					utterance.voice = voices[selectedIdx];
+				}
+
+				utterance.rate = 0.9;
+				utterance.pitch = 1.0;
+
+				utterance.onstart = () => {
+					statusDisplay.className = "status-display playing";
+					statusDisplay.textContent = S.speaking;
+				};
+
+				// Countdown only begins after the utterance fully finishes so long
+				// phrases never overlap the next repetition.
+				utterance.onend = () => {
+					if (!isPlaying || gen !== speakGen) return;
+					statusDisplay.className = "status-display stopped";
+					statusDisplay.textContent = S.paused;
+					loopTimer = setTimeout(() => {
+						if (isPlaying && gen === speakGen) speak();
+					}, intervalSeconds * 1000);
+				};
+
+				currentUtterance = utterance;
+				speechSynthesis.speak(utterance);
+				updateCurrentText();
+			}
+
+			function startLoop() {
+				isPlaying = true;
+				speak();
+			}
+
+			function stopLoop() {
+				isPlaying = false;
+				clearTimeout(loopTimer);
+				loopTimer = null;
+				speechSynthesis.cancel();
+				statusDisplay.className = "status-display stopped";
+				statusDisplay.textContent = S.stopped;
+			}
+
+			btnPlay.addEventListener("click", startLoop);
+			btnStop.addEventListener("click", stopLoop);
+
+			updateCurrentText();
+
+			// Workaround: some browsers stall long speech; resume periodically
+			setInterval(() => {
+				if (isPlaying && speechSynthesis.speaking) {
+					speechSynthesis.pause();
+					speechSynthesis.resume();
+				}
+			}, 10000);
+
+			// QR code — generated lazily on first show from the live page URL
+			let qrRendered = false;
+
+			btnQr.addEventListener("click", () => {
+				const visible = qrContainer.classList.toggle("visible");
+				btnQr.textContent = visible ? S.hideQr : S.showQr;
+				if (visible && !qrRendered) {
+					const url = window.location.href;
+					document.getElementById("qr-url").textContent = url;
+					QrCreator.render({
+						text: url, radius: 0, ecLevel: "M",
+						fill: "#000000", background: "#ffffff", size: 200
+					}, document.getElementById("qrcode"));
+					qrRendered = true;
+				}
+			});
+
+			// Dark mode toggle
+			function isDarkActive() {
+				return root.dataset.theme === "dark" ||
+					(!root.dataset.theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+			}
+
+			function updateThemeIcon() {
+				themeToggle.textContent = isDarkActive() ? "☀️" : "🌙";
+				themeToggle.title = isDarkActive() ? S.toLightMode : S.toDarkMode;
+				themeToggle.setAttribute("aria-label", isDarkActive() ? S.toLightMode : S.toDarkMode);
+			}
+
+			themeToggle.addEventListener("click", () => {
+				root.dataset.theme = isDarkActive() ? "light" : "dark";
+				localStorage.setItem("theme", root.dataset.theme);
+				updateThemeIcon();
+			});
+
+			const savedTheme = localStorage.getItem("theme");
+			if (savedTheme) root.dataset.theme = savedTheme;
+
+			window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", updateThemeIcon);
+
+			// Apply all UI strings for the given language code
+			function applyUILanguage(lang) {
+				S = UI_STRINGS[lang] || UI_STRINGS.en;
+				document.documentElement.lang = lang;
+
+				document.querySelector(".subtitle").textContent = S.sub;
+				document.getElementById("transport-label").textContent = S.where;
+
+				document.querySelectorAll(".transport-btn").forEach(btn => {
+					const name = S.tn[btn.dataset.transport];
+					btn.querySelector(".transport-label").textContent = name;
+					btn.setAttribute("aria-label", name);
+				});
+
+				document.querySelector("label[for='lang-select']").textContent = S.lang;
+				document.querySelector("label[for='voice-select']").textContent = S.voice;
+				document.querySelector("label[for='interval-range']").textContent = S.interval;
+				document.getElementById("label-fast").textContent = S.fast;
+				document.getElementById("label-slow").textContent = S.slow;
+				document.getElementById("btn-play").textContent = S.play;
+				document.getElementById("btn-stop").textContent = S.stop;
+				document.querySelector(".qr-row span").textContent = S.share;
+				btnQr.textContent = qrContainer.classList.contains("visible") ? S.hideQr : S.showQr;
+
+				if (!isPlaying) {
+					statusDisplay.className = "status-display stopped";
+					statusDisplay.textContent = S.stopped;
+				}
+
+				updateThemeIcon();
+			}
+
+			// Detect initial language from localStorage or browser preference
+			function getInitialLang() {
+				const saved = localStorage.getItem("lang");
+				if (saved && UI_STRINGS[saved]) return saved;
+				const nav = (navigator.language || "en").split("-")[0].toLowerCase();
+				const mapped = nav === "no" ? "nb" : nav;
+				return UI_STRINGS[mapped] ? mapped : "en";
+			}
+
+			// Bootstrap language
+			const initialLang = getInitialLang();
+			currentLang = initialLang;
+			langSelect.value = initialLang;
+			applyUILanguage(initialLang);
+			loadVoices();
+		</script>
+
+		<!-- Register Service Worker for PWA -->
+		<script>
+			if ("serviceWorker" in navigator) {
+				window.addEventListener("load", () => {
+					navigator.serviceWorker.register("./sw.js")
+					.then(reg => console.log("SW registered", reg))
+					.catch(err => console.error("SW failed", err));
+				});
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "Just Mute 🤫",
+  "short_name": "JustMute",
+  "description": "Passive-aggressive audio policing for public transport",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f3fa",
+  "theme_color": "#6c3eb2",
+    "icons": [
+      {
+        "src": "icon.svg",
+        "sizes": "any",
+        "type": "image/svg+xml",
+        "purpose": "any maskable"
+      }
+    ]
+}
