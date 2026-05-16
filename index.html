@@ -3,57 +3,103 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="theme-color" content="#6c3eb2">
+		<meta name="theme-color" content="#d81b60">
 		<meta name="color-scheme" content="dark light">
 		<title>Just Mute 🤫</title>
 		<link rel="manifest" href="manifest.json">
 		<style>
+			/* ── Color tokens — sRGB fallbacks ───────────────────────────── */
 			:root {
 				color-scheme: dark light;
-				--primary: #6c3eb2;
-				--primary-light: #8b5cf6;
-				--bg: #f5f3fa;
-				--card: #ffffff;
-				--bg-input: #ffffff;
-				--border: #e5e7eb;
-				--active-bg: #ede9fe;
-				--text: #1a1a2e;
-				--text-light: #6b7280;
-				--danger: #ef4444;
-				--success: #10b981;
-				--radius: 16px;
+				--primary:       #d81b60;
+				--primary-light: #f06292;
+				--bg:            #fdf0f7;
+				--card:          #ffffff;
+				--bg-input:      #ffffff;
+				--border:        #f9d0e7;
+				--active-bg:     #fce7f3;
+				--text:          #2d0a1c;
+				--text-light:    #9d5a78;
+				--danger:        #ef4444;
+				--success:       #10b981;
+				--radius:        16px;
 			}
 
-			@media (prefers-color-scheme: dark) {
-				:root:not([data-theme="light"]) {
-					--bg: #0f0f1a;
-					--card: #1e1b2e;
-					--bg-input: #2a2540;
-					--border: #3d3558;
-					--active-bg: #3b2f6e;
-					--text: #e5e7eb;
-					--text-light: #9ca3af;
+			/* Display P3 wide-gamut overrides — richer, more vivid pinks */
+			@supports (color: color(display-p3 0 0 0)) {
+				:root {
+					--primary:       color(display-p3 0.87 0.07 0.39);
+					--primary-light: color(display-p3 0.94 0.39 0.57);
+					--bg:            color(display-p3 0.992 0.944 0.970);
+					--border:        color(display-p3 0.976 0.816 0.905);
+					--active-bg:     color(display-p3 0.988 0.906 0.953);
+					--text:          color(display-p3 0.177 0.040 0.110);
+					--text-light:    color(display-p3 0.615 0.353 0.469);
+				}
+
+				@media (prefers-color-scheme: dark) {
+					:root:not([data-theme="light"]) {
+						--bg:        color(display-p3 0.074 0.019 0.031);
+						--card:      color(display-p3 0.137 0.063 0.102);
+						--bg-input:  color(display-p3 0.180 0.078 0.141);
+						--border:    color(display-p3 0.361 0.125 0.251);
+						--active-bg: color(display-p3 0.354 0.082 0.208);
+						--text:      color(display-p3 0.961 0.878 0.926);
+						--text-light:color(display-p3 0.769 0.565 0.678);
+					}
+				}
+
+				[data-theme="dark"] {
+					--bg:        color(display-p3 0.074 0.019 0.031);
+					--card:      color(display-p3 0.137 0.063 0.102);
+					--bg-input:  color(display-p3 0.180 0.078 0.141);
+					--border:    color(display-p3 0.361 0.125 0.251);
+					--active-bg: color(display-p3 0.354 0.082 0.208);
+					--text:      color(display-p3 0.961 0.878 0.926);
+					--text-light:color(display-p3 0.769 0.565 0.678);
+				}
+
+				[data-theme="light"] {
+					--bg:        color(display-p3 0.992 0.944 0.970);
+					--border:    color(display-p3 0.976 0.816 0.905);
+					--active-bg: color(display-p3 0.988 0.906 0.953);
+					--text:      color(display-p3 0.177 0.040 0.110);
+					--text-light:color(display-p3 0.615 0.353 0.469);
 				}
 			}
 
+			/* Auto dark mode — sRGB fallbacks */
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) {
+					--bg:        #130508;
+					--card:      #23101a;
+					--bg-input:  #2e1424;
+					--border:    #5c2040;
+					--active-bg: #5a1535;
+					--text:      #f5e0ec;
+					--text-light:#c490ad;
+				}
+			}
+
+			/* Manual theme overrides — sRGB fallbacks */
 			[data-theme="dark"] {
-				--bg: #0f0f1a;
-				--card: #1e1b2e;
-				--bg-input: #2a2540;
-				--border: #3d3558;
-				--active-bg: #3b2f6e;
-				--text: #e5e7eb;
-				--text-light: #9ca3af;
+				--bg:        #130508;
+				--card:      #23101a;
+				--bg-input:  #2e1424;
+				--border:    #5c2040;
+				--active-bg: #5a1535;
+				--text:      #f5e0ec;
+				--text-light:#c490ad;
 			}
 
 			[data-theme="light"] {
-				--bg: #f5f3fa;
-				--card: #ffffff;
-				--bg-input: #ffffff;
-				--border: #e5e7eb;
-				--active-bg: #ede9fe;
-				--text: #1a1a2e;
-				--text-light: #6b7280;
+				--bg:        #fdf0f7;
+				--card:      #ffffff;
+				--bg-input:  #ffffff;
+				--border:    #f9d0e7;
+				--active-bg: #fce7f3;
+				--text:      #2d0a1c;
+				--text-light:#9d5a78;
 			}
 
 			* { margin: 0; padding: 0; box-sizing: border-box; }
@@ -203,19 +249,30 @@
 				font-weight: 500;
 			}
 
-			.status-display.stopped { background: #fef2f2; color: var(--danger); }
-			.status-display.playing { background: #d1fae5; color: var(--success); animation: pulse 2s infinite; }
-			.status-display.loading { background: #fef9c3; color: #92400e; }
+			/* Stopped/paused: use the pink theme tokens so dark mode works automatically */
+			.status-display.stopped {
+				background: var(--active-bg);
+				color: var(--primary);
+			}
+
+			.status-display.playing {
+				background: #d1fae5;
+				color: var(--success);
+				animation: pulse 2s infinite;
+			}
+
+			.status-display.loading {
+				background: #fef9c3;
+				color: #92400e;
+			}
 
 			@media (prefers-color-scheme: dark) {
-				:root:not([data-theme="light"]) .status-display.stopped { background: #3b1010; }
 				:root:not([data-theme="light"]) .status-display.playing { background: #0d2e1e; }
 				:root:not([data-theme="light"]) .status-display.loading { background: #2d2500; color: #fbbf24; }
 			}
 
-			[data-theme="dark"] .status-display.stopped { background: #3b1010; }
 			[data-theme="dark"] .status-display.playing { background: #0d2e1e; }
-			[data-theme="dark"] .status-display.loading { background: #2d2500; color: #fbbf24; }
+			[data-theme="dark"] .status-display.loading  { background: #2d2500; color: #fbbf24; }
 
 			@keyframes pulse {
 				0%, 100% { opacity: 1; }
@@ -544,7 +601,7 @@
 				hu:(p)=>`Senki ${p} sem akar hallani, ami a telefonján szól. El tudná némítani?`,
 				it:(p)=>`Nessuno ${p} vuole ascoltare quello che suona sul tuo telefono. Puoi metterlo in silenzioso?`,
 				lv:(p)=>`Neviens ${p} nevēlas dzirdēt, ko atskaņo tavs tālrunis. Vai tu vari to apklusināt?`,
-				lt:(p)=>`Niekas ${p} nenori girdėti, kas groja jūsų telefone. Ar galite jį nutildyti?`,
+				lt:(p)=>`Niekas ${p} nenori girdēti, kas groja jūsų telefone. Ar galite jį nutildyti?`,
 				nb:(p)=>`Ingen ${p} ønsker å høre hva som spiller på telefonen din. Kan du dempe den?`,
 				pl:(p)=>`Nikt ${p} nie chce słuchać tego, co gra na twoim telefonie. Czy możesz go wyciszyć?`,
 				pt:(p)=>`Ninguém ${p} quer ouvir o que está a tocar no seu telemóvel. Pode silenciá-lo?`,
@@ -569,6 +626,7 @@
 					sub:"Passive-aggressive audio policing for public transport",
 					phraseLabel:"What to say",defaultMode:"Default",customMode:"Custom",
 					customPlaceholder:"Type your custom phrase…",
+					defaultCustomPhrase:"Can you just mute your phone, please?",
 					where:"Where are you commuting?",
 					tn:{train:"Train",bus:"Bus",tram:"Tram",plane:"Plane",subway:"Subway",ferry:"Ferry",cablecar:"Cable car"},
 					lang:"Language",voice:"Voice",interval:"Loop interval",
@@ -584,6 +642,7 @@
 					sub:"Пасивно-агресивен звуков контрол в обществения транспорт",
 					phraseLabel:"Какво да се каже",defaultMode:"По подразбиране",customMode:"По избор",
 					customPlaceholder:"Въведете своята фраза…",
+					defaultCustomPhrase:"Можете ли да заглушите телефона си, моля?",
 					where:"С какво пътувате?",
 					tn:{train:"Влак",bus:"Автобус",tram:"Трамвай",plane:"Самолет",subway:"Метро",ferry:"Ферибот",cablecar:"Въжена линия"},
 					lang:"Език",voice:"Глас",interval:"Интервал на повторение",
@@ -599,6 +658,7 @@
 					sub:"Polícia d'àudio passiva-agressiva per al transport públic",
 					phraseLabel:"Què cal dir",defaultMode:"Per defecte",customMode:"Personalitzat",
 					customPlaceholder:"Escriviu la vostra frase personalitzada…",
+					defaultCustomPhrase:"Pots silenciar el telèfon, si us plau?",
 					where:"On viatgeu?",
 					tn:{train:"Tren",bus:"Autobús",tram:"Tramvia",plane:"Avió",subway:"Metro",ferry:"Ferri",cablecar:"Telefèric"},
 					lang:"Idioma",voice:"Veu",interval:"Interval de bucle",
@@ -614,6 +674,7 @@
 					sub:"Pasivno-agresivna audio kontrola u javnom prijevozu",
 					phraseLabel:"Što reći",defaultMode:"Zadano",customMode:"Prilagođeno",
 					customPlaceholder:"Upišite svoju prilagođenu frazu…",
+					defaultCustomPhrase:"Možete li utišati telefon, molim vas?",
 					where:"Čime putujete?",
 					tn:{train:"Vlak",bus:"Autobus",tram:"Tramvaj",plane:"Avion",subway:"Metro",ferry:"Trajekt",cablecar:"Žičara"},
 					lang:"Jezik",voice:"Glas",interval:"Interval petlje",
@@ -629,6 +690,7 @@
 					sub:"Pasivně-agresivní zvuková kontrola ve veřejné dopravě",
 					phraseLabel:"Co říci",defaultMode:"Výchozí",customMode:"Vlastní",
 					customPlaceholder:"Napište svou vlastní frázi…",
+					defaultCustomPhrase:"Mohli byste prosím ztlumit svůj telefon?",
 					where:"Čím cestujete?",
 					tn:{train:"Vlak",bus:"Autobus",tram:"Tramvaj",plane:"Letadlo",subway:"Metro",ferry:"Trajekt",cablecar:"Lanovka"},
 					lang:"Jazyk",voice:"Hlas",interval:"Interval smyčky",
@@ -644,6 +706,7 @@
 					sub:"Passiv-aggressiv lydkontrol i den offentlige transport",
 					phraseLabel:"Hvad skal der siges",defaultMode:"Standard",customMode:"Tilpasset",
 					customPlaceholder:"Skriv din tilpassede sætning…",
+					defaultCustomPhrase:"Kan du slå lyden fra på din telefon?",
 					where:"Hvad pendler du med?",
 					tn:{train:"Tog",bus:"Bus",tram:"Sporvogn",plane:"Fly",subway:"Metro",ferry:"Færge",cablecar:"Kabelbane"},
 					lang:"Sprog",voice:"Stemme",interval:"Sløjfe-interval",
@@ -659,6 +722,7 @@
 					sub:"Passief-agressieve geluidscontrole in het openbaar vervoer",
 					phraseLabel:"Wat te zeggen",defaultMode:"Standaard",customMode:"Aangepast",
 					customPlaceholder:"Typ uw aangepaste zin…",
+					defaultCustomPhrase:"Kun jij je telefoon op stil zetten, alsjeblieft?",
 					where:"Waarmee reist u?",
 					tn:{train:"Trein",bus:"Bus",tram:"Tram",plane:"Vliegtuig",subway:"Metro",ferry:"Veerboot",cablecar:"Kabelbaan"},
 					lang:"Taal",voice:"Stem",interval:"Lusinterval",
@@ -674,6 +738,7 @@
 					sub:"Passiiv-agressiivne helipolitsei ühistranspordis",
 					phraseLabel:"Mida öelda",defaultMode:"Vaikimisi",customMode:"Kohandatud",
 					customPlaceholder:"Sisestage oma kohandatud fraas…",
+					defaultCustomPhrase:"Kas saaksid oma telefoni vaigistada, palun?",
 					where:"Millega sõidate?",
 					tn:{train:"Rong",bus:"Buss",tram:"Tramm",plane:"Lennuk",subway:"Metro",ferry:"Parvlaev",cablecar:"Köistee"},
 					lang:"Keel",voice:"Hääl",interval:"Kordusintervall",
@@ -689,6 +754,7 @@
 					sub:"Passiivisaggressiivinen äänivalvonta julkisessa liikenteessä",
 					phraseLabel:"Mitä sanoa",defaultMode:"Oletus",customMode:"Mukautettu",
 					customPlaceholder:"Kirjoita oma lauseesi…",
+					defaultCustomPhrase:"Laittaisitko puhelimesi äänettömälle, kiitos?",
 					where:"Millä kuljet?",
 					tn:{train:"Juna",bus:"Bussi",tram:"Raitiovaunu",plane:"Lentokone",subway:"Metro",ferry:"Lautta",cablecar:"Köysirata"},
 					lang:"Kieli",voice:"Ääni",interval:"Toistoväli",
@@ -704,6 +770,7 @@
 					sub:"Contrôle audio passif-agressif pour les transports en commun",
 					phraseLabel:"Quoi dire",defaultMode:"Par défaut",customMode:"Personnalisé",
 					customPlaceholder:"Saisissez votre phrase personnalisée…",
+					defaultCustomPhrase:"Pourrais-tu mettre ton téléphone sur muet, s'il te plaît ?",
 					where:"Quel moyen de transport utilisez-vous ?",
 					tn:{train:"Train",bus:"Bus",tram:"Tram",plane:"Avion",subway:"Métro",ferry:"Ferry",cablecar:"Téléphérique"},
 					lang:"Langue",voice:"Voix",interval:"Intervalle de boucle",
@@ -719,6 +786,7 @@
 					sub:"Passiv-aggressive Audiokontrolle für den öffentlichen Nahverkehr",
 					phraseLabel:"Was sagen",defaultMode:"Standard",customMode:"Benutzerdefiniert",
 					customPlaceholder:"Geben Sie Ihren Text ein…",
+					defaultCustomPhrase:"Könntest du bitte dein Telefon stummschalten?",
 					where:"Womit fahren Sie?",
 					tn:{train:"Zug",bus:"Bus",tram:"Straßenbahn",plane:"Flugzeug",subway:"U-Bahn",ferry:"Fähre",cablecar:"Seilbahn"},
 					lang:"Sprache",voice:"Stimme",interval:"Schleifenintervall",
@@ -734,6 +802,7 @@
 					sub:"Παθητικά-επιθετική ηχητική αστυνόμευση για δημόσιες μεταφορές",
 					phraseLabel:"Τι να πείτε",defaultMode:"Προεπιλογή",customMode:"Προσαρμοσμένο",
 					customPlaceholder:"Πληκτρολογήστε τη δική σας φράση…",
+					defaultCustomPhrase:"Μπορείς να βάλεις το τηλέφωνό σου στη σίγαση, παρακαλώ;",
 					where:"Με τι μετακινείστε;",
 					tn:{train:"Τρένο",bus:"Λεωφορείο",tram:"Τραμ",plane:"Αεροπλάνο",subway:"Μετρό",ferry:"Πλοίο",cablecar:"Τελεφερίκ"},
 					lang:"Γλώσσα",voice:"Φωνή",interval:"Διάστημα επανάληψης",
@@ -749,6 +818,7 @@
 					sub:"Passzív-agresszív hangellenőrzés a tömegközlekedésben",
 					phraseLabel:"Mit mondjon",defaultMode:"Alapértelmezett",customMode:"Egyéni",
 					customPlaceholder:"Írja be a saját mondatát…",
+					defaultCustomPhrase:"Kérlek, némítsd el a telefonod!",
 					where:"Mivel ingázik?",
 					tn:{train:"Vonat",bus:"Busz",tram:"Villamos",plane:"Repülő",subway:"Metró",ferry:"Komp",cablecar:"Drótkötélpálya"},
 					lang:"Nyelv",voice:"Hang",interval:"Hurok időköz",
@@ -764,6 +834,7 @@
 					sub:"Controllo audio passivo-aggressivo per i trasporti pubblici",
 					phraseLabel:"Cosa dire",defaultMode:"Predefinito",customMode:"Personalizzato",
 					customPlaceholder:"Scrivi la tua frase personalizzata…",
+					defaultCustomPhrase:"Puoi mettere il telefono in silenzioso, per favore?",
 					where:"Con quale mezzo stai viaggiando?",
 					tn:{train:"Treno",bus:"Autobus",tram:"Tram",plane:"Aereo",subway:"Metro",ferry:"Traghetto",cablecar:"Funivia"},
 					lang:"Lingua",voice:"Voce",interval:"Intervallo di loop",
@@ -779,6 +850,7 @@
 					sub:"Pasīvi-agresīva skaņu kontrole sabiedriskajā transportā",
 					phraseLabel:"Ko teikt",defaultMode:"Noklusējums",customMode:"Pielāgots",
 					customPlaceholder:"Ierakstiet savu frāzi…",
+					defaultCustomPhrase:"Vai varētu apklusināt savu tālruni, lūdzu?",
 					where:"Ar ko jūs braucat?",
 					tn:{train:"Vilciens",bus:"Autobuss",tram:"Tramvajs",plane:"Lidmašīna",subway:"Metro",ferry:"Prāmis",cablecar:"Gaisa tramvajs"},
 					lang:"Valoda",voice:"Balss",interval:"Cilpas intervāls",
@@ -794,6 +866,7 @@
 					sub:"Pasyviai agresyvi garso kontrolė viešajame transporte",
 					phraseLabel:"Ką sakyti",defaultMode:"Numatytasis",customMode:"Pasirinktinis",
 					customPlaceholder:"Įveskite savo frazę…",
+					defaultCustomPhrase:"Ar galite nutildyti telefoną, prašau?",
 					where:"Kuo keliaujate?",
 					tn:{train:"Traukinys",bus:"Autobusas",tram:"Tramvajus",plane:"Lėktuvas",subway:"Metro",ferry:"Keltas",cablecar:"Lynų kelias"},
 					lang:"Kalba",voice:"Balsas",interval:"Kilpos intervalas",
@@ -809,6 +882,7 @@
 					sub:"Passiv-aggressiv lydkontroll i kollektivtrafikken",
 					phraseLabel:"Hva som sies",defaultMode:"Standard",customMode:"Tilpasset",
 					customPlaceholder:"Skriv din egne setning…",
+					defaultCustomPhrase:"Kan du dempe telefonen?",
 					where:"Hva reiser du med?",
 					tn:{train:"Tog",bus:"Buss",tram:"Trikk",plane:"Fly",subway:"T-bane",ferry:"Ferje",cablecar:"Taubane"},
 					lang:"Språk",voice:"Stemme",interval:"Sløyfeintervall",
@@ -824,6 +898,7 @@
 					sub:"Pasywno-agresywna kontrola dźwięku w transporcie publicznym",
 					phraseLabel:"Co powiedzieć",defaultMode:"Domyślna",customMode:"Niestandardowa",
 					customPlaceholder:"Wpisz swoją frazę…",
+					defaultCustomPhrase:"Czy możesz wyciszyć swój telefon?",
 					where:"Czym podróżujesz?",
 					tn:{train:"Pociąg",bus:"Autobus",tram:"Tramwaj",plane:"Samolot",subway:"Metro",ferry:"Prom",cablecar:"Kolejka linowa"},
 					lang:"Język",voice:"Głos",interval:"Interwał pętli",
@@ -839,6 +914,7 @@
 					sub:"Controlo de áudio passivo-agressivo para transportes públicos",
 					phraseLabel:"O que dizer",defaultMode:"Padrão",customMode:"Personalizado",
 					customPlaceholder:"Escreva a sua frase personalizada…",
+					defaultCustomPhrase:"Podes silenciar o teu telemóvel, por favor?",
 					where:"Em que transporte vai?",
 					tn:{train:"Comboio",bus:"Autocarro",tram:"Elétrico",plane:"Avião",subway:"Metro",ferry:"Ferry",cablecar:"Teleférico"},
 					lang:"Idioma",voice:"Voz",interval:"Intervalo de ciclo",
@@ -854,6 +930,7 @@
 					sub:"Control audio pasiv-agresiv pentru transportul public",
 					phraseLabel:"Ce să spui",defaultMode:"Implicit",customMode:"Personalizat",
 					customPlaceholder:"Scrieți fraza dvs. personalizată…",
+					defaultCustomPhrase:"Poți pune telefonul pe silențios, te rog?",
 					where:"Cu ce călătoriți?",
 					tn:{train:"Tren",bus:"Autobuz",tram:"Tramvai",plane:"Avion",subway:"Metrou",ferry:"Feribot",cablecar:"Telecabină"},
 					lang:"Limbă",voice:"Voce",interval:"Interval de buclă",
@@ -869,6 +946,7 @@
 					sub:"Пассивно-агрессивный звуковой контроль в общественном транспорте",
 					phraseLabel:"Что сказать",defaultMode:"По умолчанию",customMode:"Свой текст",
 					customPlaceholder:"Введите свою фразу…",
+					defaultCustomPhrase:"Пожалуйста, поставьте телефон на беззвучный режим.",
 					where:"На чём вы едете?",
 					tn:{train:"Поезд",bus:"Автобус",tram:"Трамвай",plane:"Самолёт",subway:"Метро",ferry:"Паром",cablecar:"Канатная дорога"},
 					lang:"Язык",voice:"Голос",interval:"Интервал повтора",
@@ -884,6 +962,7 @@
 					sub:"Pasívno-agresívna zvuková kontrola vo verejnej doprave",
 					phraseLabel:"Čo povedať",defaultMode:"Predvolené",customMode:"Vlastná",
 					customPlaceholder:"Napíšte svoju vlastnú frázu…",
+					defaultCustomPhrase:"Mohli by ste prosím stlmiť telefón?",
 					where:"Čím cestujete?",
 					tn:{train:"Vlak",bus:"Autobus",tram:"Električka",plane:"Lietadlo",subway:"Metro",ferry:"Trajekt",cablecar:"Lanovka"},
 					lang:"Jazyk",voice:"Hlas",interval:"Interval slučky",
@@ -899,6 +978,7 @@
 					sub:"Pasivno-agresivni zvočni nadzor v javnem prevozu",
 					phraseLabel:"Kaj reči",defaultMode:"Privzeto",customMode:"Po meri",
 					customPlaceholder:"Vnesite svojo frazo…",
+					defaultCustomPhrase:"Bi prosil, da utišate telefon?",
 					where:"S čim potujete?",
 					tn:{train:"Vlak",bus:"Avtobus",tram:"Tramvaj",plane:"Letalo",subway:"Metro",ferry:"Trajekt",cablecar:"Žičnica"},
 					lang:"Jezik",voice:"Glas",interval:"Interval zanke",
@@ -914,6 +994,7 @@
 					sub:"Control de audio pasivo-agresivo para el transporte público",
 					phraseLabel:"Qué decir",defaultMode:"Por defecto",customMode:"Personalizado",
 					customPlaceholder:"Escribe tu frase personalizada…",
+					defaultCustomPhrase:"¿Puedes silenciar tu teléfono, por favor?",
 					where:"¿En qué transporte vas?",
 					tn:{train:"Tren",bus:"Autobús",tram:"Tranvía",plane:"Avión",subway:"Metro",ferry:"Ferry",cablecar:"Teleférico"},
 					lang:"Idioma",voice:"Voz",interval:"Intervalo de bucle",
@@ -929,6 +1010,7 @@
 					sub:"Passivt aggressiv ljudkontroll i kollektivtrafiken",
 					phraseLabel:"Vad som sägs",defaultMode:"Standard",customMode:"Anpassad",
 					customPlaceholder:"Skriv din anpassade fras…",
+					defaultCustomPhrase:"Kan du tysta telefonen, tack?",
 					where:"Vilket transportmedel använder du?",
 					tn:{train:"Tåg",bus:"Buss",tram:"Spårvagn",plane:"Flyg",subway:"Tunnelbana",ferry:"Färja",cablecar:"Linbana"},
 					lang:"Språk",voice:"Röst",interval:"Slingintervall",
@@ -944,6 +1026,7 @@
 					sub:"Toplu taşıma için pasif-agresif ses denetimi",
 					phraseLabel:"Ne söyleneceği",defaultMode:"Varsayılan",customMode:"Özel",
 					customPlaceholder:"Özel cümlenizi yazın…",
+					defaultCustomPhrase:"Lütfen telefonunuzu sessize alır mısınız?",
 					where:"Hangi taşıtla seyahat ediyorsunuz?",
 					tn:{train:"Tren",bus:"Otobüs",tram:"Tramvay",plane:"Uçak",subway:"Metro",ferry:"Feribot",cablecar:"Teleferik"},
 					lang:"Dil",voice:"Ses",interval:"Döngü aralığı",
@@ -959,6 +1042,7 @@
 					sub:"Пасивно-агресивний звуковий контроль у громадському транспорті",
 					phraseLabel:"Що сказати",defaultMode:"За замовчуванням",customMode:"Власний",
 					customPlaceholder:"Введіть власну фразу…",
+					defaultCustomPhrase:"Будь ласка, поставте телефон на беззвучний режим.",
 					where:"Чим ви їдете?",
 					tn:{train:"Поїзд",bus:"Автобус",tram:"Трамвай",plane:"Літак",subway:"Метро",ferry:"Пором",cablecar:"Канатна дорога"},
 					lang:"Мова",voice:"Голос",interval:"Інтервал циклу",
@@ -979,7 +1063,7 @@
 			let currentUtterance = null;
 			let loopTimer = null;
 			let isPlaying = false;
-			let phraseMode = "default";   // "default" | "custom"
+			let phraseMode = "default";
 			let customPhraseText = "";
 			let currentTransport = "train";
 			let currentLang = "en";
@@ -1137,7 +1221,6 @@
 			// ── Play state helper ────────────────────────────────────────────────
 
 			function setPlayState(state) {
-				// state: "stopped" | "loading" | "active"
 				if (state === "stopped") {
 					btnPlay.textContent = S.play;
 					btnPlay.disabled    = false;
@@ -1192,7 +1275,6 @@
 					setPlayState("speaking");
 				};
 
-				// Wait for the utterance to finish before starting the pause countdown
 				utterance.onend = () => {
 					if (!isPlaying || gen !== speakGen) return;
 					setPlayState("paused");
@@ -1226,7 +1308,6 @@
 			btnPlay.addEventListener("click", startLoop);
 			btnStop.addEventListener("click", stopLoop);
 
-			// Workaround: some browsers stall long speech; resume periodically
 			setInterval(() => {
 				if (isPlaying && speechSynthesis.speaking) {
 					speechSynthesis.pause();
@@ -1327,11 +1408,7 @@
 				btnQr.textContent = qrContainer.classList.contains("visible") ? S.hideQr : S.showQr;
 				btnInstall.textContent = S.install;
 
-				if (!isPlaying) {
-					btnPlay.textContent = S.play;
-					setPlayState("stopped");
-				}
-
+				if (!isPlaying) setPlayState("stopped");
 				updateThemeIcon();
 			}
 
@@ -1341,7 +1418,8 @@
 				const saved = localStorage.getItem("lang");
 				if (saved && UI_STRINGS[saved]) return saved;
 				const nav = (navigator.language || "en").split("-")[0].toLowerCase();
-				return UI_STRINGS[nav === "no" ? "nb" : nav] ? (nav === "no" ? "nb" : nav) : "en";
+				const mapped = nav === "no" ? "nb" : nav;
+				return UI_STRINGS[mapped] ? mapped : "en";
 			}
 
 			const initialLang = getInitialLang();
@@ -1367,8 +1445,10 @@
 			}
 
 			// Restore phrase mode + custom text
-			const savedMode = localStorage.getItem("phraseMode");
-			customPhraseText = localStorage.getItem("customPhrase") || "";
+			// Pre-fill with the language-appropriate default custom phrase if never set
+			const savedMode   = localStorage.getItem("phraseMode");
+			const savedCustom = localStorage.getItem("customPhrase");
+			customPhraseText  = savedCustom !== null ? savedCustom : S.defaultCustomPhrase;
 			customPhraseEl.value = customPhraseText;
 			if (savedMode === "custom") applyMode("custom");
 
