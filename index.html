@@ -116,13 +116,48 @@
 				transition: background 0.2s, color 0.2s;
 			}
 
+			main {
+				width: 100%;
+				max-width: 440px;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* App header: title block + theme toggle side by side */
+			.app-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				margin-bottom: 24px;
+				gap: 12px;
+			}
+
 			h1 { font-size: 1.75rem; margin-bottom: 4px; }
 
 			.subtitle {
 				color: var(--text-light);
-				margin-bottom: 24px;
-				text-align: center;
 				font-size: 0.95rem;
+			}
+
+			/* Two-column layout on wider screens */
+			.layout {
+				display: flex;
+				flex-direction: column;
+			}
+
+			.col-left, .col-right {
+				display: flex;
+				flex-direction: column;
+			}
+
+			@media (min-width: 700px) {
+				main { max-width: 876px; }
+				.layout {
+					flex-direction: row;
+					align-items: flex-start;
+					gap: 16px;
+				}
+				.col-left, .col-right { flex: 1; }
 			}
 
 			.card {
@@ -130,7 +165,6 @@
 				border-radius: var(--radius);
 				padding: 20px;
 				width: 100%;
-				max-width: 420px;
 				box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 				margin-bottom: 16px;
 				transition: background 0.2s;
@@ -249,7 +283,6 @@
 				border-radius: 12px;
 				margin-bottom: 16px;
 				width: 100%;
-				max-width: 420px;
 				font-size: 0.9rem;
 				font-weight: 500;
 			}
@@ -288,7 +321,6 @@
 				display: flex;
 				gap: 12px;
 				width: 100%;
-				max-width: 420px;
 				margin-bottom: 16px;
 			}
 
@@ -327,7 +359,6 @@
 
 			.current-text {
 				width: 100%;
-				max-width: 420px;
 				text-align: center;
 				font-size: 1.15rem;
 				font-weight: 600;
@@ -392,7 +423,6 @@
 			#btn-install {
 				display: none;
 				width: 100%;
-				max-width: 420px;
 				margin-bottom: 16px;
 				background: transparent;
 				border: 2px solid var(--primary);
@@ -405,20 +435,8 @@
 			#btn-install.visible { display: block; }
 			#btn-install:hover { background: var(--primary); color: #fff; }
 
-			footer {
-				margin-top: auto;
-				padding-top: 32px;
-				text-align: center;
-				color: var(--text-light);
-				font-size: 0.8rem;
-			}
-
-			footer a { color: var(--primary); text-decoration: none; }
-
 			#theme-toggle {
-				position: fixed;
-				top: 16px;
-				right: 16px;
+				flex-shrink: 0;
 				width: 40px;
 				height: 40px;
 				padding: 0;
@@ -427,7 +445,6 @@
 				background: var(--card);
 				font-size: 1.2rem;
 				cursor: pointer;
-				z-index: 100;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -435,128 +452,151 @@
 			}
 
 			#theme-toggle:hover { border-color: var(--primary-light); }
+
+			footer {
+				margin-top: auto;
+				padding-top: 32px;
+				padding-bottom: 8px;
+				text-align: center;
+				color: var(--text-light);
+				font-size: 0.8rem;
+				line-height: 1.5;
+			}
+
+			footer a { color: var(--primary); text-decoration: none; }
 		</style>
 	</head>
 	<body>
+	<main>
 
-		<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-
-		<h1>🤫 Just Mute</h1>
-		<p class="subtitle">Passive-aggressive audio policing for public transport</p>
-
-		<!-- What to say card: Default (transport) or Custom phrase -->
-		<div class="card">
-			<label id="phrase-label">What to say</label>
-			<div class="mode-toggle" role="group">
-				<button class="mode-btn active" id="mode-default">Default</button>
-				<button class="mode-btn" id="mode-custom">Custom</button>
+		<header class="app-header">
+			<div>
+				<h1>🤫 Just Mute</h1>
+				<p class="subtitle">Passive-aggressive audio policing for public transport</p>
 			</div>
-			<div id="transport-section">
-				<div class="transport-grid" id="transport-grid" role="radiogroup">
-					<button class="transport-btn active" data-transport="train" aria-label="Train">🚆<span class="transport-label">Train</span></button>
-					<button class="transport-btn" data-transport="bus" aria-label="Bus">🚌<span class="transport-label">Bus</span></button>
-					<button class="transport-btn" data-transport="tram" aria-label="Tram">🚊<span class="transport-label">Tram</span></button>
-					<button class="transport-btn" data-transport="plane" aria-label="Plane">✈️<span class="transport-label">Plane</span></button>
-					<button class="transport-btn" data-transport="subway" aria-label="Subway">🚇<span class="transport-label">Subway</span></button>
-					<button class="transport-btn" data-transport="ferry" aria-label="Ferry">⛴️<span class="transport-label">Ferry</span></button>
-					<button class="transport-btn" data-transport="cablecar" aria-label="Cable car">🚡<span class="transport-label">Cable car</span></button>
+			<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+		</header>
+
+		<div class="layout">
+			<div class="col-left">
+				<!-- What to say card: Default (transport) or Custom phrase -->
+				<div class="card">
+					<label id="phrase-label">What to say</label>
+					<div class="mode-toggle" role="group">
+						<button class="mode-btn active" id="mode-default">Default</button>
+						<button class="mode-btn" id="mode-custom">Custom</button>
+					</div>
+					<div id="transport-section">
+						<div class="transport-grid" id="transport-grid" role="radiogroup">
+							<button class="transport-btn active" data-transport="train" aria-label="Train">🚆<span class="transport-label">Train</span></button>
+							<button class="transport-btn" data-transport="bus" aria-label="Bus">🚌<span class="transport-label">Bus</span></button>
+							<button class="transport-btn" data-transport="tram" aria-label="Tram">🚊<span class="transport-label">Tram</span></button>
+							<button class="transport-btn" data-transport="plane" aria-label="Plane">✈️<span class="transport-label">Plane</span></button>
+							<button class="transport-btn" data-transport="subway" aria-label="Subway">🚇<span class="transport-label">Subway</span></button>
+							<button class="transport-btn" data-transport="ferry" aria-label="Ferry">⛴️<span class="transport-label">Ferry</span></button>
+							<button class="transport-btn" data-transport="cablecar" aria-label="Cable car">🚡<span class="transport-label">Cable car</span></button>
+						</div>
+					</div>
+					<div id="custom-section" hidden>
+						<textarea id="custom-phrase" rows="3" placeholder="Type your custom phrase…"></textarea>
+					</div>
+				</div>
+
+				<!-- Status -->
+				<div class="status-display stopped" id="status-display">⏹ Stopped</div>
+
+				<!-- Current phrase -->
+				<div class="current-text" id="current-text"></div>
+
+				<!-- Play/Stop -->
+				<div class="controls">
+					<button class="btn-play" id="btn-play">▶ Play</button>
+					<button class="btn-stop" id="btn-stop" disabled>⏹ Stop</button>
 				</div>
 			</div>
-			<div id="custom-section" hidden>
-				<textarea id="custom-phrase" rows="3" placeholder="Type your custom phrase…"></textarea>
-			</div>
-		</div>
 
-		<!-- Language Picker -->
-		<div class="card">
-			<label for="lang-select">Language</label>
-			<select id="lang-select">
-				<option value="en">English</option>
-				<option value="bg">Български</option>
-				<option value="ca">Català</option>
-				<option value="hr">Hrvatski</option>
-				<option value="cs">Čeština</option>
-				<option value="da">Dansk</option>
-				<option value="nl">Nederlands</option>
-				<option value="et">Eesti</option>
-				<option value="fi">Suomi</option>
-				<option value="fr">Français</option>
-				<option value="de">Deutsch</option>
-				<option value="el">Ελληνικά</option>
-				<option value="hu">Magyar</option>
-				<option value="it">Italiano</option>
-				<option value="lv">Latviešu</option>
-				<option value="lt">Lietuvių</option>
-				<option value="nb">Norsk</option>
-				<option value="pl">Polski</option>
-				<option value="pt">Português</option>
-				<option value="ro">Română</option>
-				<option value="ru">Русский</option>
-				<option value="sk">Slovenčina</option>
-				<option value="sl">Slovenščina</option>
-				<option value="es">Español</option>
-				<option value="sv">Svenska</option>
-				<option value="tr">Türkçe</option>
-				<option value="uk">Українська</option>
-				<option value="ar">العربية</option>
-				<option value="he">עברית</option>
-				<option value="hi">हिन्दी</option>
-				<option value="id">Bahasa Indonesia</option>
-				<option value="ja">日本語</option>
-				<option value="ko">한국어</option>
-				<option value="th">ภาษาไทย</option>
-				<option value="vi">Tiếng Việt</option>
-				<option value="zh">中文（简体）</option>
-				<option value="zhtw">中文（繁體）</option>
-			</select>
-		</div>
+			<div class="col-right">
+				<!-- Language Picker -->
+				<div class="card">
+					<label for="lang-select">Language</label>
+					<select id="lang-select">
+						<option value="en">English</option>
+						<option value="bg">Български</option>
+						<option value="ca">Català</option>
+						<option value="hr">Hrvatski</option>
+						<option value="cs">Čeština</option>
+						<option value="da">Dansk</option>
+						<option value="nl">Nederlands</option>
+						<option value="et">Eesti</option>
+						<option value="fi">Suomi</option>
+						<option value="fr">Français</option>
+						<option value="de">Deutsch</option>
+						<option value="el">Ελληνικά</option>
+						<option value="hu">Magyar</option>
+						<option value="it">Italiano</option>
+						<option value="lv">Latviešu</option>
+						<option value="lt">Lietuvių</option>
+						<option value="nb">Norsk</option>
+						<option value="pl">Polski</option>
+						<option value="pt">Português</option>
+						<option value="ro">Română</option>
+						<option value="ru">Русский</option>
+						<option value="sk">Slovenčina</option>
+						<option value="sl">Slovenščina</option>
+						<option value="es">Español</option>
+						<option value="sv">Svenska</option>
+						<option value="tr">Türkçe</option>
+						<option value="uk">Українська</option>
+						<option value="ar">العربية</option>
+						<option value="he">עברית</option>
+						<option value="hi">हिन्दी</option>
+						<option value="id">Bahasa Indonesia</option>
+						<option value="ja">日本語</option>
+						<option value="ko">한국어</option>
+						<option value="th">ภาษาไทย</option>
+						<option value="vi">Tiếng Việt</option>
+						<option value="zh">中文（简体）</option>
+						<option value="zhtw">中文（繁體）</option>
+					</select>
+				</div>
 
-		<!-- Voice Picker -->
-		<div class="card">
-			<label for="voice-select">Voice</label>
-			<select id="voice-select"><option value="">Loading voices…</option></select>
-		</div>
+				<!-- Voice Picker -->
+				<div class="card">
+					<label for="voice-select">Voice</label>
+					<select id="voice-select"><option value="">Loading voices…</option></select>
+				</div>
 
-		<!-- Interval -->
-		<div class="card">
-			<label for="interval-range">Loop interval</label>
-			<div class="interval-control">
-				<span id="label-fast">Fast</span>
-				<input type="range" id="interval-range" min="5" max="60" value="15" step="1">
-				<span id="label-slow">Slow</span>
-				<span class="interval-value" id="interval-value">15s</span>
-			</div>
-		</div>
+				<!-- Interval -->
+				<div class="card">
+					<label for="interval-range">Loop interval</label>
+					<div class="interval-control">
+						<span id="label-fast">Fast</span>
+						<input type="range" id="interval-range" min="5" max="60" value="15" step="1">
+						<span id="label-slow">Slow</span>
+						<span class="interval-value" id="interval-value">15s</span>
+					</div>
+				</div>
 
-		<!-- Status -->
-		<div class="status-display stopped" id="status-display">⏹ Stopped</div>
-
-		<!-- Current phrase -->
-		<div class="current-text" id="current-text"></div>
-
-		<!-- Play/Stop -->
-		<div class="controls">
-			<button class="btn-play" id="btn-play">▶ Play</button>
-			<button class="btn-stop" id="btn-stop" disabled>⏹ Stop</button>
-		</div>
-
-		<!-- QR share -->
-		<div class="card">
-			<div class="qr-row">
-				<span>Share this app</span>
-				<button class="btn-qr" id="btn-qr">Show QR Code</button>
-			</div>
-			<div id="qr-container" aria-live="polite">
-				<div id="qrcode"></div>
-				<p class="qr-url" id="qr-url"></p>
+				<!-- QR share -->
+				<div class="card">
+					<div class="qr-row">
+						<span>Share this app</span>
+						<button class="btn-qr" id="btn-qr">Show QR Code</button>
+					</div>
+					<div id="qr-container" aria-live="polite">
+						<div id="qrcode"></div>
+						<p class="qr-url" id="qr-url"></p>
+					</div>
+				</div>
 			</div>
 		</div>
 
 		<!-- Install (revealed by beforeinstallprompt) -->
 		<button id="btn-install">📲 Install app</button>
 
-		<footer>Rage-coded by Thomas Steiner (<a href="https://toot.cafe/@tomayac">@tomayac@toot.cafe</a>)
-			on a noisy commuter train, but with love ❤️.</footer>
+		<footer></footer>
+
+	</main>
 
 		<script src="https://cdn.jsdelivr.net/npm/qr-creator@1.0.0/dist/qr-creator.min.js"></script>
 
@@ -1256,6 +1296,51 @@
 				}
 			};
 
+			// Footer templates — each receives the GitHub "coded" link HTML
+			(function() {
+				const m = `(<a href="https://toot.cafe/@tomayac">@tomayac@toot.cafe</a>)`;
+				const T = {
+					en:   (l)=>`Rage-${l} by Thomas Steiner ${m} on a noisy commuter train, but with love ❤️.`,
+					bg:   (l)=>`В ярост ${l} от Thomas Steiner ${m} в шумен влак, но с любов ❤️.`,
+					ca:   (l)=>`${l} amb ràbia de Thomas Steiner ${m} en un tren de rodalia sorollós, però amb amor ❤️.`,
+					hr:   (l)=>`${l} u bijesu od Thomasa Steinera ${m} u bučnom prigradskom vlaku, ali s ljubavlju ❤️.`,
+					cs:   (l)=>`Vztekem ${l} od Thomase Steinera ${m} v hlučném příměstském vlaku, ale s láskou ❤️.`,
+					da:   (l)=>`Rasende ${l} af Thomas Steiner ${m} i et støjende pendlertog, men med kærlighed ❤️.`,
+					nl:   (l)=>`Woedend ${l} door Thomas Steiner ${m} in een lawaaierige trein, maar met liefde ❤️.`,
+					et:   (l)=>`Vihas ${l} Thomas Steineri ${m} poolt mürarikkas pendelrongis, aga armastusega ❤️.`,
+					fi:   (l)=>`Raivoisasti ${l} Thomas Steinerin ${m} toimesta meluisassa lähijunassa, mutta rakkaudella ❤️.`,
+					fr:   (l)=>`${l} dans un accès de rage par Thomas Steiner ${m} dans un train de banlieue bruyant, mais avec amour ❤️.`,
+					de:   (l)=>`Wut-${l} von Thomas Steiner ${m} im lauten Pendlerzug, aber mit Liebe ❤️.`,
+					el:   (l)=>`${l} εν οργή από τον Thomas Steiner ${m} σε θορυβώδες τρένο, αλλά με αγάπη ❤️.`,
+					hu:   (l)=>`Dühből ${l} Thomas Steiner ${m} által zajos ingázóvonaton, de szeretettel ❤️.`,
+					it:   (l)=>`${l} con rabbia da Thomas Steiner ${m} su un treno pendolari rumoroso, ma con amore ❤️.`,
+					lv:   (l)=>`Dusmās ${l} no Thomas Steinera ${m} trokšņainā vilcienā, bet ar mīlestību ❤️.`,
+					lt:   (l)=>`Įpykęs ${l} Thomas Steineras ${m} triukšmingame priemiesčio traukinyje, bet su meile ❤️.`,
+					nb:   (l)=>`Rasende ${l} av Thomas Steiner ${m} i et støyende pendlertog, men med kjærlighet ❤️.`,
+					pl:   (l)=>`Ze wściekłością ${l} przez Thomasa Steinera ${m} w hałaśliwym pociągu podmiejskim, ale z miłością ❤️.`,
+					pt:   (l)=>`${l} com raiva por Thomas Steiner ${m} num comboio de subúrbio barulhento, mas com amor ❤️.`,
+					ro:   (l)=>`${l} cu furie de Thomas Steiner ${m} într-un tren suburban zgomotos, dar cu dragoste ❤️.`,
+					ru:   (l)=>`В ярости ${l} от Thomas Steiner ${m} в шумной электричке, но с любовью ❤️.`,
+					sk:   (l)=>`V zúrivosti ${l} od Thomasa Steinera ${m} v hlučnom prímestskom vlaku, ale s láskou ❤️.`,
+					sl:   (l)=>`V besu ${l} od Thomasa Steinera ${m} v hrupnem primestnem vlaku, a z ljubeznijo ❤️.`,
+					es:   (l)=>`${l} con rabia por Thomas Steiner ${m} en un tren de cercanías ruidoso, pero con amor ❤️.`,
+					sv:   (l)=>`Rasande ${l} av Thomas Steiner ${m} på ett bullrigt pendeltåg, men med kärlek ❤️.`,
+					tr:   (l)=>`Öfkeyle ${l} Thomas Steiner ${m} tarafından gürültülü bir banliyö treninde, ama sevgiyle ❤️.`,
+					uk:   (l)=>`У злості ${l} від Thomas Steiner ${m} у галасливій приміській електричці, але з любов'ю ❤️.`,
+					ar:   (l)=>`${l} بغضب بقلم Thomas Steiner ${m} في قطار مزدحم وصاخب، لكن بمحبة ❤️.`,
+					he:   (l)=>`${l} בזעם מאת Thomas Steiner ${m} ברכבת רועשת של נוסעי פרברים, אבל באהבה ❤️.`,
+					hi:   (l)=>`गुस्से में ${l} Thomas Steiner ${m} द्वारा एक शोरगुल भरी लोकल ट्रेन में, लेकिन प्यार के साथ ❤️.`,
+					id:   (l)=>`${l} dengan marah oleh Thomas Steiner ${m} di kereta komuter yang bising, tapi dengan cinta ❤️.`,
+					ja:   (l)=>`怒りに任せて${l}した Thomas Steiner ${m}、うるさい通勤電車の中で、でも愛を込めて ❤️.`,
+					ko:   (l)=>`분노로 ${l}한 Thomas Steiner ${m}, 시끄러운 통근 열차에서, 하지만 사랑을 담아 ❤️.`,
+					th:   (l)=>`${l} ด้วยความโกรธ โดย Thomas Steiner ${m} บนรถไฟชานเมืองที่วุ่นวาย แต่ด้วยความรัก ❤️.`,
+					vi:   (l)=>`${l} trong cơn thịnh nộ bởi Thomas Steiner ${m} trên chuyến tàu ồn ào, nhưng với tình yêu ❤️.`,
+					zh:   (l)=>`愤怒${l}，作者 Thomas Steiner ${m}，在嘈杂的通勤列车上，但带着爱 ❤️.`,
+					zhtw: (l)=>`憤怒${l}，作者 Thomas Steiner ${m}，在嘈雜的通勤列車上，但帶著愛 ❤️.`
+				};
+				Object.keys(T).forEach(k => { if (UI_STRINGS[k]) UI_STRINGS[k].footer = T[k]; });
+			})();
+
 			let S = UI_STRINGS.en;
 
 			// State
@@ -1609,6 +1694,9 @@
 				document.querySelector(".qr-row span").textContent = S.share;
 				btnQr.textContent = qrContainer.classList.contains("visible") ? S.hideQr : S.showQr;
 				btnInstall.textContent = S.install;
+
+				const codeLink = `<a href="https://github.com/tomayac/just-mute">coded</a>`;
+				document.querySelector("footer").innerHTML = S.footer(codeLink);
 
 				if (!isPlaying) setPlayState("stopped");
 				updateThemeIcon();
