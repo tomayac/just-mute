@@ -185,6 +185,11 @@
 			.mode-btn:hover:not(.active) { background: var(--active-bg); color: var(--text); }
 
 			/* Swipeable transport strip */
+			#transport-section {
+				margin: 0 -20px;
+				overflow: hidden;
+			}
+
 			.transport-grid {
 				display: flex;
 				gap: 8px;
@@ -192,7 +197,6 @@
 				scroll-snap-type: x mandatory;
 				scrollbar-width: none;
 				-webkit-overflow-scrolling: touch;
-				margin: 0 -20px;
 				padding: 0 20px 4px 20px;
 				scroll-padding-left: 20px;
 			}
