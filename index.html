@@ -13,10 +13,10 @@
 				color-scheme: dark light;
 				--primary:       #d81b60;
 				--primary-light: #f06292;
-				--bg:            #fdf0f7;
+				--bg:            #ffffff;
 				--card:          #ffffff;
 				--bg-input:      #ffffff;
-				--border:        #f9d0e7;
+				--border:        #f0d0dc;
 				--active-bg:     #fce7f3;
 				--text:          #2d0a1c;
 				--text-light:    #9d5a78;
@@ -30,8 +30,8 @@
 				:root {
 					--primary:       color(display-p3 0.87 0.07 0.39);
 					--primary-light: color(display-p3 0.94 0.39 0.57);
-					--bg:            color(display-p3 0.992 0.944 0.970);
-					--border:        color(display-p3 0.976 0.816 0.905);
+					--bg:            color(display-p3 1 1 1);
+					--border:        color(display-p3 0.941 0.816 0.863);
 					--active-bg:     color(display-p3 0.988 0.906 0.953);
 					--text:          color(display-p3 0.177 0.040 0.110);
 					--text-light:    color(display-p3 0.615 0.353 0.469);
@@ -39,29 +39,29 @@
 
 				@media (prefers-color-scheme: dark) {
 					:root:not([data-theme="light"]) {
-						--bg:        color(display-p3 0.074 0.019 0.031);
-						--card:      color(display-p3 0.137 0.063 0.102);
-						--bg-input:  color(display-p3 0.180 0.078 0.141);
-						--border:    color(display-p3 0.361 0.125 0.251);
-						--active-bg: color(display-p3 0.354 0.082 0.208);
-						--text:      color(display-p3 0.961 0.878 0.926);
-						--text-light:color(display-p3 0.769 0.565 0.678);
+						--bg:        color(display-p3 0.04 0.04 0.04);
+						--card:      color(display-p3 0.10 0.10 0.10);
+						--bg-input:  color(display-p3 0.14 0.14 0.14);
+						--border:    color(display-p3 0.26 0.24 0.25);
+						--active-bg: color(display-p3 0.18 0.14 0.16);
+						--text:      color(display-p3 0.95 0.93 0.94);
+						--text-light:color(display-p3 0.60 0.58 0.59);
 					}
 				}
 
 				[data-theme="dark"] {
-					--bg:        color(display-p3 0.074 0.019 0.031);
-					--card:      color(display-p3 0.137 0.063 0.102);
-					--bg-input:  color(display-p3 0.180 0.078 0.141);
-					--border:    color(display-p3 0.361 0.125 0.251);
-					--active-bg: color(display-p3 0.354 0.082 0.208);
-					--text:      color(display-p3 0.961 0.878 0.926);
-					--text-light:color(display-p3 0.769 0.565 0.678);
+					--bg:        color(display-p3 0.04 0.04 0.04);
+					--card:      color(display-p3 0.10 0.10 0.10);
+					--bg-input:  color(display-p3 0.14 0.14 0.14);
+					--border:    color(display-p3 0.26 0.24 0.25);
+					--active-bg: color(display-p3 0.18 0.14 0.16);
+					--text:      color(display-p3 0.95 0.93 0.94);
+					--text-light:color(display-p3 0.60 0.58 0.59);
 				}
 
 				[data-theme="light"] {
-					--bg:        color(display-p3 0.992 0.944 0.970);
-					--border:    color(display-p3 0.976 0.816 0.905);
+					--bg:        color(display-p3 1 1 1);
+					--border:    color(display-p3 0.941 0.816 0.863);
 					--active-bg: color(display-p3 0.988 0.906 0.953);
 					--text:      color(display-p3 0.177 0.040 0.110);
 					--text-light:color(display-p3 0.615 0.353 0.469);
@@ -71,32 +71,32 @@
 			/* Auto dark mode — sRGB fallbacks */
 			@media (prefers-color-scheme: dark) {
 				:root:not([data-theme="light"]) {
-					--bg:        #130508;
-					--card:      #23101a;
-					--bg-input:  #2e1424;
-					--border:    #5c2040;
-					--active-bg: #5a1535;
-					--text:      #f5e0ec;
-					--text-light:#c490ad;
+					--bg:        #0a0a0a;
+					--card:      #1a1a1a;
+					--bg-input:  #242424;
+					--border:    #404040;
+					--active-bg: #2a2428;
+					--text:      #f0eeef;
+					--text-light:#8f8c8e;
 				}
 			}
 
 			/* Manual theme overrides — sRGB fallbacks */
 			[data-theme="dark"] {
-				--bg:        #130508;
-				--card:      #23101a;
-				--bg-input:  #2e1424;
-				--border:    #5c2040;
-				--active-bg: #5a1535;
-				--text:      #f5e0ec;
-				--text-light:#c490ad;
+				--bg:        #0a0a0a;
+				--card:      #1a1a1a;
+				--bg-input:  #242424;
+				--border:    #404040;
+				--active-bg: #2a2428;
+				--text:      #f0eeef;
+				--text-light:#8f8c8e;
 			}
 
 			[data-theme="light"] {
-				--bg:        #fdf0f7;
+				--bg:        #ffffff;
 				--card:      #ffffff;
 				--bg-input:  #ffffff;
-				--border:    #f9d0e7;
+				--border:    #f0d0dc;
 				--active-bg: #fce7f3;
 				--text:      #2d0a1c;
 				--text-light:#9d5a78;
@@ -193,7 +193,8 @@
 				scrollbar-width: none;
 				-webkit-overflow-scrolling: touch;
 				margin: 0 -20px;
-				padding: 0 20px 4px;
+				padding: 0 20px 4px 20px;
+				scroll-padding-left: 20px;
 			}
 
 			.transport-grid::-webkit-scrollbar { display: none; }
