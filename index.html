@@ -1297,47 +1297,48 @@
 				}
 			};
 
-			// Footer templates — each receives the GitHub "coded" link HTML
+			// Footer templates — each receives the GitHub URL and links its own translated word for "coded"
 			(function() {
 				const m = `(<a href="https://toot.cafe/@tomayac">@tomayac@toot.cafe</a>)`;
+				const a = (u, w) => `<a href="${u}">${w}</a>`;
 				const T = {
-					en:   (l)=>`Rage-${l} by Thomas Steiner ${m} on a noisy commuter train, but with love ❤️.`,
-					bg:   (l)=>`В ярост ${l} от Thomas Steiner ${m} в шумен влак, но с любов ❤️.`,
-					ca:   (l)=>`${l} amb ràbia de Thomas Steiner ${m} en un tren de rodalia sorollós, però amb amor ❤️.`,
-					hr:   (l)=>`${l} u bijesu od Thomasa Steinera ${m} u bučnom prigradskom vlaku, ali s ljubavlju ❤️.`,
-					cs:   (l)=>`Vztekem ${l} od Thomase Steinera ${m} v hlučném příměstském vlaku, ale s láskou ❤️.`,
-					da:   (l)=>`Rasende ${l} af Thomas Steiner ${m} i et støjende pendlertog, men med kærlighed ❤️.`,
-					nl:   (l)=>`Woedend ${l} door Thomas Steiner ${m} in een lawaaierige trein, maar met liefde ❤️.`,
-					et:   (l)=>`Vihas ${l} Thomas Steineri ${m} poolt mürarikkas pendelrongis, aga armastusega ❤️.`,
-					fi:   (l)=>`Raivoisasti ${l} Thomas Steinerin ${m} toimesta meluisassa lähijunassa, mutta rakkaudella ❤️.`,
-					fr:   (l)=>`${l} dans un accès de rage par Thomas Steiner ${m} dans un train de banlieue bruyant, mais avec amour ❤️.`,
-					de:   (l)=>`Wut-${l} von Thomas Steiner ${m} im lauten Pendlerzug, aber mit Liebe ❤️.`,
-					el:   (l)=>`${l} εν οργή από τον Thomas Steiner ${m} σε θορυβώδες τρένο, αλλά με αγάπη ❤️.`,
-					hu:   (l)=>`Dühből ${l} Thomas Steiner ${m} által zajos ingázóvonaton, de szeretettel ❤️.`,
-					it:   (l)=>`${l} con rabbia da Thomas Steiner ${m} su un treno pendolari rumoroso, ma con amore ❤️.`,
-					lv:   (l)=>`Dusmās ${l} no Thomas Steinera ${m} trokšņainā vilcienā, bet ar mīlestību ❤️.`,
-					lt:   (l)=>`Įpykęs ${l} Thomas Steineras ${m} triukšmingame priemiesčio traukinyje, bet su meile ❤️.`,
-					nb:   (l)=>`Rasende ${l} av Thomas Steiner ${m} i et støyende pendlertog, men med kjærlighet ❤️.`,
-					pl:   (l)=>`Ze wściekłością ${l} przez Thomasa Steinera ${m} w hałaśliwym pociągu podmiejskim, ale z miłością ❤️.`,
-					pt:   (l)=>`${l} com raiva por Thomas Steiner ${m} num comboio de subúrbio barulhento, mas com amor ❤️.`,
-					ro:   (l)=>`${l} cu furie de Thomas Steiner ${m} într-un tren suburban zgomotos, dar cu dragoste ❤️.`,
-					ru:   (l)=>`В ярости ${l} от Thomas Steiner ${m} в шумной электричке, но с любовью ❤️.`,
-					sk:   (l)=>`V zúrivosti ${l} od Thomasa Steinera ${m} v hlučnom prímestskom vlaku, ale s láskou ❤️.`,
-					sl:   (l)=>`V besu ${l} od Thomasa Steinera ${m} v hrupnem primestnem vlaku, a z ljubeznijo ❤️.`,
-					es:   (l)=>`${l} con rabia por Thomas Steiner ${m} en un tren de cercanías ruidoso, pero con amor ❤️.`,
-					sv:   (l)=>`Rasande ${l} av Thomas Steiner ${m} på ett bullrigt pendeltåg, men med kärlek ❤️.`,
-					tr:   (l)=>`Öfkeyle ${l} Thomas Steiner ${m} tarafından gürültülü bir banliyö treninde, ama sevgiyle ❤️.`,
-					uk:   (l)=>`У злості ${l} від Thomas Steiner ${m} у галасливій приміській електричці, але з любов'ю ❤️.`,
-					ar:   (l)=>`${l} بغضب بقلم Thomas Steiner ${m} في قطار مزدحم وصاخب، لكن بمحبة ❤️.`,
-					he:   (l)=>`${l} בזעם מאת Thomas Steiner ${m} ברכבת רועשת של נוסעי פרברים, אבל באהבה ❤️.`,
-					hi:   (l)=>`गुस्से में ${l} Thomas Steiner ${m} द्वारा एक शोरगुल भरी लोकल ट्रेन में, लेकिन प्यार के साथ ❤️.`,
-					id:   (l)=>`${l} dengan marah oleh Thomas Steiner ${m} di kereta komuter yang bising, tapi dengan cinta ❤️.`,
-					ja:   (l)=>`怒りに任せて${l}した Thomas Steiner ${m}、うるさい通勤電車の中で、でも愛を込めて ❤️.`,
-					ko:   (l)=>`분노로 ${l}한 Thomas Steiner ${m}, 시끄러운 통근 열차에서, 하지만 사랑을 담아 ❤️.`,
-					th:   (l)=>`${l} ด้วยความโกรธ โดย Thomas Steiner ${m} บนรถไฟชานเมืองที่วุ่นวาย แต่ด้วยความรัก ❤️.`,
-					vi:   (l)=>`${l} trong cơn thịnh nộ bởi Thomas Steiner ${m} trên chuyến tàu ồn ào, nhưng với tình yêu ❤️.`,
-					zh:   (l)=>`愤怒${l}，作者 Thomas Steiner ${m}，在嘈杂的通勤列车上，但带着爱 ❤️.`,
-					zhtw: (l)=>`憤怒${l}，作者 Thomas Steiner ${m}，在嘈雜的通勤列車上，但帶著愛 ❤️.`
+					en:   (u)=>`Rage-${a(u,"coded")} by Thomas Steiner ${m} on a noisy commuter train, but with love ❤️.`,
+					bg:   (u)=>`В ярост ${a(u,"кодирано")} от Thomas Steiner ${m} в шумен влак, но с любов ❤️.`,
+					ca:   (u)=>`${a(u,"Programat")} amb ràbia per Thomas Steiner ${m} en un tren de rodalia sorollós, però amb amor ❤️.`,
+					hr:   (u)=>`Bijesno ${a(u,"kodiran")} od Thomasa Steinera ${m} u bučnom prigradskom vlaku, ali s ljubavlju ❤️.`,
+					cs:   (u)=>`Vztekem ${a(u,"zakódováno")} od Thomase Steinera ${m} v hlučném příměstském vlaku, ale s láskou ❤️.`,
+					da:   (u)=>`Rasende ${a(u,"kodet")} af Thomas Steiner ${m} i et støjende pendlertog, men med kærlighed ❤️.`,
+					nl:   (u)=>`Woedend ${a(u,"gecodeerd")} door Thomas Steiner ${m} in een lawaaierige trein, maar met liefde ❤️.`,
+					et:   (u)=>`Vihas ${a(u,"kodeeritud")} Thomas Steineri ${m} poolt mürarikkas pendelrongis, aga armastusega ❤️.`,
+					fi:   (u)=>`Raivoisasti ${a(u,"koodattu")} Thomas Steinerin ${m} toimesta meluisassa lähijunassa, mutta rakkaudella ❤️.`,
+					fr:   (u)=>`${a(u,"Codé")} dans un accès de rage par Thomas Steiner ${m} dans un train de banlieue bruyant, mais avec amour ❤️.`,
+					de:   (u)=>`Wut-${a(u,"gecodet")} von Thomas Steiner ${m} im lauten Pendlerzug, aber mit Liebe ❤️.`,
+					el:   (u)=>`${a(u,"Κωδικοποιημένο")} εν οργή από τον Thomas Steiner ${m} σε θορυβώδες τρένο, αλλά με αγάπη ❤️.`,
+					hu:   (u)=>`Dühből ${a(u,"kódolva")} Thomas Steiner ${m} által zajos ingázóvonaton, de szeretettel ❤️.`,
+					it:   (u)=>`${a(u,"Codificato")} con rabbia da Thomas Steiner ${m} su un treno pendolari rumoroso, ma con amore ❤️.`,
+					lv:   (u)=>`Dusmās ${a(u,"kodēts")} no Thomas Steinera ${m} trokšņainā vilcienā, bet ar mīlestību ❤️.`,
+					lt:   (u)=>`Įsiutęs ${a(u,"sukodavo")} Thomas Steineras ${m} triukšmingame priemiesčio traukinyje, bet su meile ❤️.`,
+					nb:   (u)=>`Rasende ${a(u,"kodet")} av Thomas Steiner ${m} i et støyende pendlertog, men med kjærlighet ❤️.`,
+					pl:   (u)=>`Ze wściekłością ${a(u,"zakodowane")} przez Thomasa Steinera ${m} w hałaśliwym pociągu podmiejskim, ale z miłością ❤️.`,
+					pt:   (u)=>`${a(u,"Programado")} com raiva por Thomas Steiner ${m} num comboio de subúrbio barulhento, mas com amor ❤️.`,
+					ro:   (u)=>`${a(u,"Codat")} cu furie de Thomas Steiner ${m} într-un tren suburban zgomotos, dar cu dragoste ❤️.`,
+					ru:   (u)=>`В ярости ${a(u,"закодировано")} Thomas Steiner ${m} в шумной электричке, но с любовью ❤️.`,
+					sk:   (u)=>`V zúrivosti ${a(u,"nakódované")} od Thomasa Steinera ${m} v hlučnom prímestskom vlaku, ale s láskou ❤️.`,
+					sl:   (u)=>`V besu ${a(u,"zakodiran")} od Thomasa Steinera ${m} v hrupnem primestnem vlaku, a z ljubeznijo ❤️.`,
+					es:   (u)=>`${a(u,"Programado")} con rabia por Thomas Steiner ${m} en un tren de cercanías ruidoso, pero con amor ❤️.`,
+					sv:   (u)=>`Rasande ${a(u,"kodad")} av Thomas Steiner ${m} på ett bullrigt pendeltåg, men med kärlek ❤️.`,
+					tr:   (u)=>`Öfkeyle ${a(u,"kodlanmış")} Thomas Steiner ${m} tarafından gürültülü bir banliyö treninde, ama sevgiyle ❤️.`,
+					uk:   (u)=>`У злості ${a(u,"закодовано")} від Thomas Steiner ${m} у галасливій приміській електричці, але з любов'ю ❤️.`,
+					ar:   (u)=>`${a(u,"بُرمج")} بغضب بقلم Thomas Steiner ${m} في قطار مزدحم وصاخب، لكن بمحبة ❤️.`,
+					he:   (u)=>`${a(u,"קוּדד")} בזעם מאת Thomas Steiner ${m} ברכבת רועשת של נוסעי פרברים, אבל באהבה ❤️.`,
+					hi:   (u)=>`गुस्से में ${a(u,"कोड किया")} Thomas Steiner ${m} ने एक शोरगुल भरी लोकल ट्रेन में, लेकिन प्यार के साथ ❤️.`,
+					id:   (u)=>`${a(u,"Dikodekan")} dengan marah oleh Thomas Steiner ${m} di kereta komuter yang bising, tapi dengan cinta ❤️.`,
+					ja:   (u)=>`怒りに任せて${a(u,"コードした")} Thomas Steiner ${m}、うるさい通勤電車の中で、でも愛を込めて ❤️.`,
+					ko:   (u)=>`분노로 ${a(u,"코딩한")} Thomas Steiner ${m}, 시끄러운 통근 열차에서, 하지만 사랑을 담아 ❤️.`,
+					th:   (u)=>`${a(u,"เขียนโค้ด")}ด้วยความโกรธโดย Thomas Steiner ${m} บนรถไฟชานเมืองที่วุ่นวาย แต่ด้วยความรัก ❤️.`,
+					vi:   (u)=>`${a(u,"Lập trình")} trong cơn thịnh nộ bởi Thomas Steiner ${m} trên chuyến tàu ồn ào, nhưng với tình yêu ❤️.`,
+					zh:   (u)=>`愤怒${a(u,"编码")}，作者 Thomas Steiner ${m}，在嘈杂的通勤列车上，但带着爱 ❤️.`,
+					zhtw: (u)=>`憤怒${a(u,"編碼")}，作者 Thomas Steiner ${m}，在嘈雜的通勤列車上，但帶著愛 ❤️.`
 				};
 				Object.keys(T).forEach(k => { if (UI_STRINGS[k]) UI_STRINGS[k].footer = T[k]; });
 			})();
@@ -1696,8 +1697,7 @@
 				btnQr.textContent = qrContainer.classList.contains("visible") ? S.hideQr : S.showQr;
 				btnInstall.textContent = S.install;
 
-				const codeLink = `<a href="https://github.com/tomayac/just-mute">coded</a>`;
-				document.querySelector("footer").innerHTML = S.footer(codeLink);
+				document.querySelector("footer").innerHTML = S.footer("https://github.com/tomayac/just-mute");
 
 				if (!isPlaying) setPlayState("stopped");
 				updateThemeIcon();
