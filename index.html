@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#d81b60">
+		<meta name="color-scheme" content="dark light">
+		<title>Just Mute</title>
+		<link rel="icon" href="icon.svg" type="image/svg+xml">
+		<link rel="manifest" href="manifest.json">
+		<style>
+			/* ── Color tokens — sRGB fallbacks ───────────────────────────── */
+			:root {
+				color-scheme: dark light;
+				--primary:       #d81b60;
+				--primary-light: #f06292;
+				--bg:            #ffffff;
+				--card:          #ffffff;
+				--bg-input:      #ffffff;
+				--border:        #f0d0dc;
+				--active-bg:     #fce7f3;
+				--text:          #2d0a1c;
+				--text-light:    #9d5a78;
+				--danger:        #ef4444;
+				--success:       #10b981;
+				--radius:        16px;
+			}
+
+			/* Display P3 wide-gamut overrides — richer, more vivid pinks */
+			@supports (color: color(display-p3 0 0 0)) {
+				:root {
+					--primary:       color(display-p3 0.87 0.07 0.39);
+					--primary-light: color(display-p3 0.94 0.39 0.57);
+					--bg:            color(display-p3 1 1 1);
+					--border:        color(display-p3 0.941 0.816 0.863);
+					--active-bg:     color(display-p3 0.988 0.906 0.953);
+					--text:          color(display-p3 0.177 0.040 0.110);
+					--text-light:    color(display-p3 0.615 0.353 0.469);
+				}
+
+				@media (prefers-color-scheme: dark) {
+					:root:not([data-theme="light"]) {
+						--bg:        color(display-p3 0.04 0.04 0.04);
+						--card:      color(display-p3 0.10 0.10 0.10);
+						--bg-input:  color(display-p3 0.14 0.14 0.14);
+						--border:    color(display-p3 0.26 0.24 0.25);
+						--active-bg: color(display-p3 0.18 0.14 0.16);
+						--text:      color(display-p3 0.95 0.93 0.94);
+						--text-light:color(display-p3 0.60 0.58 0.59);
+					}
+				}
+
+				[data-theme="dark"] {
+					--bg:        color(display-p3 0.04 0.04 0.04);
+					--card:      color(display-p3 0.10 0.10 0.10);
+					--bg-input:  color(display-p3 0.14 0.14 0.14);
+					--border:    color(display-p3 0.26 0.24 0.25);
+					--active-bg: color(display-p3 0.18 0.14 0.16);
+					--text:      color(display-p3 0.95 0.93 0.94);
+					--text-light:color(display-p3 0.60 0.58 0.59);
+				}
+
+				[data-theme="light"] {
+					--bg:        color(display-p3 1 1 1);
+					--border:    color(display-p3 0.941 0.816 0.863);
+					--active-bg: color(display-p3 0.988 0.906 0.953);
+					--text:      color(display-p3 0.177 0.040 0.110);
+					--text-light:color(display-p3 0.615 0.353 0.469);
+				}
+			}
+
+			/* Auto dark mode — sRGB fallbacks */
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) {
+					--bg:        #0a0a0a;
+					--card:      #1a1a1a;
+					--bg-input:  #242424;
+					--border:    #404040;
+					--active-bg: #2a2428;
+					--text:      #f0eeef;
+					--text-light:#8f8c8e;
+				}
+			}
+
+			/* Manual theme overrides — sRGB fallbacks */
+			[data-theme="dark"] {
+				--bg:        #0a0a0a;
+				--card:      #1a1a1a;
+				--bg-input:  #242424;
+				--border:    #404040;
+				--active-bg: #2a2428;
+				--text:      #f0eeef;
+				--text-light:#8f8c8e;
+			}
+
+			[data-theme="light"] {
+				--bg:        #ffffff;
+				--card:      #ffffff;
+				--bg-input:  #ffffff;
+				--border:    #f0d0dc;
+				--active-bg: #fce7f3;
+				--text:      #2d0a1c;
+				--text-light:#9d5a78;
+			}
+
+			* { margin: 0; padding: 0; box-sizing: border-box; }
+
+			body {
+				font-family: system-ui, sans-serif;
+				background: var(--bg);
+				color: var(--text);
+				min-height: 100dvh;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				padding: 24px 16px;
+				transition: background 0.2s, color 0.2s;
+			}
+
+			main {
+				width: 100%;
+				max-width: 480px;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* App header: title block + theme toggle side by side */
+			.app-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				margin-bottom: 24px;
+				gap: 12px;
+			}
+
+			h1 { font-size: 1.75rem; margin-bottom: 4px; }
+
+			.subtitle {
+				color: var(--text-light);
+				font-size: 0.95rem;
+			}
+
+			/* Two-column layout on wider screens */
+			.layout {
+				display: flex;
+				flex-direction: column;
+			}
+
+			.col-left, .col-right {
+				display: flex;
+				flex-direction: column;
+			}
+
+			@media (min-width: 1040px) {
+				main { max-width: 960px; }
+				.layout {
+					flex-direction: row;
+					align-items: flex-start;
+					gap: 16px;
+				}
+				.col-left, .col-right { flex: 1; }
+			}
+
+			.card {
+				background: var(--card);
+				border-radius: var(--radius);
+				padding: 20px;
+				width: 100%;
+				box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+				margin-bottom: 16px;
+				transition: background 0.2s;
+			}
+
+			.card label {
+				display: block;
+				font-weight: 600;
+				margin-bottom: 10px;
+				font-size: 0.9rem;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				color: var(--text-light);
+			}
+
+			select, button {
+				width: 100%;
+				padding: 12px 16px;
+				border-radius: 12px;
+				border: 2px solid var(--border);
+				font-size: 1rem;
+				background: var(--bg-input);
+				color: var(--text);
+				cursor: pointer;
+				transition: border-color 0.2s, background 0.2s, color 0.2s, opacity 0.2s;
+			}
+
+			select:focus, button:focus { outline: none; border-color: var(--primary-light); }
+
+			/* Segmented mode toggle */
+			.mode-toggle {
+				display: flex;
+				border: 2px solid var(--border);
+				border-radius: 10px;
+				overflow: hidden;
+				margin-bottom: 14px;
+			}
+
+			.mode-btn {
+				flex: 1;
+				border: none;
+				border-radius: 0;
+				background: transparent;
+				color: var(--text-light);
+				padding: 8px 12px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				width: auto;
+			}
+
+			.mode-btn.active { background: var(--primary); color: #fff; }
+			.mode-btn:hover:not(.active) { background: var(--active-bg); color: var(--text); }
+
+			/* Swipeable transport strip */
+			#transport-section {
+				margin: 0 -20px;
+				overflow: hidden;
+			}
+
+			.transport-grid {
+				display: flex;
+				gap: 8px;
+				overflow-x: auto;
+				scroll-snap-type: x mandatory;
+				scrollbar-width: none;
+				-webkit-overflow-scrolling: touch;
+				padding: 0 20px 4px 20px;
+				scroll-padding-left: 20px;
+			}
+
+			.transport-grid::-webkit-scrollbar { display: none; }
+
+			.transport-btn {
+				flex: 0 0 68px;
+				scroll-snap-align: start;
+				background: var(--bg-input);
+				border: 2px solid var(--border);
+				border-radius: 12px;
+				padding: 12px 4px;
+				font-size: 1.6rem;
+				cursor: pointer;
+				text-align: center;
+				transition: all 0.2s;
+			}
+
+			.transport-btn.active { border-color: var(--primary); background: var(--active-bg); }
+			.transport-btn:hover { border-color: var(--primary-light); }
+
+			.transport-label {
+				display: block;
+				font-size: 0.65rem;
+				margin-top: 4px;
+				color: var(--text-light);
+			}
+
+			/* Custom phrase textarea */
+			#custom-phrase {
+				width: 100%;
+				padding: 12px 16px;
+				border-radius: 12px;
+				border: 2px solid var(--border);
+				font-size: 1rem;
+				font-family: inherit;
+				background: var(--bg-input);
+				color: var(--text);
+				resize: vertical;
+				min-height: 88px;
+				transition: border-color 0.2s, background 0.2s;
+			}
+
+			#custom-phrase:focus { outline: none; border-color: var(--primary-light); }
+
+			.status-display {
+				text-align: center;
+				padding: 16px;
+				border-radius: 12px;
+				margin-bottom: 16px;
+				width: 100%;
+				font-size: 0.9rem;
+				font-weight: 500;
+			}
+
+			/* Stopped/paused: use the pink theme tokens so dark mode works automatically */
+			.status-display.stopped {
+				background: var(--active-bg);
+				color: var(--primary);
+			}
+
+			.status-display.playing {
+				background: #d1fae5;
+				color: var(--success);
+				animation: pulse 2s infinite;
+			}
+
+			.status-display.loading {
+				background: #fef9c3;
+				color: #92400e;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) .status-display.playing { background: #0d2e1e; }
+				:root:not([data-theme="light"]) .status-display.loading { background: #2d2500; color: #fbbf24; }
+			}
+
+			[data-theme="dark"] .status-display.playing { background: #0d2e1e; }
+			[data-theme="dark"] .status-display.loading  { background: #2d2500; color: #fbbf24; }
+
+			@keyframes pulse {
+				0%, 100% { opacity: 1; }
+				50% { opacity: 0.7; }
+			}
+
+			.controls {
+				display: flex;
+				gap: 12px;
+				width: 100%;
+				margin-bottom: 16px;
+			}
+
+			.btn-play {
+				background: var(--primary);
+				color: #fff;
+				border: none;
+				font-weight: 700;
+				font-size: 1.1rem;
+				padding: 16px;
+			}
+
+			.btn-play:hover:not(:disabled) { background: var(--primary-light); }
+
+			.btn-play:disabled {
+				background: var(--text-light);
+				cursor: default;
+				opacity: 0.7;
+			}
+
+			.btn-stop {
+				background: var(--danger);
+				color: #fff;
+				border: none;
+				font-weight: 700;
+				font-size: 1.1rem;
+				padding: 16px;
+			}
+
+			.btn-stop:hover:not(:disabled) { background: #dc2626; }
+
+			.btn-stop:disabled {
+				opacity: 0.35;
+				cursor: default;
+			}
+
+			.current-text {
+				width: 100%;
+				text-align: center;
+				font-size: 1.15rem;
+				font-weight: 600;
+				padding: 20px;
+				background: var(--card);
+				border-radius: var(--radius);
+				box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+				margin-bottom: 16px;
+				min-height: 80px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background 0.2s;
+			}
+
+			.interval-control {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+			}
+
+			.interval-control input[type="range"] { flex: 1; accent-color: var(--primary); }
+
+			.interval-value { font-weight: 700; font-size: 0.9rem; min-width: 40px; text-align: right; }
+
+			/* QR */
+			.qr-row {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 12px;
+			}
+
+			.qr-row span {
+				font-weight: 600;
+				font-size: 0.9rem;
+				color: var(--text-light);
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+
+			.btn-qr {
+				width: auto;
+				padding: 8px 14px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				background: var(--primary);
+				color: #fff;
+				border: none;
+				white-space: nowrap;
+			}
+
+			.btn-qr:hover { background: var(--primary-light); }
+
+			#qr-container { display: none; flex-direction: column; align-items: center; padding-top: 16px; gap: 10px; }
+			#qr-container.visible { display: flex; }
+			#qrcode { background: #fff; padding: 10px; border-radius: 8px; line-height: 0; }
+			#qrcode svg { display: block; }
+			.qr-url { font-size: 0.7rem; color: var(--text-light); word-break: break-all; text-align: center; }
+
+			/* Install */
+			#btn-install {
+				display: none;
+				width: 100%;
+				margin-bottom: 16px;
+				background: transparent;
+				border: 2px solid var(--primary);
+				color: var(--primary);
+				font-weight: 700;
+				font-size: 1rem;
+				padding: 14px 16px;
+			}
+
+			#btn-install.visible { display: block; }
+			#btn-install:hover { background: var(--primary); color: #fff; }
+
+			#theme-toggle {
+				flex-shrink: 0;
+				width: 40px;
+				height: 40px;
+				padding: 0;
+				border-radius: 50%;
+				border: 2px solid var(--border);
+				background: var(--card);
+				font-size: 1.2rem;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background 0.2s, border-color 0.2s;
+			}
+
+			#theme-toggle:hover { border-color: var(--primary-light); }
+
+			footer {
+				margin-top: auto;
+				padding-top: 32px;
+				padding-bottom: 8px;
+				text-align: center;
+				color: var(--text-light);
+				font-size: 0.8rem;
+				line-height: 1.5;
+			}
+
+			footer a { color: var(--primary); text-decoration: none; }
+		</style>
+		<script type="module" crossorigin src="/just-mute/assets/index-BXOAESig.js"></script>
+	</head>
+	<body>
+	<main>
+
+		<header class="app-header">
+			<div>
+				<h1>🤫 Just Mute</h1>
+				<p class="subtitle">Passive-aggressive audio policing for public transport</p>
+			</div>
+			<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+		</header>
+
+		<div class="layout">
+			<div class="col-left">
+				<!-- What to say card: Default (transport) or Custom phrase -->
+				<div class="card">
+					<label id="phrase-label">What to say</label>
+					<div class="mode-toggle" role="group">
+						<button class="mode-btn active" id="mode-default">Default</button>
+						<button class="mode-btn" id="mode-custom">Custom</button>
+					</div>
+					<div id="transport-section">
+						<div class="transport-grid" id="transport-grid" role="radiogroup">
+							<button class="transport-btn active" data-transport="train" aria-label="Train">🚆<span class="transport-label">Train</span></button>
+							<button class="transport-btn" data-transport="bus" aria-label="Bus">🚌<span class="transport-label">Bus</span></button>
+							<button class="transport-btn" data-transport="tram" aria-label="Tram">🚊<span class="transport-label">Tram</span></button>
+							<button class="transport-btn" data-transport="plane" aria-label="Plane">✈️<span class="transport-label">Plane</span></button>
+							<button class="transport-btn" data-transport="subway" aria-label="Subway">🚇<span class="transport-label">Subway</span></button>
+							<button class="transport-btn" data-transport="ferry" aria-label="Ferry">⛴️<span class="transport-label">Ferry</span></button>
+							<button class="transport-btn" data-transport="cablecar" aria-label="Cable car">🚡<span class="transport-label">Cable car</span></button>
+						</div>
+					</div>
+					<div id="custom-section" hidden>
+						<textarea id="custom-phrase" rows="3" placeholder="Type your custom phrase…"></textarea>
+					</div>
+				</div>
+
+				<!-- Status -->
+				<div class="status-display stopped" id="status-display">⏹ Stopped</div>
+
+				<!-- Current phrase -->
+				<div class="current-text" id="current-text"></div>
+
+				<!-- Play/Stop -->
+				<div class="controls">
+					<button class="btn-play" id="btn-play">▶ Play</button>
+					<button class="btn-stop" id="btn-stop" disabled>⏹ Stop</button>
+				</div>
+			</div>
+
+			<div class="col-right">
+				<!-- Language Picker -->
+				<div class="card">
+					<label for="lang-select">Language</label>
+					<select id="lang-select">
+						<option value="en">English</option>
+						<option value="bg">Български</option>
+						<option value="ca">Català</option>
+						<option value="hr">Hrvatski</option>
+						<option value="cs">Čeština</option>
+						<option value="da">Dansk</option>
+						<option value="nl">Nederlands</option>
+						<option value="et">Eesti</option>
+						<option value="fi">Suomi</option>
+						<option value="fr">Français</option>
+						<option value="de">Deutsch</option>
+						<option value="el">Ελληνικά</option>
+						<option value="hu">Magyar</option>
+						<option value="it">Italiano</option>
+						<option value="lv">Latviešu</option>
+						<option value="lt">Lietuvių</option>
+						<option value="nb">Norsk</option>
+						<option value="pl">Polski</option>
+						<option value="pt">Português</option>
+						<option value="ro">Română</option>
+						<option value="ru">Русский</option>
+						<option value="sk">Slovenčina</option>
+						<option value="sl">Slovenščina</option>
+						<option value="es">Español</option>
+						<option value="sv">Svenska</option>
+						<option value="tr">Türkçe</option>
+						<option value="uk">Українська</option>
+						<option value="ar">العربية</option>
+						<option value="he">עברית</option>
+						<option value="hi">हिन्दी</option>
+						<option value="id">Bahasa Indonesia</option>
+						<option value="ja">日本語</option>
+						<option value="ko">한국어</option>
+						<option value="th">ภาษาไทย</option>
+						<option value="vi">Tiếng Việt</option>
+						<option value="zh">中文（简体）</option>
+						<option value="zhtw">中文（繁體）</option>
+					</select>
+				</div>
+
+				<!-- Voice Picker -->
+				<div class="card">
+					<label for="voice-select">Voice</label>
+					<select id="voice-select"><option value="">Loading voices…</option></select>
+				</div>
+
+				<!-- Interval -->
+				<div class="card">
+					<label for="interval-range">Loop interval</label>
+					<div class="interval-control">
+						<span id="label-fast">Fast</span>
+						<input type="range" id="interval-range" min="5" max="60" value="15" step="1">
+						<span id="label-slow">Slow</span>
+						<span class="interval-value" id="interval-value">15s</span>
+					</div>
+				</div>
+
+				<!-- QR share -->
+				<div class="card">
+					<div class="qr-row">
+						<span>Share this app</span>
+						<button class="btn-qr" id="btn-qr">Show QR Code</button>
+					</div>
+					<div id="qr-container" aria-live="polite">
+						<div id="qrcode"></div>
+						<p class="qr-url" id="qr-url"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Install (revealed by beforeinstallprompt) -->
+		<button id="btn-install">📲 Install app</button>
+
+		<footer></footer>
+
+	</main>
+
+
+		<script>
+			if ("serviceWorker" in navigator) {
+				window.addEventListener("load", () => {
+					navigator.serviceWorker.register("./sw.js")
+						.then(reg => console.log("SW registered", reg))
+						.catch(err => console.error("SW failed", err));
+				});
+			}
+		</script>
+	</body>
+</html>
