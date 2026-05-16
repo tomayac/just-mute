@@ -498,6 +498,16 @@
 				<option value="sv">Svenska</option>
 				<option value="tr">Türkçe</option>
 				<option value="uk">Українська</option>
+				<option value="ar">العربية</option>
+				<option value="he">עברית</option>
+				<option value="hi">हिन्दी</option>
+				<option value="id">Bahasa Indonesia</option>
+				<option value="ja">日本語</option>
+				<option value="ko">한국어</option>
+				<option value="th">ภาษาไทย</option>
+				<option value="vi">Tiếng Việt</option>
+				<option value="zh">中文（简体）</option>
+				<option value="zhtw">中文（繁體）</option>
 			</select>
 		</div>
 
@@ -557,7 +567,10 @@
 				de:"de-DE",el:"el-GR",hu:"hu-HU",it:"it-IT",lv:"lv-LV",
 				lt:"lt-LT",nb:"nb-NO",pl:"pl-PL",pt:"pt-PT",ro:"ro-RO",
 				ru:"ru-RU",sk:"sk-SK",sl:"sl-SI",es:"es-ES",sv:"sv-SE",
-				tr:"tr-TR",uk:"uk-UA"
+				tr:"tr-TR",uk:"uk-UA",
+				ar:"ar-SA",he:"he-IL",hi:"hi-IN",id:"id-ID",
+				ja:"ja-JP",ko:"ko-KR",th:"th-TH",vi:"vi-VN",
+				zh:"zh-CN",zhtw:"zh-TW"
 			};
 
 			const TRANSPORT_PREP = {
@@ -587,7 +600,17 @@
 				es:{train:"en el tren",bus:"en el autobús",tram:"en el tranvía",plane:"en el avión",subway:"en el metro",ferry:"en el ferry",cablecar:"en el teleférico"},
 				sv:{train:"på tåget",bus:"på bussen",tram:"på spårvagnen",plane:"på planet",subway:"på tunnelbanan",ferry:"på färjan",cablecar:"i linbanan"},
 				tr:{train:"Trende",bus:"Otobüste",tram:"Tramvayda",plane:"Uçakta",subway:"Metroda",ferry:"Feribotta",cablecar:"Teleferik kabininde"},
-				uk:{train:"у поїзді",bus:"в автобусі",tram:"у трамваї",plane:"у літаку",subway:"у метро",ferry:"на поромі",cablecar:"у канатній дорозі"}
+				uk:{train:"у поїзді",bus:"в автобусі",tram:"у трамваї",plane:"у літаку",subway:"у метро",ferry:"на поромі",cablecar:"у канатній дорозі"},
+				ar:{train:"في القطار",bus:"في الحافلة",tram:"في الترام",plane:"في الطائرة",subway:"في المترو",ferry:"في العبّارة",cablecar:"في التلفريك"},
+				he:{train:"ברכבת",bus:"באוטובוס",tram:"בטרם",plane:"במטוס",subway:"ברכבת התחתית",ferry:"במעבורת",cablecar:"בטלפריק"},
+				hi:{train:"ट्रेन में",bus:"बस में",tram:"ट्राम में",plane:"हवाई जहाज़ में",subway:"मेट्रो में",ferry:"फ़ेरी में",cablecar:"केबल कार में"},
+				id:{train:"di kereta",bus:"di bus",tram:"di trem",plane:"di pesawat",subway:"di kereta bawah tanah",ferry:"di feri",cablecar:"di kereta gantung"},
+				ja:{train:"電車の中で",bus:"バスの中で",tram:"路面電車の中で",plane:"飛行機の中で",subway:"地下鉄の中で",ferry:"フェリーの中で",cablecar:"ケーブルカーの中で"},
+				ko:{train:"기차 안에서",bus:"버스 안에서",tram:"트램 안에서",plane:"비행기 안에서",subway:"지하철 안에서",ferry:"페리 안에서",cablecar:"케이블카 안에서"},
+				th:{train:"บนรถไฟ",bus:"บนรถบัส",tram:"บนรถราง",plane:"บนเครื่องบิน",subway:"บนรถไฟฟ้าใต้ดิน",ferry:"บนเรือเฟอร์รี่",cablecar:"บนกระเช้าไฟฟ้า"},
+				vi:{train:"trên tàu",bus:"trên xe buýt",tram:"trên tàu điện",plane:"trên máy bay",subway:"trên tàu điện ngầm",ferry:"trên phà",cablecar:"trên cáp treo"},
+				zh:{train:"在火车上",bus:"在公交车上",tram:"在有轨电车上",plane:"在飞机上",subway:"在地铁里",ferry:"在渡轮上",cablecar:"在缆车上"},
+				zhtw:{train:"在火車上",bus:"在公車上",tram:"在有軌電車上",plane:"在飛機上",subway:"在捷運裡",ferry:"在渡輪上",cablecar:"在纜車上"}
 			};
 
 			const PHRASE_TEMPLATES = {
@@ -617,7 +640,17 @@
 				es:(p)=>`Nadie ${p} quiere escuchar lo que suena en tu teléfono. ¿Puedes silenciarlo?`,
 				sv:(p)=>`Ingen ${p} vill höra vad som spelas på din telefon. Kan du stänga av ljudet?`,
 				tr:(p)=>`${p} kimse telefonunuzdaki sesi duymak istemiyor. Lütfen sessize alır mısınız?`,
-				uk:(p)=>`Ніхто ${p} не хоче чути те, що грає у вашому телефоні. Будь ласка, поставте його на беззвучний режим.`
+				uk:(p)=>`Ніхто ${p} не хоче чути те, що грає у вашому телефоні. Будь ласка, поставте його на беззвучний режим.`,
+				ar:(p)=>`لا أحد ${p} يريد سماع ما يصدر من هاتفك. هل يمكنك كتم الصوت؟`,
+				he:(p)=>`אף אחד ${p} לא רוצה לשמוע מה מתנגן בטלפון שלך. אפשר להעביר לשקט?`,
+				hi:(p)=>`${p} कोई भी आपके फ़ोन की आवाज़ नहीं सुनना चाहता। क्या आप इसे साइलेंट मोड पर रख सकते हैं?`,
+				id:(p)=>`Tidak ada yang ${p} ingin mendengar apa yang diputar di ponsel Anda. Bisakah Anda mengaktifkan mode senyap?`,
+				ja:(p)=>`${p}、誰もあなたのスマートフォンから流れる音を聞きたくありません。マナーモードにしていただけますか？`,
+				ko:(p)=>`${p} 아무도 당신의 휴대폰에서 나오는 소리를 듣고 싶지 않습니다. 무음으로 해주시겠어요?`,
+				th:(p)=>`ไม่มีใคร${p}อยากฟังเสียงจากโทรศัพท์ของคุณ กรุณาปิดเสียงด้วยนะคะ`,
+				vi:(p)=>`Không ai ${p} muốn nghe những gì đang phát trên điện thoại của bạn. Bạn có thể tắt tiếng không?`,
+				zh:(p)=>`${p}，没有人想听您手机播放的声音。请把手机调成静音好吗？`,
+				zhtw:(p)=>`${p}，沒有人想聽您手機播放的聲音。請把手機調成靜音好嗎？`
 			};
 
 			function getDefaultPhrase(lang, transport) {
@@ -1058,6 +1091,168 @@
 					noVoices:"Для цієї мови немає доступних голосів",loadingVoices:"Завантаження голосів…",
 					toDarkMode:"Переключити на темну тему",toLightMode:"Переключити на світлу тему",
 					install:"📲 Встановити додаток"
+				},
+				ar:{
+					dir:"rtl",
+					sub:"تنبيه مهذّب على وسائل النقل العام",
+					phraseLabel:"ما يجب قوله",defaultMode:"افتراضي",customMode:"مخصّص",
+					customPlaceholder:"اكتب عبارتك المخصّصة…",
+					defaultCustomPhrase:"هل يمكنك كتم صوت هاتفك من فضلك؟",
+					where:"أين أنت الآن؟",
+					tn:{train:"قطار",bus:"حافلة",tram:"ترام",plane:"طائرة",subway:"مترو",ferry:"عبّارة",cablecar:"تلفريك"},
+					lang:"اللغة",voice:"الصوت",interval:"فترة التكرار",
+					fast:"سريع",slow:"بطيء",
+					stopped:"⏹ متوقف",loading:"⏳ جارٍ التحميل…",speaking:"🔊 يتكلم…",paused:"⏸ متوقف مؤقتاً…",
+					play:"▶ تشغيل",stop:"⏹ إيقاف",
+					share:"مشاركة هذا التطبيق",showQr:"إظهار رمز QR",hideQr:"إخفاء رمز QR",
+					noVoices:"لا توجد أصوات متاحة لهذه اللغة",loadingVoices:"جارٍ تحميل الأصوات…",
+					toDarkMode:"التبديل إلى الوضع المظلم",toLightMode:"التبديل إلى الوضع المضيء",
+					install:"📲 تثبيت التطبيق"
+				},
+				he:{
+					dir:"rtl",
+					sub:"תזכורת מנומסת בתחבורה הציבורית",
+					phraseLabel:"מה לומר",defaultMode:"ברירת מחדל",customMode:"מותאם אישית",
+					customPlaceholder:"הקלד את הביטוי המותאם אישית שלך…",
+					defaultCustomPhrase:"אפשר להעביר את הטלפון לשקט, בבקשה?",
+					where:"במה אתה נוסע?",
+					tn:{train:"רכבת",bus:"אוטובוס",tram:"טרם",plane:"מטוס",subway:"רכבת תחתית",ferry:"מעבורת",cablecar:"טלפריק"},
+					lang:"שפה",voice:"קול",interval:"מרווח לולאה",
+					fast:"מהיר",slow:"איטי",
+					stopped:"⏹ עצור",loading:"⏳ טוען…",speaking:"🔊 מדבר…",paused:"⏸ מושהה בין לולאות…",
+					play:"▶ הפעל",stop:"⏹ עצור",
+					share:"שתף אפליקציה זו",showQr:"הצג קוד QR",hideQr:"הסתר קוד QR",
+					noVoices:"אין קולות זמינים לשפה זו",loadingVoices:"טוען קולות…",
+					toDarkMode:"עבור למצב כהה",toLightMode:"עבור למצב בהיר",
+					install:"📲 התקן אפליקציה"
+				},
+				hi:{
+					sub:"सार्वजनिक परिवहन पर एक विनम्र अनुरोध",
+					phraseLabel:"क्या कहना है",defaultMode:"डिफ़ॉल्ट",customMode:"कस्टम",
+					customPlaceholder:"अपना कस्टम वाक्यांश टाइप करें…",
+					defaultCustomPhrase:"क्या आप अपने फ़ोन को साइलेंट कर सकते हैं, कृपया?",
+					where:"आप किस पर सफ़र कर रहे हैं?",
+					tn:{train:"ट्रेन",bus:"बस",tram:"ट्राम",plane:"विमान",subway:"मेट्रो",ferry:"फ़ेरी",cablecar:"केबल कार"},
+					lang:"भाषा",voice:"आवाज़",interval:"लूप अंतराल",
+					fast:"तेज़",slow:"धीमा",
+					stopped:"⏹ रुका हुआ",loading:"⏳ लोड हो रहा है…",speaking:"🔊 बोल रहा है…",paused:"⏸ लूप के बीच रुका…",
+					play:"▶ चलाएँ",stop:"⏹ रोकें",
+					share:"यह ऐप शेयर करें",showQr:"QR कोड दिखाएँ",hideQr:"QR कोड छुपाएँ",
+					noVoices:"इस भाषा के लिए कोई आवाज़ उपलब्ध नहीं",loadingVoices:"आवाज़ें लोड हो रही हैं…",
+					toDarkMode:"डार्क मोड पर जाएँ",toLightMode:"लाइट मोड पर जाएँ",
+					install:"📲 ऐप इंस्टॉल करें"
+				},
+				id:{
+					sub:"Pengingat sopan di transportasi umum",
+					phraseLabel:"Yang akan dikatakan",defaultMode:"Bawaan",customMode:"Kustom",
+					customPlaceholder:"Ketik kalimat kustom Anda…",
+					defaultCustomPhrase:"Bisakah Anda mengaktifkan mode senyap ponsel Anda?",
+					where:"Anda naik apa?",
+					tn:{train:"Kereta",bus:"Bus",tram:"Trem",plane:"Pesawat",subway:"Kereta Bawah Tanah",ferry:"Feri",cablecar:"Kereta Gantung"},
+					lang:"Bahasa",voice:"Suara",interval:"Interval putaran",
+					fast:"Cepat",slow:"Lambat",
+					stopped:"⏹ Berhenti",loading:"⏳ Memuat…",speaking:"🔊 Berbicara…",paused:"⏸ Jeda antar putaran…",
+					play:"▶ Putar",stop:"⏹ Hentikan",
+					share:"Bagikan aplikasi ini",showQr:"Tampilkan kode QR",hideQr:"Sembunyikan kode QR",
+					noVoices:"Tidak ada suara tersedia untuk bahasa ini",loadingVoices:"Memuat suara…",
+					toDarkMode:"Beralih ke mode gelap",toLightMode:"Beralih ke mode terang",
+					install:"📲 Pasang aplikasi"
+				},
+				ja:{
+					sub:"公共交通機関でのマナーモードのお願い",
+					phraseLabel:"言うこと",defaultMode:"デフォルト",customMode:"カスタム",
+					customPlaceholder:"カスタムフレーズを入力…",
+					defaultCustomPhrase:"すみません、スマートフォンをマナーモードにしていただけますか？",
+					where:"どの交通機関に乗っていますか？",
+					tn:{train:"電車",bus:"バス",tram:"路面電車",plane:"飛行機",subway:"地下鉄",ferry:"フェリー",cablecar:"ケーブルカー"},
+					lang:"言語",voice:"音声",interval:"ループ間隔",
+					fast:"速い",slow:"遅い",
+					stopped:"⏹ 停止",loading:"⏳ 読み込み中…",speaking:"🔊 再生中…",paused:"⏸ ループ間の一時停止…",
+					play:"▶ 再生",stop:"⏹ 停止",
+					share:"このアプリをシェア",showQr:"QRコードを表示",hideQr:"QRコードを非表示",
+					noVoices:"この言語に利用可能な音声はありません",loadingVoices:"音声を読み込み中…",
+					toDarkMode:"ダークモードに切り替え",toLightMode:"ライトモードに切り替え",
+					install:"📲 アプリをインストール"
+				},
+				ko:{
+					sub:"대중교통에서의 정중한 안내",
+					phraseLabel:"말할 내용",defaultMode:"기본",customMode:"사용자 정의",
+					customPlaceholder:"사용자 정의 문구를 입력하세요…",
+					defaultCustomPhrase:"죄송하지만 휴대폰을 무음으로 해주시겠어요?",
+					where:"어디에 타고 계신가요?",
+					tn:{train:"기차",bus:"버스",tram:"트램",plane:"비행기",subway:"지하철",ferry:"페리",cablecar:"케이블카"},
+					lang:"언어",voice:"음성",interval:"루프 간격",
+					fast:"빠름",slow:"느림",
+					stopped:"⏹ 정지됨",loading:"⏳ 로딩 중…",speaking:"🔊 재생 중…",paused:"⏸ 루프 사이 일시정지…",
+					play:"▶ 재생",stop:"⏹ 정지",
+					share:"앱 공유하기",showQr:"QR 코드 보기",hideQr:"QR 코드 숨기기",
+					noVoices:"이 언어에 사용 가능한 음성이 없습니다",loadingVoices:"음성 로딩 중…",
+					toDarkMode:"다크 모드로 전환",toLightMode:"라이트 모드로 전환",
+					install:"📲 앱 설치"
+				},
+				th:{
+					sub:"การเตือนอย่างสุภาพบนระบบขนส่งสาธารณะ",
+					phraseLabel:"สิ่งที่จะพูด",defaultMode:"ค่าเริ่มต้น",customMode:"กำหนดเอง",
+					customPlaceholder:"พิมพ์ประโยคที่กำหนดเอง…",
+					defaultCustomPhrase:"ช่วยปิดเสียงโทรศัพท์ด้วยได้ไหมคะ?",
+					where:"คุณกำลังนั่งอะไรอยู่?",
+					tn:{train:"รถไฟ",bus:"รถบัส",tram:"รถราง",plane:"เครื่องบิน",subway:"รถไฟฟ้าใต้ดิน",ferry:"เรือเฟอร์รี่",cablecar:"กระเช้าไฟฟ้า"},
+					lang:"ภาษา",voice:"เสียง",interval:"ช่วงเวลาลูป",
+					fast:"เร็ว",slow:"ช้า",
+					stopped:"⏹ หยุดแล้ว",loading:"⏳ กำลังโหลด…",speaking:"🔊 กำลังพูด…",paused:"⏸ หยุดระหว่างลูป…",
+					play:"▶ เล่น",stop:"⏹ หยุด",
+					share:"แชร์แอปนี้",showQr:"แสดงรหัส QR",hideQr:"ซ่อนรหัส QR",
+					noVoices:"ไม่มีเสียงสำหรับภาษานี้",loadingVoices:"กำลังโหลดเสียง…",
+					toDarkMode:"เปลี่ยนเป็นโหมดมืด",toLightMode:"เปลี่ยนเป็นโหมดสว่าง",
+					install:"📲 ติดตั้งแอป"
+				},
+				vi:{
+					sub:"Nhắc nhở lịch sự trên phương tiện giao thông công cộng",
+					phraseLabel:"Nội dung thông báo",defaultMode:"Mặc định",customMode:"Tùy chỉnh",
+					customPlaceholder:"Nhập câu tùy chỉnh của bạn…",
+					defaultCustomPhrase:"Bạn có thể tắt tiếng điện thoại không, làm ơn?",
+					where:"Bạn đang đi phương tiện gì?",
+					tn:{train:"Tàu",bus:"Xe buýt",tram:"Tàu điện",plane:"Máy bay",subway:"Tàu điện ngầm",ferry:"Phà",cablecar:"Cáp treo"},
+					lang:"Ngôn ngữ",voice:"Giọng đọc",interval:"Khoảng lặp",
+					fast:"Nhanh",slow:"Chậm",
+					stopped:"⏹ Đã dừng",loading:"⏳ Đang tải…",speaking:"🔊 Đang phát…",paused:"⏸ Tạm dừng giữa các vòng…",
+					play:"▶ Phát",stop:"⏹ Dừng",
+					share:"Chia sẻ ứng dụng này",showQr:"Hiện mã QR",hideQr:"Ẩn mã QR",
+					noVoices:"Không có giọng đọc nào cho ngôn ngữ này",loadingVoices:"Đang tải giọng đọc…",
+					toDarkMode:"Chuyển sang chế độ tối",toLightMode:"Chuyển sang chế độ sáng",
+					install:"📲 Cài đặt ứng dụng"
+				},
+				zh:{
+					sub:"乘坐公共交通时的温馨提示",
+					phraseLabel:"播报内容",defaultMode:"默认",customMode:"自定义",
+					customPlaceholder:"输入自定义短语…",
+					defaultCustomPhrase:"请把您的手机调成静音，谢谢。",
+					where:"您在乘坐什么交通工具？",
+					tn:{train:"火车",bus:"公交车",tram:"有轨电车",plane:"飞机",subway:"地铁",ferry:"渡轮",cablecar:"缆车"},
+					lang:"语言",voice:"声音",interval:"循环间隔",
+					fast:"快",slow:"慢",
+					stopped:"⏹ 已停止",loading:"⏳ 加载中…",speaking:"🔊 播放中…",paused:"⏸ 循环间暂停…",
+					play:"▶ 播放",stop:"⏹ 停止",
+					share:"分享此应用",showQr:"显示二维码",hideQr:"隐藏二维码",
+					noVoices:"该语言没有可用的语音",loadingVoices:"加载语音中…",
+					toDarkMode:"切换到深色模式",toLightMode:"切换到浅色模式",
+					install:"📲 安装应用"
+				},
+				zhtw:{
+					sub:"搭乘大眾運輸時的貼心提示",
+					phraseLabel:"播報內容",defaultMode:"預設",customMode:"自訂",
+					customPlaceholder:"輸入自訂短語…",
+					defaultCustomPhrase:"請把您的手機調成靜音，謝謝。",
+					where:"您在乘坐什麼交通工具？",
+					tn:{train:"火車",bus:"公車",tram:"有軌電車",plane:"飛機",subway:"捷運",ferry:"渡輪",cablecar:"纜車"},
+					lang:"語言",voice:"聲音",interval:"循環間隔",
+					fast:"快",slow:"慢",
+					stopped:"⏹ 已停止",loading:"⏳ 載入中…",speaking:"🔊 播放中…",paused:"⏸ 循環間暫停…",
+					play:"▶ 播放",stop:"⏹ 停止",
+					share:"分享此應用",showQr:"顯示二維碼",hideQr:"隱藏二維碼",
+					noVoices:"該語言沒有可用的語音",loadingVoices:"載入語音中…",
+					toDarkMode:"切換到深色模式",toLightMode:"切換到淺色模式",
+					install:"📲 安裝應用"
 				}
 			};
 
@@ -1388,7 +1583,9 @@
 
 			function applyUILanguage(lang) {
 				S = UI_STRINGS[lang] || UI_STRINGS.en;
-				document.documentElement.lang = lang;
+				document.documentElement.lang = LOCALES[lang] || lang;
+				document.documentElement.dir = S.dir || "ltr";
+				customPhraseEl.dir = S.dir || "ltr";
 
 				document.querySelector(".subtitle").textContent = S.sub;
 				document.getElementById("phrase-label").textContent    = S.phraseLabel;
@@ -1422,8 +1619,10 @@
 			function getInitialLang() {
 				const saved = localStorage.getItem("lang");
 				if (saved && UI_STRINGS[saved]) return saved;
-				const nav = (navigator.language || "en").split("-")[0].toLowerCase();
-				const mapped = nav === "no" ? "nb" : nav;
+				const navFull = (navigator.language || "en").toLowerCase();
+				const navBase = navFull.split("-")[0];
+				if (navFull === "zh-tw" || navFull === "zh-hant") return "zhtw";
+				const mapped = navBase === "no" ? "nb" : navBase;
 				return UI_STRINGS[mapped] ? mapped : "en";
 			}
 
