@@ -210,7 +210,6 @@ select:focus, button:focus { outline: none; border-color: var(--primary-light); 
 
 /* Swipeable transport strip */
 #transport-section {
-	margin: 0 -20px;
 	overflow: hidden;
 }
 
@@ -218,11 +217,11 @@ select:focus, button:focus { outline: none; border-color: var(--primary-light); 
 	display: flex;
 	gap: 8px;
 	overflow-x: auto;
+	overflow-y: hidden;
 	scroll-snap-type: x mandatory;
 	scrollbar-width: none;
 	-webkit-overflow-scrolling: touch;
-	padding: 0 20px 4px 20px;
-	scroll-padding-left: 20px;
+	padding-bottom: 4px;
 }
 
 .transport-grid::-webkit-scrollbar { display: none; }
