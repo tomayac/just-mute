@@ -331,7 +331,7 @@ select:focus, button:focus { outline: none; border-color: var(--primary-light); 
 }
 
 .btn-stop {
-	background: var(--danger);
+	background: #334155;
 	color: #fff;
 	border: none;
 	font-weight: 700;
@@ -339,7 +339,7 @@ select:focus, button:focus { outline: none; border-color: var(--primary-light); 
 	padding: 16px;
 }
 
-.btn-stop:hover:not(:disabled) { background: #dc2626; }
+.btn-stop:hover:not(:disabled) { background: #1e293b; }
 
 .btn-stop:disabled {
 	opacity: 0.35;
@@ -413,16 +413,16 @@ select:focus, button:focus { outline: none; border-color: var(--primary-light); 
 	display: none;
 	width: 100%;
 	margin-bottom: 16px;
-	background: transparent;
-	border: 2px solid var(--primary);
-	color: var(--primary);
+	background: var(--primary);
+	border: none;
+	color: #fff;
 	font-weight: 700;
 	font-size: 1rem;
 	padding: 14px 16px;
 }
 
 #btn-install.visible { display: block; }
-#btn-install:hover { background: var(--primary); color: #fff; }
+#btn-install:hover { background: var(--primary-light); }
 
 #theme-toggle {
 	flex-shrink: 0;
