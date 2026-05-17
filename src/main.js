@@ -815,7 +815,7 @@ function populateVoiceOptions() {
 		const opt = document.createElement("option");
 		opt.value = idx;
 		const star = voice.name.startsWith("Google") ? "⭐ " : "";
-		const shortName = voice.name.replace(/\s*\([^)]*\)/g, '').trim() || voice.name;
+		const shortName = voice.name.replace(/\s*\(.*$/, '').trim() || voice.name;
 		opt.textContent = `${star}${shortName} (${voice.lang})`;
 		voiceSelect.appendChild(opt);
 	});
