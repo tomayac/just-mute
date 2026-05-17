@@ -754,6 +754,7 @@ let currentTransport = "train";
 let currentLang = "en";
 let intervalSeconds = 15;
 let speakGen = 0;
+let countdownTimer = null;
 
 // DOM refs
 const langSelect      = document.getElementById("lang-select");
@@ -926,13 +927,29 @@ function setPlayState(state) {
 		btnPlay.disabled    = true;
 		btnStop.disabled    = false;
 		statusDisplay.className   = "status-display stopped";
-		statusDisplay.textContent = S.paused;
 	}
+}
+
+function clearCountdown() {
+	clearInterval(countdownTimer);
+	countdownTimer = null;
+}
+
+function startCountdown(seconds) {
+	clearCountdown();
+	let remaining = seconds;
+	const tick = () => {
+		statusDisplay.textContent = `${S.paused.replace(/…$/, '')} — ${remaining}s`;
+		if (remaining > 0) remaining--;
+	};
+	tick();
+	countdownTimer = setInterval(tick, 1000);
 }
 
 // ── Speech ───────────────────────────────────────────────────────────
 
 function speak() {
+	clearCountdown();
 	clearTimeout(loopTimer);
 	loopTimer = null;
 	speechSynthesis.cancel();
@@ -960,6 +977,7 @@ function speak() {
 	utterance.onend = () => {
 		if (!isPlaying || gen !== speakGen) return;
 		setPlayState("paused");
+		startCountdown(intervalSeconds);
 		loopTimer = setTimeout(() => {
 			if (isPlaying && gen === speakGen) speak();
 		}, intervalSeconds * 1000);
@@ -980,6 +998,7 @@ function startLoop() {
 }
 
 function stopLoop() {
+	clearCountdown();
 	isPlaying = false;
 	clearTimeout(loopTimer);
 	loopTimer = null;
