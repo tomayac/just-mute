@@ -182,6 +182,8 @@ select, button {
 	transition: border-color 0.2s, background 0.2s, color 0.2s, opacity 0.2s;
 }
 
+select { padding-inline-end: 40px; }
+
 select:focus, button:focus { outline: none; border-color: var(--primary-light); }
 
 /* Segmented mode toggle */
