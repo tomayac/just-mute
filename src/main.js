@@ -12,6 +12,79 @@ const LOCALES = {
 	zh:"zh-CN",zhtw:"zh-TW"
 };
 
+const KOKORO_VOICE_MAP = {
+	en: [
+		{ id:"af_heart",    name:"Heart",        gender:"F" },
+		{ id:"af_bella",    name:"Bella",        gender:"F" },
+		{ id:"af_nicole",   name:"Nicole",       gender:"F" },
+		{ id:"af_aoede",    name:"Aoede",        gender:"F" },
+		{ id:"af_kore",     name:"Kore",         gender:"F" },
+		{ id:"af_sarah",    name:"Sarah",        gender:"F" },
+		{ id:"af_nova",     name:"Nova",         gender:"F" },
+		{ id:"af_sky",      name:"Sky",          gender:"F" },
+		{ id:"af_alloy",    name:"Alloy",        gender:"F" },
+		{ id:"af_jessica",  name:"Jessica",      gender:"F" },
+		{ id:"af_river",    name:"River",        gender:"F" },
+		{ id:"am_fenrir",   name:"Fenrir",       gender:"M" },
+		{ id:"am_michael",  name:"Michael",      gender:"M" },
+		{ id:"am_puck",     name:"Puck",         gender:"M" },
+		{ id:"am_echo",     name:"Echo",         gender:"M" },
+		{ id:"am_eric",     name:"Eric",         gender:"M" },
+		{ id:"am_liam",     name:"Liam",         gender:"M" },
+		{ id:"am_onyx",     name:"Onyx",         gender:"M" },
+		{ id:"am_adam",     name:"Adam",         gender:"M" },
+		{ id:"am_santa",    name:"Santa",        gender:"M" },
+		{ id:"bf_emma",     name:"Emma (GB)",    gender:"F" },
+		{ id:"bf_isabella", name:"Isabella (GB)",gender:"F" },
+		{ id:"bf_alice",    name:"Alice (GB)",   gender:"F" },
+		{ id:"bf_lily",     name:"Lily (GB)",    gender:"F" },
+		{ id:"bm_fable",    name:"Fable (GB)",   gender:"M" },
+		{ id:"bm_george",   name:"George (GB)",  gender:"M" },
+		{ id:"bm_lewis",    name:"Lewis (GB)",   gender:"M" },
+		{ id:"bm_daniel",   name:"Daniel (GB)",  gender:"M" },
+	],
+	es: [
+		{ id:"ef_dora",     name:"Dora",         gender:"F" },
+		{ id:"em_alex",     name:"Alex",         gender:"M" },
+		{ id:"em_santa",    name:"Santa",        gender:"M" },
+	],
+	fr: [
+		{ id:"ff_siwis",    name:"Siwis",        gender:"F" },
+	],
+	hi: [
+		{ id:"hf_alpha",    name:"Alpha",        gender:"F" },
+		{ id:"hf_beta",     name:"Beta",         gender:"F" },
+		{ id:"hm_omega",    name:"Omega",        gender:"M" },
+		{ id:"hm_psi",      name:"Psi",          gender:"M" },
+	],
+	it: [
+		{ id:"if_sara",     name:"Sara",         gender:"F" },
+		{ id:"im_nicola",   name:"Nicola",       gender:"M" },
+	],
+	ja: [
+		{ id:"jf_alpha",      name:"Alpha",      gender:"F" },
+		{ id:"jf_gongitsune", name:"Gongitsune", gender:"F" },
+		{ id:"jf_nezumi",     name:"Nezumi",     gender:"F" },
+		{ id:"jf_tebukuro",   name:"Tebukuro",   gender:"F" },
+		{ id:"jm_kumo",       name:"Kumo",       gender:"M" },
+	],
+	pt: [
+		{ id:"pf_dora",     name:"Dora (BR)",    gender:"F" },
+		{ id:"pm_alex",     name:"Alex (BR)",    gender:"M" },
+		{ id:"pm_santa",    name:"Santa (BR)",   gender:"M" },
+	],
+	zh: [
+		{ id:"zf_xiaobei",  name:"Xiaobei",      gender:"F" },
+		{ id:"zf_xiaoni",   name:"Xiaoni",       gender:"F" },
+		{ id:"zf_xiaoxiao", name:"Xiaoxiao",     gender:"F" },
+		{ id:"zf_xiaoyi",   name:"Xiaoyi",       gender:"F" },
+		{ id:"zm_yunjian",  name:"Yunjian",      gender:"M" },
+		{ id:"zm_yunxi",    name:"Yunxi",        gender:"M" },
+		{ id:"zm_yunxia",   name:"Yunxia",       gender:"M" },
+		{ id:"zm_yunyang",  name:"Yunyang",      gender:"M" },
+	],
+};
+
 const TRANSPORT_PREP = {
 	en:{train:"on the train",bus:"on the bus",tram:"on the tram",plane:"on the plane",subway:"on the subway",ferry:"on the ferry",cablecar:"on the cable car"},
 	bg:{train:"във влака",bus:"в автобуса",tram:"в трамвая",plane:"в самолета",subway:"в метрото",ferry:"на ферибота",cablecar:"на въжената линия"},
@@ -755,6 +828,11 @@ let currentLang = "en";
 let intervalSeconds = 15;
 let speakGen = 0;
 let countdownTimer = null;
+let kokoroWorker = null;
+let kokoroRequests = new Map();
+let kokoroRequestId = 0;
+let kokoroSource = null;
+let kokoroAudioCtx = null;
 
 // DOM refs
 const langSelect      = document.getElementById("lang-select");
@@ -791,7 +869,9 @@ function populateVoiceOptions() {
 	const lang = langSelect.value;
 	const langCode = LOCALES[lang].split("-")[0];
 
-	if (voices.length === 0) {
+	const kokoroForLang = KOKORO_VOICE_MAP[lang] || [];
+
+	if (voices.length === 0 && kokoroForLang.length === 0) {
 		voiceSelect.innerHTML = `<option value="">${S.loadingVoices}</option>`;
 		return;
 	}
@@ -805,33 +885,63 @@ function populateVoiceOptions() {
 		});
 
 	voiceSelect.innerHTML = "";
-	if (matching.length === 0) {
+
+	if (matching.length === 0 && kokoroForLang.length === 0) {
 		voiceSelect.innerHTML = `<option value="">${S.noVoices}</option>`;
 		return;
 	}
 
-	matching.forEach(voice => {
-		const idx = voices.indexOf(voice);
-		const opt = document.createElement("option");
-		opt.value = idx;
-		const star = voice.name.startsWith("Google") ? "⭐ " : "";
-		const shortName = voice.name.replace(/\s*\(.*$/, '').trim() || voice.name;
-		opt.textContent = `${star}${shortName} (${voice.lang})`;
-		voiceSelect.appendChild(opt);
-	});
+	if (kokoroForLang.length > 0) {
+		const grp = document.createElement("optgroup");
+		grp.label = "✨ Premium (Kokoro AI)";
+		kokoroForLang.forEach(v => {
+			const opt = document.createElement("option");
+			opt.value = `kokoro:${v.id}`;
+			const g = v.gender === "F" ? "♀" : "♂";
+			opt.textContent = `✨ ${v.name} (${g})`;
+			grp.appendChild(opt);
+		});
+		voiceSelect.appendChild(grp);
+	}
 
-	const savedName = localStorage.getItem("voice_" + lang);
-	if (savedName) {
-		const saved = matching.find(v => v.name === savedName);
-		if (saved) { voiceSelect.value = voices.indexOf(saved); return; }
+	if (matching.length > 0) {
+		const grp = document.createElement("optgroup");
+		grp.label = "System Voices";
+		matching.forEach(voice => {
+			const idx = voices.indexOf(voice);
+			const opt = document.createElement("option");
+			opt.value = idx;
+			const star = voice.name.startsWith("Google") ? "⭐ " : "";
+			const shortName = voice.name.replace(/\s*\(.*$/, '').trim() || voice.name;
+			opt.textContent = `${star}${shortName} (${voice.lang})`;
+			grp.appendChild(opt);
+		});
+		voiceSelect.appendChild(grp);
+	}
+
+	const savedVal = localStorage.getItem("voice_" + lang);
+	if (savedVal) {
+		if (savedVal.startsWith("kokoro:")) {
+			const found = kokoroForLang.find(v => `kokoro:${v.id}` === savedVal);
+			if (found) { voiceSelect.value = savedVal; return; }
+		} else {
+			const saved = matching.find(v => v.name === savedVal);
+			if (saved) { voiceSelect.value = voices.indexOf(saved); return; }
+		}
 	}
 	const google = matching.find(v => v.name.startsWith("Google"));
 	if (google) voiceSelect.value = voices.indexOf(google);
 }
 
 voiceSelect.addEventListener("change", () => {
-	const v = voices[voiceSelect.value];
-	if (v) localStorage.setItem("voice_" + currentLang, v.name);
+	const val = voiceSelect.value;
+	if (val.startsWith("kokoro:")) {
+		localStorage.setItem("voice_" + currentLang, val);
+	} else {
+		const v = voices[val];
+		if (v) localStorage.setItem("voice_" + currentLang, v.name);
+	}
+	if (isPlaying) speak();
 });
 
 // ── Phrase helpers ───────────────────────────────────────────────────
@@ -950,12 +1060,29 @@ function startCountdown(seconds) {
 
 // ── Speech ───────────────────────────────────────────────────────────
 
+function stopKokoroSource() {
+	if (kokoroSource) {
+		try { kokoroSource.stop(); } catch (_) {}
+		kokoroSource = null;
+	}
+}
+
 function speak() {
 	clearCountdown();
 	clearTimeout(loopTimer);
 	loopTimer = null;
 	speechSynthesis.cancel();
+	stopKokoroSource();
 
+	const voiceVal = voiceSelect.value;
+	if (voiceVal.startsWith("kokoro:")) {
+		speakKokoro(voiceVal.slice(7));
+	} else {
+		speakWebSpeech();
+	}
+}
+
+function speakWebSpeech() {
 	const phrase = getCurrentPhrase().trim();
 	if (!phrase) return;
 
@@ -990,6 +1117,94 @@ function speak() {
 	updateCurrentText();
 }
 
+function getKokoroWorker() {
+	if (kokoroWorker) return kokoroWorker;
+	kokoroWorker = new Worker(
+		new URL('./kokoro.worker.js', import.meta.url),
+		{ type: 'module' }
+	);
+	kokoroWorker.addEventListener('message', ({ data: { id, audio, sampling_rate, error } }) => {
+		const pending = kokoroRequests.get(id);
+		if (!pending) return;
+		kokoroRequests.delete(id);
+		if (error) pending.reject(new Error(error));
+		else pending.resolve({ audio, sampling_rate });
+	});
+	kokoroWorker.addEventListener('error', (e) => {
+		// The worker calls e.preventDefault() on internal errors and routes them
+		// back as message replies, so this only fires for worker bootstrap failures
+		// (e.g. syntax error during module parse) where the worker never ran.
+		e.preventDefault();
+		const msg = e.message || "Worker failed to start";
+		console.error("[main] kokoro worker error event:", msg);
+		for (const { reject } of kokoroRequests.values()) reject(new Error(msg));
+		kokoroRequests.clear();
+		kokoroWorker = null;
+	});
+	return kokoroWorker;
+}
+
+function generateWithKokoro(text, voice) {
+	return new Promise((resolve, reject) => {
+		const id = ++kokoroRequestId;
+		kokoroRequests.set(id, { resolve, reject });
+		getKokoroWorker().postMessage({ id, text, voice });
+	});
+}
+
+function getAudioContext() {
+	if (!kokoroAudioCtx || kokoroAudioCtx.state === "closed") {
+		kokoroAudioCtx = new AudioContext();
+	}
+	if (kokoroAudioCtx.state === "suspended") {
+		kokoroAudioCtx.resume();
+	}
+	return kokoroAudioCtx;
+}
+
+async function speakKokoro(voiceId) {
+	const phrase = getCurrentPhrase().trim();
+	if (!phrase) return;
+
+	setPlayState("loading");
+
+	const gen = ++speakGen;
+	try {
+		const output = await generateWithKokoro(phrase, voiceId);
+		if (gen !== speakGen || !isPlaying) return;
+
+		setPlayState("speaking");
+		updateCurrentText();
+
+		const ctx = getAudioContext();
+		const buf = ctx.createBuffer(1, output.audio.length, output.sampling_rate);
+		buf.copyToChannel(output.audio, 0);
+		const source = ctx.createBufferSource();
+		source.buffer = buf;
+		source.connect(ctx.destination);
+		kokoroSource = source;
+
+		source.onended = () => {
+			if (gen !== speakGen) return;
+			kokoroSource = null;
+			if (!isPlaying) return;
+			setPlayState("paused");
+			startCountdown(intervalSeconds);
+			loopTimer = setTimeout(() => {
+				if (isPlaying && gen === speakGen) speak();
+			}, intervalSeconds * 1000);
+		};
+
+		source.start();
+	} catch (err) {
+		if (gen === speakGen) {
+			console.error("Kokoro TTS error:", err);
+			isPlaying = false;
+			setPlayState("stopped");
+		}
+	}
+}
+
 function startLoop() {
 	if (phraseMode === "custom" && !customPhraseText.trim()) {
 		customPhraseEl.focus();
@@ -1005,6 +1220,7 @@ function stopLoop() {
 	clearTimeout(loopTimer);
 	loopTimer = null;
 	speechSynthesis.cancel();
+	stopKokoroSource();
 	setPlayState("stopped");
 }
 
