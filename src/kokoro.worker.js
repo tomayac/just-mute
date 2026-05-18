@@ -95,19 +95,42 @@ async function loadVoice(voiceId) {
 }
 
 async function toPhonemes(text, voiceId) {
-	// Pre-computed cache covers all default phrases for es/fr/hi/it/pt voices.
-	const cached = phonemeCache[voiceId[0]]?.[text];
-	if (cached) return cached;
+	// Split text by punctuation and process each clause separately.
+	// Punctuation (.?!,;:¿¡) is passed through to the tokenizer as-is so the
+	// Kokoro model can apply correct prosody: sentence pauses, rising intonation, etc.
+	const PUNCT_RE = /([.!?,;:\u00bf\u00a1]+)/;
+	const parts = text.split(PUNCT_RE);
+	const phoneParts = [];
 
-	// English voices (a/b prefix) use phonemizer directly.
-	// Non-English voices with uncached text fall back to en-us after stripping
-	// diacritics so eSpeak doesn't abort on accented characters.
-	const lang = PHONEME_LANG[voiceId[0]] ?? "en-us";
-	try {
-		return (await phonemize(text, lang)).join(" ");
-	} catch {
-		return (await phonemize(text.normalize("NFD").replace(/[\u0300-\u036f]/g, ""), "en-us")).join(" ");
+	for (let i = 0; i < parts.length; i++) {
+		if (i % 2 === 1) {
+			// Punctuation — keep for prosody
+			const p = parts[i].trim();
+			if (p) phoneParts.push(p);
+			continue;
+		}
+		const seg = parts[i].trim();
+		if (!seg) continue;
+
+		// Check pre-computed cache (covers non-English default clauses)
+		const cached = phonemeCache[voiceId[0]]?.[seg];
+		if (cached) { phoneParts.push(cached); continue; }
+
+		// Phonemize via eSpeak (English voices, or uncached custom text)
+		const lang = PHONEME_LANG[voiceId[0]] ?? "en-us";
+		try {
+			phoneParts.push((await phonemize(seg, lang)).join(" "));
+		} catch {
+			phoneParts.push((await phonemize(
+				seg.normalize("NFD").replace(/[\u0300-\u036f]/g, ""), "en-us"
+			)).join(" "));
+		}
 	}
+
+	// Join: remove spaces before punctuation, ensure single space after
+	return phoneParts.join(" ")
+		.replace(/\s+([.!?,;:\u00bf\u00a1])/g, "$1")
+		.trim();
 }
 
 async function generate(text, voiceId) {

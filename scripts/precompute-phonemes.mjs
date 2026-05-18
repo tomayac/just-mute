@@ -58,9 +58,13 @@ function cleanIPA(raw) {
     .trim();
 }
 
-const cache = {};  // { voicePrefix: { phraseText: ipaString } }
+// Cache keyed by text SEGMENT (without punctuation) so the worker can split
+// a phrase by punctuation, look up each clause, then re-interleave the
+// punctuation marks for correct prosody (pauses, rising intonation, etc.).
+const cache = {};  // { voicePrefix: { segmentText: ipaString } }
 
 const PREFIX_TO_LANG = { e: "es", f: "fr", h: "hi", i: "it", p: "pt" };
+const PUNCT_RE = /([.!?,;:¿¡]+)/;
 
 for (const [voicePrefix, espeakLang] of Object.entries(KOKORO_TO_ESPEAK)) {
   const langId = PREFIX_TO_LANG[voicePrefix];
@@ -71,14 +75,17 @@ for (const [voicePrefix, espeakLang] of Object.entries(KOKORO_TO_ESPEAK)) {
 
   for (const transport of TRANSPORTS) {
     const phrase = PHRASE_TEMPLATES[langId](TRANSPORT_PREP[langId][transport]);
-    const result = worker.synthesize_ipa(phrase);
-    const ipa = cleanIPA(result.ipa);
-    if (!ipa) {
-      console.warn(`  ⚠️  Empty IPA for ${langId}/${transport}`);
-      continue;
+    // Split phrase into alternating [text, punct, text, punct, ...] parts
+    const parts = phrase.split(PUNCT_RE);
+    for (let i = 0; i < parts.length; i += 2) {
+      const seg = parts[i].trim();
+      if (!seg || cache[voicePrefix][seg]) continue;  // empty or already stored
+      const result = worker.synthesize_ipa(seg);
+      const ipa = cleanIPA(result.ipa);
+      if (!ipa) { console.warn(`  Warning: empty IPA for "${seg}"`); continue; }
+      cache[voicePrefix][seg] = ipa;
+      console.log(`  ${langId}/${transport}: ${ipa.slice(0, 60)}...`);
     }
-    cache[voicePrefix][phrase] = ipa;
-    console.log(`  ${langId}/${transport}: ${ipa.slice(0, 60)}…`);
   }
 }
 
