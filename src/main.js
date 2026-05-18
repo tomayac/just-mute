@@ -959,6 +959,7 @@ function updateCurrentText() {
 		currentTextEl.textContent =
 			`${TRANSPORT_EMOJI[currentTransport]} ${getDefaultPhrase(currentLang, currentTransport)}`;
 	}
+	if (isPlaying) updateMediaMetadata();
 }
 
 // ── Mode toggle ──────────────────────────────────────────────────────
@@ -1039,6 +1040,12 @@ function setPlayState(state) {
 		btnPlay.disabled    = true;
 		btnStop.disabled    = false;
 		statusDisplay.className   = "status-display stopped";
+	}
+	if ("mediaSession" in navigator) {
+		navigator.mediaSession.playbackState =
+			state === "speaking" ? "playing" :
+			state === "loading"  ? "paused"  :
+			state === "paused"   ? "paused"  : "none";
 	}
 }
 
@@ -1205,12 +1212,38 @@ async function speakKokoro(voiceId) {
 	}
 }
 
+function updateMediaMetadata() {
+	if (!("mediaSession" in navigator)) return;
+	navigator.mediaSession.metadata = new MediaMetadata({
+		title:  getCurrentPhrase(),
+		artist: "Just Mute",
+		artwork: [{ src: "icon.svg", type: "image/svg+xml", sizes: "any" }],
+	});
+}
+
+function setupMediaSession() {
+	if (!("mediaSession" in navigator)) return;
+	navigator.mediaSession.setActionHandler("play",  () => startLoop());
+	navigator.mediaSession.setActionHandler("pause", () => stopLoop());
+	navigator.mediaSession.setActionHandler("stop",  () => stopLoop());
+	navigator.mediaSession.setActionHandler("nexttrack", () => {
+		if (!isPlaying) return;
+		clearCountdown();
+		clearTimeout(loopTimer);
+		loopTimer = null;
+		speechSynthesis.cancel();
+		stopKokoroSource();
+		speak();
+	});
+}
+
 function startLoop() {
 	if (phraseMode === "custom" && !customPhraseText.trim()) {
 		customPhraseEl.focus();
 		return;
 	}
 	isPlaying = true;
+	updateMediaMetadata();
 	speak();
 }
 
@@ -1226,6 +1259,7 @@ function stopLoop() {
 
 btnPlay.addEventListener("click", startLoop);
 btnStop.addEventListener("click", stopLoop);
+setupMediaSession();
 
 setInterval(() => {
 	if (isPlaying && speechSynthesis.speaking) {
