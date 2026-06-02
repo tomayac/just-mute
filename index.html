@@ -1,165 +1,260 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="theme-color" content="#d81b60">
-		<meta name="color-scheme" content="dark light">
-		<title>Just Mute</title>
-		<link rel="icon" href="icon.svg" type="image/svg+xml">
-		<link rel="manifest" href="manifest.json">
-		<link rel="stylesheet" href="./src/style.css">
-	</head>
-	<body>
-	<main>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#d81b60" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Just Mute</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <main>
+      <header class="app-header">
+        <div>
+          <h1>🤫 Just Mute</h1>
+          <p class="subtitle">
+            Passive-aggressive audio policing for public transport
+          </p>
+        </div>
+        <button
+          id="theme-toggle"
+          aria-label="Toggle dark mode"
+          title="Toggle dark mode"
+        >
+          🌙
+        </button>
+      </header>
 
-		<header class="app-header">
-			<div>
-				<h1>🤫 Just Mute</h1>
-				<p class="subtitle">Passive-aggressive audio policing for public transport</p>
-			</div>
-			<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-		</header>
+      <div class="layout">
+        <div class="col-left">
+          <!-- What to say card: Default (transport) or Custom phrase -->
+          <div class="card">
+            <label id="phrase-label">What to say</label>
+            <div class="mode-toggle" role="group">
+              <button class="mode-btn active" id="mode-default">Default</button>
+              <button class="mode-btn" id="mode-custom">Custom</button>
+            </div>
+            <div id="transport-section">
+              <div class="transport-grid" id="transport-grid" role="radiogroup">
+                <button
+                  class="transport-btn active"
+                  data-transport="train"
+                  aria-label="Train"
+                >
+                  🚆<span class="transport-label">Train</span>
+                </button>
+                <button
+                  class="transport-btn"
+                  data-transport="subway"
+                  aria-label="Subway"
+                >
+                  🚇<span class="transport-label">Subway</span>
+                </button>
+                <button
+                  class="transport-btn"
+                  data-transport="bus"
+                  aria-label="Bus"
+                >
+                  🚌<span class="transport-label">Bus</span>
+                </button>
+                <button
+                  class="transport-btn"
+                  data-transport="tram"
+                  aria-label="Tram"
+                >
+                  🚊<span class="transport-label">Tram</span>
+                </button>
+                <button
+                  class="transport-btn"
+                  data-transport="ferry"
+                  aria-label="Ferry"
+                >
+                  ⛴️<span class="transport-label">Ferry</span>
+                </button>
+                <button
+                  class="transport-btn"
+                  data-transport="plane"
+                  aria-label="Plane"
+                >
+                  ✈️<span class="transport-label">Plane</span>
+                </button>
+                <button
+                  class="transport-btn"
+                  data-transport="cablecar"
+                  aria-label="Cable car"
+                >
+                  🚡<span class="transport-label">Cable car</span>
+                </button>
+              </div>
+            </div>
+            <div id="custom-section" hidden>
+              <textarea
+                id="custom-phrase"
+                rows="3"
+                placeholder="Type your custom phrase…"
+              ></textarea>
+            </div>
+          </div>
 
-		<div class="layout">
-			<div class="col-left">
-				<!-- What to say card: Default (transport) or Custom phrase -->
-				<div class="card">
-					<label id="phrase-label">What to say</label>
-					<div class="mode-toggle" role="group">
-						<button class="mode-btn active" id="mode-default">Default</button>
-						<button class="mode-btn" id="mode-custom">Custom</button>
-					</div>
-					<div id="transport-section">
-						<div class="transport-grid" id="transport-grid" role="radiogroup">
-							<button class="transport-btn active" data-transport="train" aria-label="Train">🚆<span class="transport-label">Train</span></button>
-							<button class="transport-btn" data-transport="subway" aria-label="Subway">🚇<span class="transport-label">Subway</span></button>
-							<button class="transport-btn" data-transport="bus" aria-label="Bus">🚌<span class="transport-label">Bus</span></button>
-							<button class="transport-btn" data-transport="tram" aria-label="Tram">🚊<span class="transport-label">Tram</span></button>
-							<button class="transport-btn" data-transport="ferry" aria-label="Ferry">⛴️<span class="transport-label">Ferry</span></button>
-							<button class="transport-btn" data-transport="plane" aria-label="Plane">✈️<span class="transport-label">Plane</span></button>
-							<button class="transport-btn" data-transport="cablecar" aria-label="Cable car">🚡<span class="transport-label">Cable car</span></button>
-						</div>
-					</div>
-					<div id="custom-section" hidden>
-						<textarea id="custom-phrase" rows="3" placeholder="Type your custom phrase…"></textarea>
-					</div>
-				</div>
+          <!-- Status -->
+          <div class="status-display stopped" id="status-display">
+            ⏹ Stopped
+          </div>
 
-				<!-- Status -->
-				<div class="status-display stopped" id="status-display">⏹ Stopped</div>
+          <!-- Kokoro progress (shown only during AI voice loading) -->
+          <div id="kokoro-progress" hidden>
+            <p id="kokoro-progress-label"></p>
+            <progress id="kokoro-progress-bar" max="100"></progress>
+          </div>
 
-				<!-- Current phrase -->
-				<div class="current-text" id="current-text"></div>
+          <!-- Current phrase -->
+          <div class="current-text" id="current-text"></div>
 
-				<!-- Play/Stop -->
-				<div class="controls">
-					<button class="btn-play" id="btn-play">▶ Play</button>
-					<button class="btn-stop" id="btn-stop" disabled>⏹ Stop</button>
-				</div>
-			</div>
+          <!-- Play/Stop -->
+          <div class="controls">
+            <button class="btn-play" id="btn-play">▶ Play</button>
+            <button class="btn-stop" id="btn-stop" disabled>⏹ Stop</button>
+          </div>
+        </div>
 
-			<div class="col-right">
-				<!-- Language Picker -->
-				<div class="card">
-					<label for="lang-select">Language</label>
-					<select id="lang-select">
-						<option value="en">English</option>
-						<option value="bg">Български</option>
-						<option value="ca">Català</option>
-						<option value="hr">Hrvatski</option>
-						<option value="cs">Čeština</option>
-						<option value="da">Dansk</option>
-						<option value="nl">Nederlands</option>
-						<option value="et">Eesti</option>
-						<option value="fi">Suomi</option>
-						<option value="fr">Français</option>
-						<option value="de">Deutsch</option>
-						<option value="el">Ελληνικά</option>
-						<option value="hu">Magyar</option>
-						<option value="it">Italiano</option>
-						<option value="lv">Latviešu</option>
-						<option value="lt">Lietuvių</option>
-						<option value="nb">Norsk</option>
-						<option value="pl">Polski</option>
-						<option value="pt">Português</option>
-						<option value="ro">Română</option>
-						<option value="ru">Русский</option>
-						<option value="sk">Slovenčina</option>
-						<option value="sl">Slovenščina</option>
-						<option value="es">Español</option>
-						<option value="sv">Svenska</option>
-						<option value="tr">Türkçe</option>
-						<option value="uk">Українська</option>
-						<option value="ar">العربية</option>
-						<option value="he">עברית</option>
-						<option value="hi">हिन्दी</option>
-						<option value="id">Bahasa Indonesia</option>
-						<option value="ja">日本語</option>
-						<option value="ko">한국어</option>
-						<option value="th">ภาษาไทย</option>
-						<option value="vi">Tiếng Việt</option>
-						<option value="zh">中文（简体）</option>
-						<option value="zhtw">中文（繁體）</option>
-					</select>
-				</div>
+        <div class="col-right">
+          <!-- Language Picker -->
+          <div class="card">
+            <label for="lang-select">Language</label>
+            <select id="lang-select">
+              <option value="en">English</option>
+              <option value="bg">Български</option>
+              <option value="ca">Català</option>
+              <option value="hr">Hrvatski</option>
+              <option value="cs">Čeština</option>
+              <option value="da">Dansk</option>
+              <option value="nl">Nederlands</option>
+              <option value="et">Eesti</option>
+              <option value="fi">Suomi</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+              <option value="el">Ελληνικά</option>
+              <option value="hu">Magyar</option>
+              <option value="it">Italiano</option>
+              <option value="lv">Latviešu</option>
+              <option value="lt">Lietuvių</option>
+              <option value="nb">Norsk</option>
+              <option value="pl">Polski</option>
+              <option value="pt">Português</option>
+              <option value="ro">Română</option>
+              <option value="ru">Русский</option>
+              <option value="sk">Slovenčina</option>
+              <option value="sl">Slovenščina</option>
+              <option value="es">Español</option>
+              <option value="sv">Svenska</option>
+              <option value="tr">Türkçe</option>
+              <option value="uk">Українська</option>
+              <option value="ar">العربية</option>
+              <option value="he">עברית</option>
+              <option value="hi">हिन्दी</option>
+              <option value="id">Bahasa Indonesia</option>
+              <option value="ja">日本語</option>
+              <option value="ko">한국어</option>
+              <option value="th">ภาษาไทย</option>
+              <option value="vi">Tiếng Việt</option>
+              <option value="zh">中文（简体）</option>
+              <option value="zhtw">中文（繁體）</option>
+            </select>
+          </div>
 
-				<!-- Voice Picker -->
-				<div class="card">
-					<label for="voice-select">Voice</label>
-					<select id="voice-select"><option value="">Loading voices…</option></select>
-					<button id="btn-unlock" class="unlock-btn" hidden>🔒 Unlock Premium Voices</button>
-					<p id="premium-active" class="premium-active" hidden>✨ Premium active</p>
-				</div>
+          <!-- Voice Picker -->
+          <div class="card">
+            <label for="voice-select">Voice</label>
+            <select id="voice-select">
+              <option value="">Loading voices…</option>
+            </select>
+            <button id="btn-unlock" class="unlock-btn" hidden>
+              🔒 Unlock Premium Voices
+            </button>
+            <p id="premium-active" class="premium-active" hidden>
+              ✨ Premium active
+            </p>
+          </div>
 
-				<!-- Interval -->
-				<div class="card">
-					<label for="interval-range">Loop interval</label>
-					<div class="interval-control">
-						<span id="label-fast">Fast</span>
-						<input type="range" id="interval-range" min="5" max="60" value="15" step="1">
-						<span id="label-slow">Slow</span>
-						<span class="interval-value" id="interval-value">15s</span>
-					</div>
-				</div>
+          <!-- Interval -->
+          <div class="card">
+            <label for="interval-range">Loop interval</label>
+            <div class="interval-control">
+              <span id="label-fast">Fast</span>
+              <input
+                type="range"
+                id="interval-range"
+                min="5"
+                max="60"
+                value="15"
+                step="1"
+              />
+              <span id="label-slow">Slow</span>
+              <span class="interval-value" id="interval-value">15s</span>
+            </div>
+          </div>
 
-				<!-- QR share -->
-				<div class="card">
-					<div class="qr-row">
-						<span>Share this app</span>
-						<button class="btn-qr" id="btn-qr">Show QR Code</button>
-					</div>
-					<div id="qr-container" aria-live="polite">
-						<div id="qrcode"></div>
-						<p class="qr-url" id="qr-url"></p>
-					</div>
-				</div>
-			</div>
-		</div>
+          <!-- QR share -->
+          <div class="card">
+            <div class="qr-row">
+              <span>Share this app</span>
+              <button class="btn-qr" id="btn-qr">Show QR Code</button>
+            </div>
+            <div id="qr-container" aria-live="polite">
+              <div id="qrcode"></div>
+              <p class="qr-url" id="qr-url"></p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-		<!-- Premium license dialog -->
-		<dialog id="premium-dialog">
-			<form method="dialog">
-				<h2>✨ Unlock Premium Voices</h2>
-				<p>Kokoro AI voices across 8 languages — pay once, unlock on this device forever.</p>
-				<a id="btn-buy" href="#" target="_blank" rel="noopener" class="btn-buy">Buy a license →</a>
-				<div class="dialog-divider">Already have a license key?</div>
-				<input type="text" id="license-input" autocomplete="off" spellcheck="false" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX">
-				<p id="license-msg" class="license-msg" hidden></p>
-				<div class="dialog-actions">
-					<button type="button" id="btn-activate">Activate</button>
-					<button type="submit" class="btn-secondary">Cancel</button>
-				</div>
-			</form>
-		</dialog>
+      <!-- Premium license dialog -->
+      <dialog id="premium-dialog">
+        <form method="dialog">
+          <h2>✨ Unlock Premium Voices</h2>
+          <p>
+            Kokoro AI voices across 8 languages — pay once, unlock on this
+            device forever.
+          </p>
+          <a
+            id="btn-buy"
+            href="#"
+            target="_blank"
+            rel="noopener"
+            class="btn-buy"
+            >Buy a license →</a
+          >
+          <div class="dialog-divider">Already have a license key?</div>
+          <input
+            type="text"
+            id="license-input"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+          />
+          <p id="license-msg" class="license-msg" hidden></p>
+          <div class="dialog-actions">
+            <button type="button" id="btn-activate">Activate</button>
+            <button type="submit" class="btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </dialog>
 
-		<!-- Install (revealed by beforeinstallprompt) -->
-		<button id="btn-install">📲 Install app</button>
+      <!-- Install (revealed by beforeinstallprompt) -->
+      <button id="btn-install">📲 Install app</button>
 
-		<footer></footer>
+      <footer></footer>
 
-	</main>
+      <!-- Update banner (shown when a new SW takes over) -->
+      <div id="update-banner" hidden>
+        <span>A new version is available.</span>
+        <button id="btn-update-reload">Refresh</button>
+      </div>
+    </main>
 
-		<script type="module" src="./src/main.js"></script>
-	</body>
+    <script type="module" src="./src/main.js"></script>
+  </body>
 </html>

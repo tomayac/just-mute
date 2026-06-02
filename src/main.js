@@ -1,822 +1,2004 @@
 import QrCreator from 'qr-creator';
 
 // ── Lemon Squeezy ────────────────────────────────────────────────────
-const LS_CHECKOUT_URL  = "https://tomayac.lemonsqueezy.com/checkout/buy/c74744d3-0544-4d7d-ae71-f8d2c0a6e1d9";
-const LS_ACTIVATE_URL  = "https://api.lemonsqueezy.com/v1/licenses/activate";
-const LS_VALIDATE_URL  = "https://api.lemonsqueezy.com/v1/licenses/validate";
+const LS_CHECKOUT_URL =
+  'https://tomayac.lemonsqueezy.com/checkout/buy/c74744d3-0544-4d7d-ae71-f8d2c0a6e1d9';
+const LS_ACTIVATE_URL = 'https://api.lemonsqueezy.com/v1/licenses/activate';
+const LS_VALIDATE_URL = 'https://api.lemonsqueezy.com/v1/licenses/validate';
 
 const LOCALES = {
-	en:"en-US",bg:"bg-BG",ca:"ca-ES",hr:"hr-HR",cs:"cs-CZ",
-	da:"da-DK",nl:"nl-NL",et:"et-EE",fi:"fi-FI",fr:"fr-FR",
-	de:"de-DE",el:"el-GR",hu:"hu-HU",it:"it-IT",lv:"lv-LV",
-	lt:"lt-LT",nb:"nb-NO",pl:"pl-PL",pt:"pt-PT",ro:"ro-RO",
-	ru:"ru-RU",sk:"sk-SK",sl:"sl-SI",es:"es-ES",sv:"sv-SE",
-	tr:"tr-TR",uk:"uk-UA",
-	ar:"ar-SA",he:"he-IL",hi:"hi-IN",id:"id-ID",
-	ja:"ja-JP",ko:"ko-KR",th:"th-TH",vi:"vi-VN",
-	zh:"zh-CN",zhtw:"zh-TW"
+  en: 'en-US',
+  bg: 'bg-BG',
+  ca: 'ca-ES',
+  hr: 'hr-HR',
+  cs: 'cs-CZ',
+  da: 'da-DK',
+  nl: 'nl-NL',
+  et: 'et-EE',
+  fi: 'fi-FI',
+  fr: 'fr-FR',
+  de: 'de-DE',
+  el: 'el-GR',
+  hu: 'hu-HU',
+  it: 'it-IT',
+  lv: 'lv-LV',
+  lt: 'lt-LT',
+  nb: 'nb-NO',
+  pl: 'pl-PL',
+  pt: 'pt-PT',
+  ro: 'ro-RO',
+  ru: 'ru-RU',
+  sk: 'sk-SK',
+  sl: 'sl-SI',
+  es: 'es-ES',
+  sv: 'sv-SE',
+  tr: 'tr-TR',
+  uk: 'uk-UA',
+  ar: 'ar-SA',
+  he: 'he-IL',
+  hi: 'hi-IN',
+  id: 'id-ID',
+  ja: 'ja-JP',
+  ko: 'ko-KR',
+  th: 'th-TH',
+  vi: 'vi-VN',
+  zh: 'zh-CN',
+  zhtw: 'zh-TW',
 };
 
 const KOKORO_VOICE_MAP = {
-	en: [
-		{ id:"af_heart",    name:"Heart",        gender:"F" },
-		{ id:"af_bella",    name:"Bella",        gender:"F" },
-		{ id:"af_nicole",   name:"Nicole",       gender:"F" },
-		{ id:"af_aoede",    name:"Aoede",        gender:"F" },
-		{ id:"af_kore",     name:"Kore",         gender:"F" },
-		{ id:"af_sarah",    name:"Sarah",        gender:"F" },
-		{ id:"af_nova",     name:"Nova",         gender:"F" },
-		{ id:"af_sky",      name:"Sky",          gender:"F" },
-		{ id:"af_alloy",    name:"Alloy",        gender:"F" },
-		{ id:"af_jessica",  name:"Jessica",      gender:"F" },
-		{ id:"af_river",    name:"River",        gender:"F" },
-		{ id:"am_fenrir",   name:"Fenrir",       gender:"M" },
-		{ id:"am_michael",  name:"Michael",      gender:"M" },
-		{ id:"am_puck",     name:"Puck",         gender:"M" },
-		{ id:"am_echo",     name:"Echo",         gender:"M" },
-		{ id:"am_eric",     name:"Eric",         gender:"M" },
-		{ id:"am_liam",     name:"Liam",         gender:"M" },
-		{ id:"am_onyx",     name:"Onyx",         gender:"M" },
-		{ id:"am_adam",     name:"Adam",         gender:"M" },
-		{ id:"am_santa",    name:"Santa",        gender:"M" },
-		{ id:"bf_emma",     name:"Emma (GB)",    gender:"F" },
-		{ id:"bf_isabella", name:"Isabella (GB)",gender:"F" },
-		{ id:"bf_alice",    name:"Alice (GB)",   gender:"F" },
-		{ id:"bf_lily",     name:"Lily (GB)",    gender:"F" },
-		{ id:"bm_fable",    name:"Fable (GB)",   gender:"M" },
-		{ id:"bm_george",   name:"George (GB)",  gender:"M" },
-		{ id:"bm_lewis",    name:"Lewis (GB)",   gender:"M" },
-		{ id:"bm_daniel",   name:"Daniel (GB)",  gender:"M" },
-	],
-	es: [
-		{ id:"ef_dora",     name:"Dora",         gender:"F" },
-		{ id:"em_alex",     name:"Alex",         gender:"M" },
-		{ id:"em_santa",    name:"Santa",        gender:"M" },
-	],
-	fr: [
-		{ id:"ff_siwis",    name:"Siwis",        gender:"F" },
-	],
-	hi: [
-		{ id:"hf_alpha",    name:"Alpha",        gender:"F" },
-		{ id:"hf_beta",     name:"Beta",         gender:"F" },
-		{ id:"hm_omega",    name:"Omega",        gender:"M" },
-		{ id:"hm_psi",      name:"Psi",          gender:"M" },
-	],
-	it: [
-		{ id:"if_sara",     name:"Sara",         gender:"F" },
-		{ id:"im_nicola",   name:"Nicola",       gender:"M" },
-	],
-	ja: [
-		{ id:"jf_alpha",      name:"Alpha",      gender:"F" },
-		{ id:"jf_gongitsune", name:"Gongitsune", gender:"F" },
-		{ id:"jf_nezumi",     name:"Nezumi",     gender:"F" },
-		{ id:"jf_tebukuro",   name:"Tebukuro",   gender:"F" },
-		{ id:"jm_kumo",       name:"Kumo",       gender:"M" },
-	],
-	pt: [
-		{ id:"pf_dora",     name:"Dora (BR)",    gender:"F" },
-		{ id:"pm_alex",     name:"Alex (BR)",    gender:"M" },
-		{ id:"pm_santa",    name:"Santa (BR)",   gender:"M" },
-	],
-	zh: [
-		{ id:"zf_xiaobei",  name:"Xiaobei",      gender:"F" },
-		{ id:"zf_xiaoni",   name:"Xiaoni",       gender:"F" },
-		{ id:"zf_xiaoxiao", name:"Xiaoxiao",     gender:"F" },
-		{ id:"zf_xiaoyi",   name:"Xiaoyi",       gender:"F" },
-		{ id:"zm_yunjian",  name:"Yunjian",      gender:"M" },
-		{ id:"zm_yunxi",    name:"Yunxi",        gender:"M" },
-		{ id:"zm_yunxia",   name:"Yunxia",       gender:"M" },
-		{ id:"zm_yunyang",  name:"Yunyang",      gender:"M" },
-	],
+  en: [
+    { id: 'af_heart', name: 'Heart', gender: 'F' },
+    { id: 'af_bella', name: 'Bella', gender: 'F' },
+    { id: 'af_nicole', name: 'Nicole', gender: 'F' },
+    { id: 'af_aoede', name: 'Aoede', gender: 'F' },
+    { id: 'af_kore', name: 'Kore', gender: 'F' },
+    { id: 'af_sarah', name: 'Sarah', gender: 'F' },
+    { id: 'af_nova', name: 'Nova', gender: 'F' },
+    { id: 'af_sky', name: 'Sky', gender: 'F' },
+    { id: 'af_alloy', name: 'Alloy', gender: 'F' },
+    { id: 'af_jessica', name: 'Jessica', gender: 'F' },
+    { id: 'af_river', name: 'River', gender: 'F' },
+    { id: 'am_fenrir', name: 'Fenrir', gender: 'M' },
+    { id: 'am_michael', name: 'Michael', gender: 'M' },
+    { id: 'am_puck', name: 'Puck', gender: 'M' },
+    { id: 'am_echo', name: 'Echo', gender: 'M' },
+    { id: 'am_eric', name: 'Eric', gender: 'M' },
+    { id: 'am_liam', name: 'Liam', gender: 'M' },
+    { id: 'am_onyx', name: 'Onyx', gender: 'M' },
+    { id: 'am_adam', name: 'Adam', gender: 'M' },
+    { id: 'am_santa', name: 'Santa', gender: 'M' },
+    { id: 'bf_emma', name: 'Emma (GB)', gender: 'F' },
+    { id: 'bf_isabella', name: 'Isabella (GB)', gender: 'F' },
+    { id: 'bf_alice', name: 'Alice (GB)', gender: 'F' },
+    { id: 'bf_lily', name: 'Lily (GB)', gender: 'F' },
+    { id: 'bm_fable', name: 'Fable (GB)', gender: 'M' },
+    { id: 'bm_george', name: 'George (GB)', gender: 'M' },
+    { id: 'bm_lewis', name: 'Lewis (GB)', gender: 'M' },
+    { id: 'bm_daniel', name: 'Daniel (GB)', gender: 'M' },
+  ],
+  es: [
+    { id: 'ef_dora', name: 'Dora', gender: 'F' },
+    { id: 'em_alex', name: 'Alex', gender: 'M' },
+    { id: 'em_santa', name: 'Santa', gender: 'M' },
+  ],
+  fr: [{ id: 'ff_siwis', name: 'Siwis', gender: 'F' }],
+  hi: [
+    { id: 'hf_alpha', name: 'Alpha', gender: 'F' },
+    { id: 'hf_beta', name: 'Beta', gender: 'F' },
+    { id: 'hm_omega', name: 'Omega', gender: 'M' },
+    { id: 'hm_psi', name: 'Psi', gender: 'M' },
+  ],
+  it: [
+    { id: 'if_sara', name: 'Sara', gender: 'F' },
+    { id: 'im_nicola', name: 'Nicola', gender: 'M' },
+  ],
+  ja: [
+    { id: 'jf_alpha', name: 'Alpha', gender: 'F' },
+    { id: 'jf_gongitsune', name: 'Gongitsune', gender: 'F' },
+    { id: 'jf_nezumi', name: 'Nezumi', gender: 'F' },
+    { id: 'jf_tebukuro', name: 'Tebukuro', gender: 'F' },
+    { id: 'jm_kumo', name: 'Kumo', gender: 'M' },
+  ],
+  pt: [
+    { id: 'pf_dora', name: 'Dora (BR)', gender: 'F' },
+    { id: 'pm_alex', name: 'Alex (BR)', gender: 'M' },
+    { id: 'pm_santa', name: 'Santa (BR)', gender: 'M' },
+  ],
+  zh: [
+    { id: 'zf_xiaobei', name: 'Xiaobei', gender: 'F' },
+    { id: 'zf_xiaoni', name: 'Xiaoni', gender: 'F' },
+    { id: 'zf_xiaoxiao', name: 'Xiaoxiao', gender: 'F' },
+    { id: 'zf_xiaoyi', name: 'Xiaoyi', gender: 'F' },
+    { id: 'zm_yunjian', name: 'Yunjian', gender: 'M' },
+    { id: 'zm_yunxi', name: 'Yunxi', gender: 'M' },
+    { id: 'zm_yunxia', name: 'Yunxia', gender: 'M' },
+    { id: 'zm_yunyang', name: 'Yunyang', gender: 'M' },
+  ],
 };
 
 const TRANSPORT_PREP = {
-	en:{train:"on the train",bus:"on the bus",tram:"on the tram",plane:"on the plane",subway:"on the subway",ferry:"on the ferry",cablecar:"on the cable car"},
-	bg:{train:"във влака",bus:"в автобуса",tram:"в трамвая",plane:"в самолета",subway:"в метрото",ferry:"на ферибота",cablecar:"на въжената линия"},
-	ca:{train:"al tren",bus:"a l'autobús",tram:"al tramvia",plane:"a l'avió",subway:"al metro",ferry:"al ferri",cablecar:"al telefèric"},
-	hr:{train:"u vlaku",bus:"u autobusu",tram:"u tramvaju",plane:"u zrakoplovu",subway:"u metrou",ferry:"na trajektu",cablecar:"u žičari"},
-	cs:{train:"ve vlaku",bus:"v autobuse",tram:"v tramvaji",plane:"v letadle",subway:"v metru",ferry:"na trajektu",cablecar:"v lanovce"},
-	da:{train:"i toget",bus:"i bussen",tram:"i sporvognen",plane:"i flyet",subway:"i metroen",ferry:"på færgen",cablecar:"i kabelbanen"},
-	nl:{train:"in de trein",bus:"in de bus",tram:"in de tram",plane:"in het vliegtuig",subway:"in de metro",ferry:"op de veerboot",cablecar:"in de kabelbaan"},
-	et:{train:"rongis",bus:"bussis",tram:"trammis",plane:"lennukis",subway:"metroos",ferry:"parvlaeval",cablecar:"köisteelil"},
-	fi:{train:"junassa",bus:"bussissa",tram:"raitiovaunussa",plane:"lentokoneessa",subway:"metrossa",ferry:"lautalla",cablecar:"köysiradalla"},
-	fr:{train:"dans le train",bus:"dans le bus",tram:"dans le tram",plane:"dans l'avion",subway:"dans le métro",ferry:"sur le ferry",cablecar:"dans le téléphérique"},
-	de:{train:"im Zug",bus:"im Bus",tram:"in der Straßenbahn",plane:"im Flugzeug",subway:"in der U-Bahn",ferry:"auf der Fähre",cablecar:"in der Seilbahn"},
-	el:{train:"στο τρένο",bus:"στο λεωφορείο",tram:"στο τραμ",plane:"στο αεροπλάνο",subway:"στο μετρό",ferry:"στο πλοίο",cablecar:"στο τελεφερίκ"},
-	hu:{train:"a vonaton",bus:"a buszon",tram:"a villamoson",plane:"a repülőn",subway:"a metrón",ferry:"a kompon",cablecar:"a drótkötélpályán"},
-	it:{train:"sul treno",bus:"sull'autobus",tram:"sul tram",plane:"sull'aereo",subway:"sulla metro",ferry:"sul traghetto",cablecar:"in funivia"},
-	lv:{train:"vilcienā",bus:"autobusā",tram:"tramvajā",plane:"lidmašīnā",subway:"metro",ferry:"prāmī",cablecar:"gaisa tramvajā"},
-	lt:{train:"traukinyje",bus:"autobuse",tram:"tramvajuje",plane:"lėktuve",subway:"metro",ferry:"keltu",cablecar:"lynų keliu"},
-	nb:{train:"på toget",bus:"på bussen",tram:"på trikken",plane:"på flyet",subway:"på T-banen",ferry:"på ferjen",cablecar:"i taubanen"},
-	pl:{train:"w pociągu",bus:"w autobusie",tram:"w tramwaju",plane:"w samolocie",subway:"w metrze",ferry:"na promie",cablecar:"w kolejce linowej"},
-	pt:{train:"no comboio",bus:"no autocarro",tram:"no elétrico",plane:"no avião",subway:"no metro",ferry:"no ferry",cablecar:"no teleférico"},
-	ro:{train:"în tren",bus:"în autobuz",tram:"în tramvai",plane:"în avion",subway:"la metrou",ferry:"pe feribot",cablecar:"în telecabină"},
-	ru:{train:"в поезде",bus:"в автобусе",tram:"в трамвае",plane:"в самолёте",subway:"в метро",ferry:"на пароме",cablecar:"в канатной дороге"},
-	sk:{train:"vo vlaku",bus:"v autobuse",tram:"v električke",plane:"v lietadle",subway:"v metre",ferry:"na trajekte",cablecar:"v lanovke"},
-	sl:{train:"v vlaku",bus:"v avtobusu",tram:"v tramvaju",plane:"v letalu",subway:"v metrou",ferry:"na trajektu",cablecar:"v žičnici"},
-	es:{train:"en el tren",bus:"en el autobús",tram:"en el tranvía",plane:"en el avión",subway:"en el metro",ferry:"en el ferry",cablecar:"en el teleférico"},
-	sv:{train:"på tåget",bus:"på bussen",tram:"på spårvagnen",plane:"på planet",subway:"på tunnelbanan",ferry:"på färjan",cablecar:"i linbanan"},
-	tr:{train:"Trende",bus:"Otobüste",tram:"Tramvayda",plane:"Uçakta",subway:"Metroda",ferry:"Feribotta",cablecar:"Teleferik kabininde"},
-	uk:{train:"у поїзді",bus:"в автобусі",tram:"у трамваї",plane:"у літаку",subway:"у метро",ferry:"на поромі",cablecar:"у канатній дорозі"},
-	ar:{train:"في القطار",bus:"في الحافلة",tram:"في الترام",plane:"في الطائرة",subway:"في المترو",ferry:"في العبّارة",cablecar:"في التلفريك"},
-	he:{train:"ברכבת",bus:"באוטובוס",tram:"בטרם",plane:"במטוס",subway:"ברכבת התחתית",ferry:"במעבורת",cablecar:"בטלפריק"},
-	hi:{train:"ट्रेन में",bus:"बस में",tram:"ट्राम में",plane:"हवाई जहाज़ में",subway:"मेट्रो में",ferry:"फ़ेरी में",cablecar:"केबल कार में"},
-	id:{train:"di kereta",bus:"di bus",tram:"di trem",plane:"di pesawat",subway:"di kereta bawah tanah",ferry:"di feri",cablecar:"di kereta gantung"},
-	ja:{train:"電車の中で",bus:"バスの中で",tram:"路面電車の中で",plane:"飛行機の中で",subway:"地下鉄の中で",ferry:"フェリーの中で",cablecar:"ケーブルカーの中で"},
-	ko:{train:"기차 안에서",bus:"버스 안에서",tram:"트램 안에서",plane:"비행기 안에서",subway:"지하철 안에서",ferry:"페리 안에서",cablecar:"케이블카 안에서"},
-	th:{train:"บนรถไฟ",bus:"บนรถบัส",tram:"บนรถราง",plane:"บนเครื่องบิน",subway:"บนรถไฟฟ้าใต้ดิน",ferry:"บนเรือเฟอร์รี่",cablecar:"บนกระเช้าไฟฟ้า"},
-	vi:{train:"trên tàu",bus:"trên xe buýt",tram:"trên tàu điện",plane:"trên máy bay",subway:"trên tàu điện ngầm",ferry:"trên phà",cablecar:"trên cáp treo"},
-	zh:{train:"在火车上",bus:"在公交车上",tram:"在有轨电车上",plane:"在飞机上",subway:"在地铁里",ferry:"在渡轮上",cablecar:"在缆车上"},
-	zhtw:{train:"在火車上",bus:"在公車上",tram:"在有軌電車上",plane:"在飛機上",subway:"在捷運裡",ferry:"在渡輪上",cablecar:"在纜車上"}
+  en: {
+    train: 'on the train',
+    bus: 'on the bus',
+    tram: 'on the tram',
+    plane: 'on the plane',
+    subway: 'on the subway',
+    ferry: 'on the ferry',
+    cablecar: 'on the cable car',
+  },
+  bg: {
+    train: 'във влака',
+    bus: 'в автобуса',
+    tram: 'в трамвая',
+    plane: 'в самолета',
+    subway: 'в метрото',
+    ferry: 'на ферибота',
+    cablecar: 'на въжената линия',
+  },
+  ca: {
+    train: 'al tren',
+    bus: "a l'autobús",
+    tram: 'al tramvia',
+    plane: "a l'avió",
+    subway: 'al metro',
+    ferry: 'al ferri',
+    cablecar: 'al telefèric',
+  },
+  hr: {
+    train: 'u vlaku',
+    bus: 'u autobusu',
+    tram: 'u tramvaju',
+    plane: 'u zrakoplovu',
+    subway: 'u metrou',
+    ferry: 'na trajektu',
+    cablecar: 'u žičari',
+  },
+  cs: {
+    train: 've vlaku',
+    bus: 'v autobuse',
+    tram: 'v tramvaji',
+    plane: 'v letadle',
+    subway: 'v metru',
+    ferry: 'na trajektu',
+    cablecar: 'v lanovce',
+  },
+  da: {
+    train: 'i toget',
+    bus: 'i bussen',
+    tram: 'i sporvognen',
+    plane: 'i flyet',
+    subway: 'i metroen',
+    ferry: 'på færgen',
+    cablecar: 'i kabelbanen',
+  },
+  nl: {
+    train: 'in de trein',
+    bus: 'in de bus',
+    tram: 'in de tram',
+    plane: 'in het vliegtuig',
+    subway: 'in de metro',
+    ferry: 'op de veerboot',
+    cablecar: 'in de kabelbaan',
+  },
+  et: {
+    train: 'rongis',
+    bus: 'bussis',
+    tram: 'trammis',
+    plane: 'lennukis',
+    subway: 'metroos',
+    ferry: 'parvlaeval',
+    cablecar: 'köisteelil',
+  },
+  fi: {
+    train: 'junassa',
+    bus: 'bussissa',
+    tram: 'raitiovaunussa',
+    plane: 'lentokoneessa',
+    subway: 'metrossa',
+    ferry: 'lautalla',
+    cablecar: 'köysiradalla',
+  },
+  fr: {
+    train: 'dans le train',
+    bus: 'dans le bus',
+    tram: 'dans le tram',
+    plane: "dans l'avion",
+    subway: 'dans le métro',
+    ferry: 'sur le ferry',
+    cablecar: 'dans le téléphérique',
+  },
+  de: {
+    train: 'im Zug',
+    bus: 'im Bus',
+    tram: 'in der Straßenbahn',
+    plane: 'im Flugzeug',
+    subway: 'in der U-Bahn',
+    ferry: 'auf der Fähre',
+    cablecar: 'in der Seilbahn',
+  },
+  el: {
+    train: 'στο τρένο',
+    bus: 'στο λεωφορείο',
+    tram: 'στο τραμ',
+    plane: 'στο αεροπλάνο',
+    subway: 'στο μετρό',
+    ferry: 'στο πλοίο',
+    cablecar: 'στο τελεφερίκ',
+  },
+  hu: {
+    train: 'a vonaton',
+    bus: 'a buszon',
+    tram: 'a villamoson',
+    plane: 'a repülőn',
+    subway: 'a metrón',
+    ferry: 'a kompon',
+    cablecar: 'a drótkötélpályán',
+  },
+  it: {
+    train: 'sul treno',
+    bus: "sull'autobus",
+    tram: 'sul tram',
+    plane: "sull'aereo",
+    subway: 'sulla metro',
+    ferry: 'sul traghetto',
+    cablecar: 'in funivia',
+  },
+  lv: {
+    train: 'vilcienā',
+    bus: 'autobusā',
+    tram: 'tramvajā',
+    plane: 'lidmašīnā',
+    subway: 'metro',
+    ferry: 'prāmī',
+    cablecar: 'gaisa tramvajā',
+  },
+  lt: {
+    train: 'traukinyje',
+    bus: 'autobuse',
+    tram: 'tramvajuje',
+    plane: 'lėktuve',
+    subway: 'metro',
+    ferry: 'keltu',
+    cablecar: 'lynų keliu',
+  },
+  nb: {
+    train: 'på toget',
+    bus: 'på bussen',
+    tram: 'på trikken',
+    plane: 'på flyet',
+    subway: 'på T-banen',
+    ferry: 'på ferjen',
+    cablecar: 'i taubanen',
+  },
+  pl: {
+    train: 'w pociągu',
+    bus: 'w autobusie',
+    tram: 'w tramwaju',
+    plane: 'w samolocie',
+    subway: 'w metrze',
+    ferry: 'na promie',
+    cablecar: 'w kolejce linowej',
+  },
+  pt: {
+    train: 'no comboio',
+    bus: 'no autocarro',
+    tram: 'no elétrico',
+    plane: 'no avião',
+    subway: 'no metro',
+    ferry: 'no ferry',
+    cablecar: 'no teleférico',
+  },
+  ro: {
+    train: 'în tren',
+    bus: 'în autobuz',
+    tram: 'în tramvai',
+    plane: 'în avion',
+    subway: 'la metrou',
+    ferry: 'pe feribot',
+    cablecar: 'în telecabină',
+  },
+  ru: {
+    train: 'в поезде',
+    bus: 'в автобусе',
+    tram: 'в трамвае',
+    plane: 'в самолёте',
+    subway: 'в метро',
+    ferry: 'на пароме',
+    cablecar: 'в канатной дороге',
+  },
+  sk: {
+    train: 'vo vlaku',
+    bus: 'v autobuse',
+    tram: 'v električke',
+    plane: 'v lietadle',
+    subway: 'v metre',
+    ferry: 'na trajekte',
+    cablecar: 'v lanovke',
+  },
+  sl: {
+    train: 'v vlaku',
+    bus: 'v avtobusu',
+    tram: 'v tramvaju',
+    plane: 'v letalu',
+    subway: 'v metrou',
+    ferry: 'na trajektu',
+    cablecar: 'v žičnici',
+  },
+  es: {
+    train: 'en el tren',
+    bus: 'en el autobús',
+    tram: 'en el tranvía',
+    plane: 'en el avión',
+    subway: 'en el metro',
+    ferry: 'en el ferry',
+    cablecar: 'en el teleférico',
+  },
+  sv: {
+    train: 'på tåget',
+    bus: 'på bussen',
+    tram: 'på spårvagnen',
+    plane: 'på planet',
+    subway: 'på tunnelbanan',
+    ferry: 'på färjan',
+    cablecar: 'i linbanan',
+  },
+  tr: {
+    train: 'Trende',
+    bus: 'Otobüste',
+    tram: 'Tramvayda',
+    plane: 'Uçakta',
+    subway: 'Metroda',
+    ferry: 'Feribotta',
+    cablecar: 'Teleferik kabininde',
+  },
+  uk: {
+    train: 'у поїзді',
+    bus: 'в автобусі',
+    tram: 'у трамваї',
+    plane: 'у літаку',
+    subway: 'у метро',
+    ferry: 'на поромі',
+    cablecar: 'у канатній дорозі',
+  },
+  ar: {
+    train: 'في القطار',
+    bus: 'في الحافلة',
+    tram: 'في الترام',
+    plane: 'في الطائرة',
+    subway: 'في المترو',
+    ferry: 'في العبّارة',
+    cablecar: 'في التلفريك',
+  },
+  he: {
+    train: 'ברכבת',
+    bus: 'באוטובוס',
+    tram: 'בטרם',
+    plane: 'במטוס',
+    subway: 'ברכבת התחתית',
+    ferry: 'במעבורת',
+    cablecar: 'בטלפריק',
+  },
+  hi: {
+    train: 'ट्रेन में',
+    bus: 'बस में',
+    tram: 'ट्राम में',
+    plane: 'हवाई जहाज़ में',
+    subway: 'मेट्रो में',
+    ferry: 'फ़ेरी में',
+    cablecar: 'केबल कार में',
+  },
+  id: {
+    train: 'di kereta',
+    bus: 'di bus',
+    tram: 'di trem',
+    plane: 'di pesawat',
+    subway: 'di kereta bawah tanah',
+    ferry: 'di feri',
+    cablecar: 'di kereta gantung',
+  },
+  ja: {
+    train: '電車の中で',
+    bus: 'バスの中で',
+    tram: '路面電車の中で',
+    plane: '飛行機の中で',
+    subway: '地下鉄の中で',
+    ferry: 'フェリーの中で',
+    cablecar: 'ケーブルカーの中で',
+  },
+  ko: {
+    train: '기차 안에서',
+    bus: '버스 안에서',
+    tram: '트램 안에서',
+    plane: '비행기 안에서',
+    subway: '지하철 안에서',
+    ferry: '페리 안에서',
+    cablecar: '케이블카 안에서',
+  },
+  th: {
+    train: 'บนรถไฟ',
+    bus: 'บนรถบัส',
+    tram: 'บนรถราง',
+    plane: 'บนเครื่องบิน',
+    subway: 'บนรถไฟฟ้าใต้ดิน',
+    ferry: 'บนเรือเฟอร์รี่',
+    cablecar: 'บนกระเช้าไฟฟ้า',
+  },
+  vi: {
+    train: 'trên tàu',
+    bus: 'trên xe buýt',
+    tram: 'trên tàu điện',
+    plane: 'trên máy bay',
+    subway: 'trên tàu điện ngầm',
+    ferry: 'trên phà',
+    cablecar: 'trên cáp treo',
+  },
+  zh: {
+    train: '在火车上',
+    bus: '在公交车上',
+    tram: '在有轨电车上',
+    plane: '在飞机上',
+    subway: '在地铁里',
+    ferry: '在渡轮上',
+    cablecar: '在缆车上',
+  },
+  zhtw: {
+    train: '在火車上',
+    bus: '在公車上',
+    tram: '在有軌電車上',
+    plane: '在飛機上',
+    subway: '在捷運裡',
+    ferry: '在渡輪上',
+    cablecar: '在纜車上',
+  },
 };
 
 const PHRASE_TEMPLATES = {
-	en:(p)=>`No one ${p} wants to listen to what's playing on your phone. Can you just mute?`,
-	bg:(p)=>`Никой ${p} не иска да чува какво свири на телефона ти. Можеш ли да го заглушиш?`,
-	ca:(p)=>`Ningú ${p} vol escoltar el que sona al teu telèfon. El pots silenciar?`,
-	hr:(p)=>`Nitko ${p} ne želi slušati što svira na vašem telefonu. Možete li ga utišati?`,
-	cs:(p)=>`Nikdo ${p} nechce slyšet, co hraje na vašem telefonu. Můžete ho ztlumit?`,
-	da:(p)=>`Ingen ${p} vil høre, hvad der spiller på din telefon. Kan du slå lyden fra?`,
-	nl:(p)=>`Niemand ${p} wil horen wat er op uw telefoon speelt. Kunt u hem dempen?`,
-	et:(p)=>`Keegi ${p} ei taha kuulda, mida sinu telefon mängib. Kas saaksid selle vaigistada?`,
-	fi:(p)=>`Kukaan ${p} ei halua kuulla mitä puhelimessasi soi. Voisitko hiljentää sen?`,
-	fr:(p)=>`Personne ${p} ne veut écouter ce qui passe sur ton téléphone. Tu peux juste mettre le son sur muet ?`,
-	de:(p)=>`Niemand ${p} will zuhören, was auf deinem Telefon spielt. Kannst du es bitte stummschalten?`,
-	el:(p)=>`Κανείς ${p} δεν θέλει να ακούει αυτό που παίζει στο τηλέφωνό σου. Μπορείς να το βάλεις στη σίγαση;`,
-	hu:(p)=>`Senki ${p} sem akar hallani, ami a telefonján szól. El tudná némítani?`,
-	it:(p)=>`Nessuno ${p} vuole ascoltare quello che suona sul tuo telefono. Puoi metterlo in silenzioso?`,
-	lv:(p)=>`Neviens ${p} nevēlas dzirdēt, ko atskaņo tavs tālrunis. Vai tu vari to apklusināt?`,
-	lt:(p)=>`Niekas ${p} nenori girdēti, kas groja jūsų telefone. Ar galite jį nutildyti?`,
-	nb:(p)=>`Ingen ${p} ønsker å høre hva som spiller på telefonen din. Kan du dempe den?`,
-	pl:(p)=>`Nikt ${p} nie chce słuchać tego, co gra na twoim telefonie. Czy możesz go wyciszyć?`,
-	pt:(p)=>`Ninguém ${p} quer ouvir o que está a tocar no seu telemóvel. Pode silenciá-lo?`,
-	ro:(p)=>`Nimeni ${p} nu vrea să audă ce sună pe telefonul tău. Poți să-l pui pe silențios?`,
-	ru:(p)=>`Никто ${p} не хочет слышать то, что играет на вашем телефоне. Пожалуйста, поставьте его на беззвучный режим.`,
-	sk:(p)=>`Nikto ${p} nechce počuť, čo hrá na vašom telefóne. Môžete ho stlmiť?`,
-	sl:(p)=>`Nihče ${p} ne želi slišati, kaj igra na vašem telefonu. Ali ga lahko utišate?`,
-	es:(p)=>`Nadie ${p} quiere escuchar lo que suena en tu teléfono. ¿Puedes silenciarlo?`,
-	sv:(p)=>`Ingen ${p} vill höra vad som spelas på din telefon. Kan du stänga av ljudet?`,
-	tr:(p)=>`${p} kimse telefonunuzdaki sesi duymak istemiyor. Lütfen sessize alır mısınız?`,
-	uk:(p)=>`Ніхто ${p} не хоче чути те, що грає у вашому телефоні. Будь ласка, поставте його на беззвучний режим.`,
-	ar:(p)=>`لا أحد ${p} يريد سماع ما يصدر من هاتفك. هل يمكنك كتم الصوت؟`,
-	he:(p)=>`אף אחד ${p} לא רוצה לשמוע מה מתנגן בטלפון שלך. אפשר להעביר לשקט?`,
-	hi:(p)=>`${p} कोई भी आपके फ़ोन की आवाज़ नहीं सुनना चाहता। क्या आप इसे साइलेंट मोड पर रख सकते हैं?`,
-	id:(p)=>`Tidak ada yang ${p} ingin mendengar apa yang diputar di ponsel Anda. Bisakah Anda mengaktifkan mode senyap?`,
-	ja:(p)=>`${p}、誰もあなたのスマートフォンから流れる音を聞きたくありません。マナーモードにしていただけますか？`,
-	ko:(p)=>`${p} 아무도 당신의 휴대폰에서 나오는 소리를 듣고 싶지 않습니다. 무음으로 해주시겠어요?`,
-	th:(p)=>`ไม่มีใคร${p}อยากฟังเสียงจากโทรศัพท์ของคุณ กรุณาปิดเสียงด้วยนะคะ`,
-	vi:(p)=>`Không ai ${p} muốn nghe những gì đang phát trên điện thoại của bạn. Bạn có thể tắt tiếng không?`,
-	zh:(p)=>`${p}，没有人想听您手机播放的声音。请把手机调成静音好吗？`,
-	zhtw:(p)=>`${p}，沒有人想聽您手機播放的聲音。請把手機調成靜音好嗎？`
+  en: (p) =>
+    `No one ${p} wants to listen to what's playing on your phone. Can you just mute?`,
+  bg: (p) =>
+    `Никой ${p} не иска да чува какво свири на телефона ти. Можеш ли да го заглушиш?`,
+  ca: (p) =>
+    `Ningú ${p} vol escoltar el que sona al teu telèfon. El pots silenciar?`,
+  hr: (p) =>
+    `Nitko ${p} ne želi slušati što svira na vašem telefonu. Možete li ga utišati?`,
+  cs: (p) =>
+    `Nikdo ${p} nechce slyšet, co hraje na vašem telefonu. Můžete ho ztlumit?`,
+  da: (p) =>
+    `Ingen ${p} vil høre, hvad der spiller på din telefon. Kan du slå lyden fra?`,
+  nl: (p) =>
+    `Niemand ${p} wil horen wat er op uw telefoon speelt. Kunt u hem dempen?`,
+  et: (p) =>
+    `Keegi ${p} ei taha kuulda, mida sinu telefon mängib. Kas saaksid selle vaigistada?`,
+  fi: (p) =>
+    `Kukaan ${p} ei halua kuulla mitä puhelimessasi soi. Voisitko hiljentää sen?`,
+  fr: (p) =>
+    `Personne ${p} ne veut écouter ce qui passe sur ton téléphone. Tu peux juste mettre le son sur muet ?`,
+  de: (p) =>
+    `Niemand ${p} will zuhören, was auf deinem Telefon spielt. Kannst du es bitte stummschalten?`,
+  el: (p) =>
+    `Κανείς ${p} δεν θέλει να ακούει αυτό που παίζει στο τηλέφωνό σου. Μπορείς να το βάλεις στη σίγαση;`,
+  hu: (p) =>
+    `Senki ${p} sem akar hallani, ami a telefonján szól. El tudná némítani?`,
+  it: (p) =>
+    `Nessuno ${p} vuole ascoltare quello che suona sul tuo telefono. Puoi metterlo in silenzioso?`,
+  lv: (p) =>
+    `Neviens ${p} nevēlas dzirdēt, ko atskaņo tavs tālrunis. Vai tu vari to apklusināt?`,
+  lt: (p) =>
+    `Niekas ${p} nenori girdēti, kas groja jūsų telefone. Ar galite jį nutildyti?`,
+  nb: (p) =>
+    `Ingen ${p} ønsker å høre hva som spiller på telefonen din. Kan du dempe den?`,
+  pl: (p) =>
+    `Nikt ${p} nie chce słuchać tego, co gra na twoim telefonie. Czy możesz go wyciszyć?`,
+  pt: (p) =>
+    `Ninguém ${p} quer ouvir o que está a tocar no seu telemóvel. Pode silenciá-lo?`,
+  ro: (p) =>
+    `Nimeni ${p} nu vrea să audă ce sună pe telefonul tău. Poți să-l pui pe silențios?`,
+  ru: (p) =>
+    `Никто ${p} не хочет слышать то, что играет на вашем телефоне. Пожалуйста, поставьте его на беззвучный режим.`,
+  sk: (p) =>
+    `Nikto ${p} nechce počuť, čo hrá na vašom telefóne. Môžete ho stlmiť?`,
+  sl: (p) =>
+    `Nihče ${p} ne želi slišati, kaj igra na vašem telefonu. Ali ga lahko utišate?`,
+  es: (p) =>
+    `Nadie ${p} quiere escuchar lo que suena en tu teléfono. ¿Puedes silenciarlo?`,
+  sv: (p) =>
+    `Ingen ${p} vill höra vad som spelas på din telefon. Kan du stänga av ljudet?`,
+  tr: (p) =>
+    `${p} kimse telefonunuzdaki sesi duymak istemiyor. Lütfen sessize alır mısınız?`,
+  uk: (p) =>
+    `Ніхто ${p} не хоче чути те, що грає у вашому телефоні. Будь ласка, поставте його на беззвучний режим.`,
+  ar: (p) => `لا أحد ${p} يريد سماع ما يصدر من هاتفك. هل يمكنك كتم الصوت؟`,
+  he: (p) => `אף אחד ${p} לא רוצה לשמוע מה מתנגן בטלפון שלך. אפשר להעביר לשקט?`,
+  hi: (p) =>
+    `${p} कोई भी आपके फ़ोन की आवाज़ नहीं सुनना चाहता। क्या आप इसे साइलेंट मोड पर रख सकते हैं?`,
+  id: (p) =>
+    `Tidak ada yang ${p} ingin mendengar apa yang diputar di ponsel Anda. Bisakah Anda mengaktifkan mode senyap?`,
+  ja: (p) =>
+    `${p}、誰もあなたのスマートフォンから流れる音を聞きたくありません。マナーモードにしていただけますか？`,
+  ko: (p) =>
+    `${p} 아무도 당신의 휴대폰에서 나오는 소리를 듣고 싶지 않습니다. 무음으로 해주시겠어요?`,
+  th: (p) => `ไม่มีใคร${p}อยากฟังเสียงจากโทรศัพท์ของคุณ กรุณาปิดเสียงด้วยนะคะ`,
+  vi: (p) =>
+    `Không ai ${p} muốn nghe những gì đang phát trên điện thoại của bạn. Bạn có thể tắt tiếng không?`,
+  zh: (p) => `${p}，没有人想听您手机播放的声音。请把手机调成静音好吗？`,
+  zhtw: (p) => `${p}，沒有人想聽您手機播放的聲音。請把手機調成靜音好嗎？`,
 };
 
 function getDefaultPhrase(lang, transport) {
-	return PHRASE_TEMPLATES[lang](TRANSPORT_PREP[lang][transport]);
+  return PHRASE_TEMPLATES[lang](TRANSPORT_PREP[lang][transport]);
 }
 
-const TRANSPORT_EMOJI = {train:"🚆",bus:"🚌",tram:"🚊",plane:"✈️",subway:"🚇",ferry:"⛴️",cablecar:"🚡"};
+const TRANSPORT_EMOJI = {
+  train: '🚆',
+  bus: '🚌',
+  tram: '🚊',
+  plane: '✈️',
+  subway: '🚇',
+  ferry: '⛴️',
+  cablecar: '🚡',
+};
 
 const UI_STRINGS = {
-	en:{
-		sub:"Passive-aggressive audio policing for public transport",
-		phraseLabel:"What to say",defaultMode:"Default",customMode:"Custom",
-		customPlaceholder:"Type your custom phrase…",
-		defaultCustomPhrase:"Can you just mute your phone, please?",
-		where:"Where are you commuting?",
-		tn:{train:"Train",bus:"Bus",tram:"Tram",plane:"Plane",subway:"Subway",ferry:"Ferry",cablecar:"Cable car"},
-		lang:"Language",voice:"Voice",interval:"Pause between utterances",
-		fast:"Fast",slow:"Slow",
-		stopped:"⏹ Stopped",loading:"⏳ Loading…",speaking:"🔊 Speaking…",paused:"⏸ Paused between loops…",
-		play:"▶ Play",stop:"⏹ Stop",
-		share:"Share this app",showQr:"Show QR Code",hideQr:"Hide QR Code",
-		noVoices:"No voices available for this language",loadingVoices:"Loading voices…",
-		toDarkMode:"Switch to dark mode",toLightMode:"Switch to light mode",
-		install:"📲 Install app"
-	},
-	bg:{
-		sub:"Пасивно-агресивен звуков контрол в обществения транспорт",
-		phraseLabel:"Какво да се каже",defaultMode:"По подразбиране",customMode:"По избор",
-		customPlaceholder:"Въведете своята фраза…",
-		defaultCustomPhrase:"Можете ли да заглушите телефона си, моля?",
-		where:"С какво пътувате?",
-		tn:{train:"Влак",bus:"Автобус",tram:"Трамвай",plane:"Самолет",subway:"Метро",ferry:"Ферибот",cablecar:"Въжена линия"},
-		lang:"Език",voice:"Глас",interval:"Пауза между изреченията",
-		fast:"Бързо",slow:"Бавно",
-		stopped:"⏹ Спряно",loading:"⏳ Зарежда…",speaking:"🔊 Говори…",paused:"⏸ Пауза между цикли…",
-		play:"▶ Пусни",stop:"⏹ Спри",
-		share:"Сподели приложението",showQr:"Покажи QR код",hideQr:"Скрий QR код",
-		noVoices:"Няма налични гласове за този език",loadingVoices:"Зареждане на гласовете…",
-		toDarkMode:"Превключи към тъмен режим",toLightMode:"Превключи към светъл режим",
-		install:"📲 Инсталирай приложението"
-	},
-	ca:{
-		sub:"Polícia d'àudio passiva-agressiva per al transport públic",
-		phraseLabel:"Què cal dir",defaultMode:"Per defecte",customMode:"Personalitzat",
-		customPlaceholder:"Escriviu la vostra frase personalitzada…",
-		defaultCustomPhrase:"Pots silenciar el telèfon, si us plau?",
-		where:"On viatgeu?",
-		tn:{train:"Tren",bus:"Autobús",tram:"Tramvia",plane:"Avió",subway:"Metro",ferry:"Ferri",cablecar:"Telefèric"},
-		lang:"Idioma",voice:"Veu",interval:"Pausa entre locucions",
-		fast:"Ràpid",slow:"Lent",
-		stopped:"⏹ Aturat",loading:"⏳ Carregant…",speaking:"🔊 Parlant…",paused:"⏸ Pausat entre bucles…",
-		play:"▶ Reproduir",stop:"⏹ Parar",
-		share:"Comparteix aquesta app",showQr:"Mostra el codi QR",hideQr:"Amaga el codi QR",
-		noVoices:"No hi ha veus disponibles per a aquest idioma",loadingVoices:"Carregant veus…",
-		toDarkMode:"Canvia al mode fosc",toLightMode:"Canvia al mode clar",
-		install:"📲 Instal·la l'app"
-	},
-	hr:{
-		sub:"Pasivno-agresivna audio kontrola u javnom prijevozu",
-		phraseLabel:"Što reći",defaultMode:"Zadano",customMode:"Prilagođeno",
-		customPlaceholder:"Upišite svoju prilagođenu frazu…",
-		defaultCustomPhrase:"Možete li utišati telefon, molim vas?",
-		where:"Čime putujete?",
-		tn:{train:"Vlak",bus:"Autobus",tram:"Tramvaj",plane:"Avion",subway:"Metro",ferry:"Trajekt",cablecar:"Žičara"},
-		lang:"Jezik",voice:"Glas",interval:"Pauza između izgovora",
-		fast:"Brzo",slow:"Sporo",
-		stopped:"⏹ Zaustavljeno",loading:"⏳ Učitavanje…",speaking:"🔊 Govori…",paused:"⏸ Pauza između petlji…",
-		play:"▶ Reproduciraj",stop:"⏹ Zaustavi",
-		share:"Podijeli ovu aplikaciju",showQr:"Prikaži QR kod",hideQr:"Sakrij QR kod",
-		noVoices:"Nema dostupnih glasova za ovaj jezik",loadingVoices:"Učitavanje glasova…",
-		toDarkMode:"Prebaci na tamni način",toLightMode:"Prebaci na svijetli način",
-		install:"📲 Instaliraj aplikaciju"
-	},
-	cs:{
-		sub:"Pasivně-agresivní zvuková kontrola ve veřejné dopravě",
-		phraseLabel:"Co říci",defaultMode:"Výchozí",customMode:"Vlastní",
-		customPlaceholder:"Napište svou vlastní frázi…",
-		defaultCustomPhrase:"Mohli byste prosím ztlumit svůj telefon?",
-		where:"Čím cestujete?",
-		tn:{train:"Vlak",bus:"Autobus",tram:"Tramvaj",plane:"Letadlo",subway:"Metro",ferry:"Trajekt",cablecar:"Lanovka"},
-		lang:"Jazyk",voice:"Hlas",interval:"Pauza mezi promluvami",
-		fast:"Rychle",slow:"Pomalu",
-		stopped:"⏹ Zastaveno",loading:"⏳ Načítání…",speaking:"🔊 Mluví…",paused:"⏸ Pauza mezi smyčkami…",
-		play:"▶ Přehrát",stop:"⏹ Zastavit",
-		share:"Sdílej tuto aplikaci",showQr:"Zobrazit QR kód",hideQr:"Skrýt QR kód",
-		noVoices:"Pro tento jazyk nejsou dostupné žádné hlasy",loadingVoices:"Načítání hlasů…",
-		toDarkMode:"Přepnout na tmavý režim",toLightMode:"Přepnout na světlý režim",
-		install:"📲 Nainstalovat aplikaci"
-	},
-	da:{
-		sub:"Passiv-aggressiv lydkontrol i den offentlige transport",
-		phraseLabel:"Hvad skal der siges",defaultMode:"Standard",customMode:"Tilpasset",
-		customPlaceholder:"Skriv din tilpassede sætning…",
-		defaultCustomPhrase:"Kan du slå lyden fra på din telefon?",
-		where:"Hvad pendler du med?",
-		tn:{train:"Tog",bus:"Bus",tram:"Sporvogn",plane:"Fly",subway:"Metro",ferry:"Færge",cablecar:"Kabelbane"},
-		lang:"Sprog",voice:"Stemme",interval:"Pause mellem ytringer",
-		fast:"Hurtigt",slow:"Langsomt",
-		stopped:"⏹ Stoppet",loading:"⏳ Indlæser…",speaking:"🔊 Taler…",paused:"⏸ Pause mellem sløjfer…",
-		play:"▶ Afspil",stop:"⏹ Stop",
-		share:"Del denne app",showQr:"Vis QR-kode",hideQr:"Skjul QR-kode",
-		noVoices:"Ingen stemmer tilgængelige for dette sprog",loadingVoices:"Indlæser stemmer…",
-		toDarkMode:"Skift til mørk tilstand",toLightMode:"Skift til lys tilstand",
-		install:"📲 Installer app"
-	},
-	nl:{
-		sub:"Passief-agressieve geluidscontrole in het openbaar vervoer",
-		phraseLabel:"Wat te zeggen",defaultMode:"Standaard",customMode:"Aangepast",
-		customPlaceholder:"Typ uw aangepaste zin…",
-		defaultCustomPhrase:"Kun jij je telefoon op stil zetten, alsjeblieft?",
-		where:"Waarmee reist u?",
-		tn:{train:"Trein",bus:"Bus",tram:"Tram",plane:"Vliegtuig",subway:"Metro",ferry:"Veerboot",cablecar:"Kabelbaan"},
-		lang:"Taal",voice:"Stem",interval:"Pauze tussen uitingen",
-		fast:"Snel",slow:"Langzaam",
-		stopped:"⏹ Gestopt",loading:"⏳ Laden…",speaking:"🔊 Spreekt…",paused:"⏸ Pauze tussen lussen…",
-		play:"▶ Afspelen",stop:"⏹ Stoppen",
-		share:"Deel deze app",showQr:"QR-code tonen",hideQr:"QR-code verbergen",
-		noVoices:"Geen stemmen beschikbaar voor deze taal",loadingVoices:"Stemmen laden…",
-		toDarkMode:"Overschakelen naar donkere modus",toLightMode:"Overschakelen naar lichte modus",
-		install:"📲 App installeren"
-	},
-	et:{
-		sub:"Passiiv-agressiivne helipolitsei ühistranspordis",
-		phraseLabel:"Mida öelda",defaultMode:"Vaikimisi",customMode:"Kohandatud",
-		customPlaceholder:"Sisestage oma kohandatud fraas…",
-		defaultCustomPhrase:"Kas saaksid oma telefoni vaigistada, palun?",
-		where:"Millega sõidate?",
-		tn:{train:"Rong",bus:"Buss",tram:"Tramm",plane:"Lennuk",subway:"Metro",ferry:"Parvlaev",cablecar:"Köistee"},
-		lang:"Keel",voice:"Hääl",interval:"Paus lausungite vahel",
-		fast:"Kiiresti",slow:"Aeglaselt",
-		stopped:"⏹ Peatatud",loading:"⏳ Laadimine…",speaking:"🔊 Räägib…",paused:"⏸ Paus tsüklite vahel…",
-		play:"▶ Esita",stop:"⏹ Peata",
-		share:"Jaga seda rakendust",showQr:"Näita QR-koodi",hideQr:"Peida QR-kood",
-		noVoices:"Selle keele jaoks pole hääli saadaval",loadingVoices:"Laen hääli…",
-		toDarkMode:"Lülita tumedasse režiimi",toLightMode:"Lülita heledasse režiimi",
-		install:"📲 Installi rakendus"
-	},
-	fi:{
-		sub:"Passiivisaggressiivinen äänivalvonta julkisessa liikenteessä",
-		phraseLabel:"Mitä sanoa",defaultMode:"Oletus",customMode:"Mukautettu",
-		customPlaceholder:"Kirjoita oma lauseesi…",
-		defaultCustomPhrase:"Laittaisitko puhelimesi äänettömälle, kiitos?",
-		where:"Millä kuljet?",
-		tn:{train:"Juna",bus:"Bussi",tram:"Raitiovaunu",plane:"Lentokone",subway:"Metro",ferry:"Lautta",cablecar:"Köysirata"},
-		lang:"Kieli",voice:"Ääni",interval:"Tauko lausumien välillä",
-		fast:"Nopeasti",slow:"Hitaasti",
-		stopped:"⏹ Pysäytetty",loading:"⏳ Ladataan…",speaking:"🔊 Puhuu…",paused:"⏸ Tauko kierrosten välillä…",
-		play:"▶ Toista",stop:"⏹ Pysäytä",
-		share:"Jaa tämä sovellus",showQr:"Näytä QR-koodi",hideQr:"Piilota QR-koodi",
-		noVoices:"Tälle kielelle ei ole ääniä saatavilla",loadingVoices:"Ladataan ääniä…",
-		toDarkMode:"Vaihda tummaan tilaan",toLightMode:"Vaihda vaaleaan tilaan",
-		install:"📲 Asenna sovellus"
-	},
-	fr:{
-		sub:"Contrôle audio passif-agressif pour les transports en commun",
-		phraseLabel:"Quoi dire",defaultMode:"Par défaut",customMode:"Personnalisé",
-		customPlaceholder:"Saisissez votre phrase personnalisée…",
-		defaultCustomPhrase:"Pourrais-tu mettre ton téléphone sur muet, s'il te plaît ?",
-		where:"Quel moyen de transport utilisez-vous ?",
-		tn:{train:"Train",bus:"Bus",tram:"Tram",plane:"Avion",subway:"Métro",ferry:"Ferry",cablecar:"Téléphérique"},
-		lang:"Langue",voice:"Voix",interval:"Pause entre les annonces",
-		fast:"Rapide",slow:"Lent",
-		stopped:"⏹ Arrêté",loading:"⏳ Chargement…",speaking:"🔊 En train de parler…",paused:"⏸ Pause entre les boucles…",
-		play:"▶ Lancer",stop:"⏹ Arrêter",
-		share:"Partager cette application",showQr:"Afficher le QR code",hideQr:"Masquer le QR code",
-		noVoices:"Aucune voix disponible pour cette langue",loadingVoices:"Chargement des voix…",
-		toDarkMode:"Passer en mode sombre",toLightMode:"Passer en mode clair",
-		install:"📲 Installer l'application"
-	},
-	de:{
-		sub:"Passiv-aggressive Audiokontrolle für den öffentlichen Nahverkehr",
-		phraseLabel:"Was sagen",defaultMode:"Standard",customMode:"Benutzerdefiniert",
-		customPlaceholder:"Geben Sie Ihren Text ein…",
-		defaultCustomPhrase:"Könntest du bitte dein Telefon stummschalten?",
-		where:"Womit fahren Sie?",
-		tn:{train:"Zug",bus:"Bus",tram:"Straßenbahn",plane:"Flugzeug",subway:"U-Bahn",ferry:"Fähre",cablecar:"Seilbahn"},
-		lang:"Sprache",voice:"Stimme",interval:"Pause zwischen Ansagen",
-		fast:"Schnell",slow:"Langsam",
-		stopped:"⏹ Gestoppt",loading:"⏳ Lädt…",speaking:"🔊 Spricht…",paused:"⏸ Pause zwischen den Schleifen…",
-		play:"▶ Abspielen",stop:"⏹ Stoppen",
-		share:"Diese App teilen",showQr:"QR-Code anzeigen",hideQr:"QR-Code ausblenden",
-		noVoices:"Keine Stimmen für diese Sprache verfügbar",loadingVoices:"Stimmen werden geladen…",
-		toDarkMode:"Zum Dunkelmodus wechseln",toLightMode:"Zum Hellmodus wechseln",
-		install:"📲 App installieren"
-	},
-	el:{
-		sub:"Παθητικά-επιθετική ηχητική αστυνόμευση για δημόσιες μεταφορές",
-		phraseLabel:"Τι να πείτε",defaultMode:"Προεπιλογή",customMode:"Προσαρμοσμένο",
-		customPlaceholder:"Πληκτρολογήστε τη δική σας φράση…",
-		defaultCustomPhrase:"Μπορείς να βάλεις το τηλέφωνό σου στη σίγαση, παρακαλώ;",
-		where:"Με τι μετακινείστε;",
-		tn:{train:"Τρένο",bus:"Λεωφορείο",tram:"Τραμ",plane:"Αεροπλάνο",subway:"Μετρό",ferry:"Πλοίο",cablecar:"Τελεφερίκ"},
-		lang:"Γλώσσα",voice:"Φωνή",interval:"Παύση μεταξύ εκφωνήσεων",
-		fast:"Γρήγορα",slow:"Αργά",
-		stopped:"⏹ Σταματημένο",loading:"⏳ Φόρτωση…",speaking:"🔊 Μιλάει…",paused:"⏸ Παύση μεταξύ επαναλήψεων…",
-		play:"▶ Αναπαραγωγή",stop:"⏹ Διακοπή",
-		share:"Κοινοποίησε αυτήν την εφαρμογή",showQr:"Εμφάνιση QR κώδικα",hideQr:"Απόκρυψη QR κώδικα",
-		noVoices:"Δεν υπάρχουν διαθέσιμες φωνές για αυτήν τη γλώσσα",loadingVoices:"Φόρτωση φωνών…",
-		toDarkMode:"Μετάβαση σε σκοτεινή λειτουργία",toLightMode:"Μετάβαση σε φωτεινή λειτουργία",
-		install:"📲 Εγκατάσταση εφαρμογής"
-	},
-	hu:{
-		sub:"Passzív-agresszív hangellenőrzés a tömegközlekedésben",
-		phraseLabel:"Mit mondjon",defaultMode:"Alapértelmezett",customMode:"Egyéni",
-		customPlaceholder:"Írja be a saját mondatát…",
-		defaultCustomPhrase:"Kérlek, némítsd el a telefonod!",
-		where:"Mivel ingázik?",
-		tn:{train:"Vonat",bus:"Busz",tram:"Villamos",plane:"Repülő",subway:"Metró",ferry:"Komp",cablecar:"Drótkötélpálya"},
-		lang:"Nyelv",voice:"Hang",interval:"Szünet a mondatok között",
-		fast:"Gyors",slow:"Lassú",
-		stopped:"⏹ Megállítva",loading:"⏳ Betöltés…",speaking:"🔊 Beszél…",paused:"⏸ Szünet a hurkok között…",
-		play:"▶ Lejátszás",stop:"⏹ Leállítás",
-		share:"Oszd meg ezt az alkalmazást",showQr:"QR-kód megjelenítése",hideQr:"QR-kód elrejtése",
-		noVoices:"Ehhez a nyelvhez nem áll rendelkezésre hang",loadingVoices:"Hangok betöltése…",
-		toDarkMode:"Váltás sötét módra",toLightMode:"Váltás világos módra",
-		install:"📲 Alkalmazás telepítése"
-	},
-	it:{
-		sub:"Controllo audio passivo-aggressivo per i trasporti pubblici",
-		phraseLabel:"Cosa dire",defaultMode:"Predefinito",customMode:"Personalizzato",
-		customPlaceholder:"Scrivi la tua frase personalizzata…",
-		defaultCustomPhrase:"Puoi mettere il telefono in silenzioso, per favore?",
-		where:"Con quale mezzo stai viaggiando?",
-		tn:{train:"Treno",bus:"Autobus",tram:"Tram",plane:"Aereo",subway:"Metro",ferry:"Traghetto",cablecar:"Funivia"},
-		lang:"Lingua",voice:"Voce",interval:"Pausa tra le frasi",
-		fast:"Veloce",slow:"Lento",
-		stopped:"⏹ Fermo",loading:"⏳ Caricamento…",speaking:"🔊 In riproduzione…",paused:"⏸ Pausa tra i loop…",
-		play:"▶ Avvia",stop:"⏹ Ferma",
-		share:"Condividi questa app",showQr:"Mostra QR Code",hideQr:"Nascondi QR Code",
-		noVoices:"Nessuna voce disponibile per questa lingua",loadingVoices:"Caricamento voci…",
-		toDarkMode:"Passa alla modalità scura",toLightMode:"Passa alla modalità chiara",
-		install:"📲 Installa l'app"
-	},
-	lv:{
-		sub:"Pasīvi-agresīva skaņu kontrole sabiedriskajā transportā",
-		phraseLabel:"Ko teikt",defaultMode:"Noklusējums",customMode:"Pielāgots",
-		customPlaceholder:"Ierakstiet savu frāzi…",
-		defaultCustomPhrase:"Vai varētu apklusināt savu tālruni, lūdzu?",
-		where:"Ar ko jūs braucat?",
-		tn:{train:"Vilciens",bus:"Autobuss",tram:"Tramvajs",plane:"Lidmašīna",subway:"Metro",ferry:"Prāmis",cablecar:"Gaisa tramvajs"},
-		lang:"Valoda",voice:"Balss",interval:"Pauze starp teikumiem",
-		fast:"Ātri",slow:"Lēni",
-		stopped:"⏹ Apturēts",loading:"⏳ Ielāde…",speaking:"🔊 Runā…",paused:"⏸ Pauze starp cilpām…",
-		play:"▶ Atskaņot",stop:"⏹ Apturēt",
-		share:"Kopīgot šo lietotni",showQr:"Rādīt QR kodu",hideQr:"Paslēpt QR kodu",
-		noVoices:"Šai valodai nav pieejamu balsu",loadingVoices:"Ielādē balsis…",
-		toDarkMode:"Pārslēgties uz tumšo režīmu",toLightMode:"Pārslēgties uz gaišo režīmu",
-		install:"📲 Instalēt lietotni"
-	},
-	lt:{
-		sub:"Pasyviai agresyvi garso kontrolė viešajame transporte",
-		phraseLabel:"Ką sakyti",defaultMode:"Numatytasis",customMode:"Pasirinktinis",
-		customPlaceholder:"Įveskite savo frazę…",
-		defaultCustomPhrase:"Ar galite nutildyti telefoną, prašau?",
-		where:"Kuo keliaujate?",
-		tn:{train:"Traukinys",bus:"Autobusas",tram:"Tramvajus",plane:"Lėktuvas",subway:"Metro",ferry:"Keltas",cablecar:"Lynų kelias"},
-		lang:"Kalba",voice:"Balsas",interval:"Pauzė tarp sakinių",
-		fast:"Greitai",slow:"Lėtai",
-		stopped:"⏹ Sustabdyta",loading:"⏳ Kraunama…",speaking:"🔊 Kalba…",paused:"⏸ Pauzė tarp kilpų…",
-		play:"▶ Leisti",stop:"⏹ Sustabdyti",
-		share:"Dalintis šia programa",showQr:"Rodyti QR kodą",hideQr:"Slėpti QR kodą",
-		noVoices:"Šiai kalbai nėra balso",loadingVoices:"Kraunami balsai…",
-		toDarkMode:"Perjungti į tamsų režimą",toLightMode:"Perjungti į šviesų režimą",
-		install:"📲 Įdiegti programą"
-	},
-	nb:{
-		sub:"Passiv-aggressiv lydkontroll i kollektivtrafikken",
-		phraseLabel:"Hva som sies",defaultMode:"Standard",customMode:"Tilpasset",
-		customPlaceholder:"Skriv din egne setning…",
-		defaultCustomPhrase:"Kan du dempe telefonen?",
-		where:"Hva reiser du med?",
-		tn:{train:"Tog",bus:"Buss",tram:"Trikk",plane:"Fly",subway:"T-bane",ferry:"Ferje",cablecar:"Taubane"},
-		lang:"Språk",voice:"Stemme",interval:"Pause mellom ytringer",
-		fast:"Raskt",slow:"Sakte",
-		stopped:"⏹ Stoppet",loading:"⏳ Laster…",speaking:"🔊 Snakker…",paused:"⏸ Pause mellom sløyfene…",
-		play:"▶ Spill av",stop:"⏹ Stopp",
-		share:"Del denne appen",showQr:"Vis QR-kode",hideQr:"Skjul QR-kode",
-		noVoices:"Ingen stemmer tilgjengelige for dette språket",loadingVoices:"Laster inn stemmer…",
-		toDarkMode:"Bytt til mørk modus",toLightMode:"Bytt til lys modus",
-		install:"📲 Installer app"
-	},
-	pl:{
-		sub:"Pasywno-agresywna kontrola dźwięku w transporcie publicznym",
-		phraseLabel:"Co powiedzieć",defaultMode:"Domyślna",customMode:"Niestandardowa",
-		customPlaceholder:"Wpisz swoją frazę…",
-		defaultCustomPhrase:"Czy możesz wyciszyć swój telefon?",
-		where:"Czym podróżujesz?",
-		tn:{train:"Pociąg",bus:"Autobus",tram:"Tramwaj",plane:"Samolot",subway:"Metro",ferry:"Prom",cablecar:"Kolejka linowa"},
-		lang:"Język",voice:"Głos",interval:"Przerwa między wypowiedziami",
-		fast:"Szybko",slow:"Wolno",
-		stopped:"⏹ Zatrzymano",loading:"⏳ Ładowanie…",speaking:"🔊 Mówi…",paused:"⏸ Pauza między pętlami…",
-		play:"▶ Odtwórz",stop:"⏹ Zatrzymaj",
-		share:"Udostępnij tę aplikację",showQr:"Pokaż kod QR",hideQr:"Ukryj kod QR",
-		noVoices:"Brak głosów dostępnych dla tego języka",loadingVoices:"Ładowanie głosów…",
-		toDarkMode:"Przełącz na tryb ciemny",toLightMode:"Przełącz na tryb jasny",
-		install:"📲 Zainstaluj aplikację"
-	},
-	pt:{
-		sub:"Controlo de áudio passivo-agressivo para transportes públicos",
-		phraseLabel:"O que dizer",defaultMode:"Padrão",customMode:"Personalizado",
-		customPlaceholder:"Escreva a sua frase personalizada…",
-		defaultCustomPhrase:"Podes silenciar o teu telemóvel, por favor?",
-		where:"Em que transporte vai?",
-		tn:{train:"Comboio",bus:"Autocarro",tram:"Elétrico",plane:"Avião",subway:"Metro",ferry:"Ferry",cablecar:"Teleférico"},
-		lang:"Idioma",voice:"Voz",interval:"Pausa entre anúncios",
-		fast:"Rápido",slow:"Lento",
-		stopped:"⏹ Parado",loading:"⏳ A carregar…",speaking:"🔊 A falar…",paused:"⏸ Pausa entre ciclos…",
-		play:"▶ Reproduzir",stop:"⏹ Parar",
-		share:"Partilhar esta aplicação",showQr:"Mostrar QR Code",hideQr:"Esconder QR Code",
-		noVoices:"Sem vozes disponíveis para este idioma",loadingVoices:"A carregar vozes…",
-		toDarkMode:"Mudar para modo escuro",toLightMode:"Mudar para modo claro",
-		install:"📲 Instalar aplicação"
-	},
-	ro:{
-		sub:"Control audio pasiv-agresiv pentru transportul public",
-		phraseLabel:"Ce să spui",defaultMode:"Implicit",customMode:"Personalizat",
-		customPlaceholder:"Scrieți fraza dvs. personalizată…",
-		defaultCustomPhrase:"Poți pune telefonul pe silențios, te rog?",
-		where:"Cu ce călătoriți?",
-		tn:{train:"Tren",bus:"Autobuz",tram:"Tramvai",plane:"Avion",subway:"Metrou",ferry:"Feribot",cablecar:"Telecabină"},
-		lang:"Limbă",voice:"Voce",interval:"Pauză între enunțuri",
-		fast:"Repede",slow:"Lent",
-		stopped:"⏹ Oprit",loading:"⏳ Se încarcă…",speaking:"🔊 Vorbește…",paused:"⏸ Pauză între bucle…",
-		play:"▶ Redare",stop:"⏹ Oprire",
-		share:"Partajează această aplicație",showQr:"Arată codul QR",hideQr:"Ascunde codul QR",
-		noVoices:"Nu există voci disponibile pentru această limbă",loadingVoices:"Se încarcă vocile…",
-		toDarkMode:"Comutare la modul întunecat",toLightMode:"Comutare la modul luminos",
-		install:"📲 Instalează aplicația"
-	},
-	ru:{
-		sub:"Пассивно-агрессивный звуковой контроль в общественном транспорте",
-		phraseLabel:"Что сказать",defaultMode:"По умолчанию",customMode:"Свой текст",
-		customPlaceholder:"Введите свою фразу…",
-		defaultCustomPhrase:"Пожалуйста, поставьте телефон на беззвучный режим.",
-		where:"На чём вы едете?",
-		tn:{train:"Поезд",bus:"Автобус",tram:"Трамвай",plane:"Самолёт",subway:"Метро",ferry:"Паром",cablecar:"Канатная дорога"},
-		lang:"Язык",voice:"Голос",interval:"Пауза между фразами",
-		fast:"Быстро",slow:"Медленно",
-		stopped:"⏹ Остановлено",loading:"⏳ Загрузка…",speaking:"🔊 Воспроизводит…",paused:"⏸ Пауза между повторами…",
-		play:"▶ Воспроизвести",stop:"⏹ Остановить",
-		share:"Поделиться этим приложением",showQr:"Показать QR-код",hideQr:"Скрыть QR-код",
-		noVoices:"Для этого языка голоса недоступны",loadingVoices:"Загрузка голосов…",
-		toDarkMode:"Переключить на тёмную тему",toLightMode:"Переключить на светлую тему",
-		install:"📲 Установить приложение"
-	},
-	sk:{
-		sub:"Pasívno-agresívna zvuková kontrola vo verejnej doprave",
-		phraseLabel:"Čo povedať",defaultMode:"Predvolené",customMode:"Vlastná",
-		customPlaceholder:"Napíšte svoju vlastnú frázu…",
-		defaultCustomPhrase:"Mohli by ste prosím stlmiť telefón?",
-		where:"Čím cestujete?",
-		tn:{train:"Vlak",bus:"Autobus",tram:"Električka",plane:"Lietadlo",subway:"Metro",ferry:"Trajekt",cablecar:"Lanovka"},
-		lang:"Jazyk",voice:"Hlas",interval:"Pauza medzi výrokmi",
-		fast:"Rýchlo",slow:"Pomaly",
-		stopped:"⏹ Zastavené",loading:"⏳ Načítanie…",speaking:"🔊 Hovorí…",paused:"⏸ Pauza medzi slučkami…",
-		play:"▶ Prehrať",stop:"⏹ Zastaviť",
-		share:"Zdieľaj túto aplikáciu",showQr:"Zobraziť QR kód",hideQr:"Skryť QR kód",
-		noVoices:"Pre tento jazyk nie sú k dispozícii žiadne hlasy",loadingVoices:"Načítanie hlasov…",
-		toDarkMode:"Prepnúť na tmavý režim",toLightMode:"Prepnúť na svetlý režim",
-		install:"📲 Nainštalovať aplikáciu"
-	},
-	sl:{
-		sub:"Pasivno-agresivni zvočni nadzor v javnem prevozu",
-		phraseLabel:"Kaj reči",defaultMode:"Privzeto",customMode:"Po meri",
-		customPlaceholder:"Vnesite svojo frazo…",
-		defaultCustomPhrase:"Bi prosil, da utišate telefon?",
-		where:"S čim potujete?",
-		tn:{train:"Vlak",bus:"Avtobus",tram:"Tramvaj",plane:"Letalo",subway:"Metro",ferry:"Trajekt",cablecar:"Žičnica"},
-		lang:"Jezik",voice:"Glas",interval:"Premor med izjavami",
-		fast:"Hitro",slow:"Počasi",
-		stopped:"⏹ Ustavljeno",loading:"⏳ Nalaganje…",speaking:"🔊 Govori…",paused:"⏸ Pavza med zankami…",
-		play:"▶ Predvajaj",stop:"⏹ Ustavi",
-		share:"Deli to aplikacijo",showQr:"Prikaži QR kodo",hideQr:"Skrij QR kodo",
-		noVoices:"Za ta jezik ni razpoložljivih glasov",loadingVoices:"Nalaganje glasov…",
-		toDarkMode:"Preklopi na temni način",toLightMode:"Preklopi na svetli način",
-		install:"📲 Namesti aplikacijo"
-	},
-	es:{
-		sub:"Control de audio pasivo-agresivo para el transporte público",
-		phraseLabel:"Qué decir",defaultMode:"Por defecto",customMode:"Personalizado",
-		customPlaceholder:"Escribe tu frase personalizada…",
-		defaultCustomPhrase:"¿Puedes silenciar tu teléfono, por favor?",
-		where:"¿En qué transporte vas?",
-		tn:{train:"Tren",bus:"Autobús",tram:"Tranvía",plane:"Avión",subway:"Metro",ferry:"Ferry",cablecar:"Teleférico"},
-		lang:"Idioma",voice:"Voz",interval:"Pausa entre anuncios",
-		fast:"Rápido",slow:"Lento",
-		stopped:"⏹ Detenido",loading:"⏳ Cargando…",speaking:"🔊 Hablando…",paused:"⏸ Pausa entre bucles…",
-		play:"▶ Reproducir",stop:"⏹ Detener",
-		share:"Comparte esta aplicación",showQr:"Mostrar código QR",hideQr:"Ocultar código QR",
-		noVoices:"No hay voces disponibles para este idioma",loadingVoices:"Cargando voces…",
-		toDarkMode:"Cambiar al modo oscuro",toLightMode:"Cambiar al modo claro",
-		install:"📲 Instalar la app"
-	},
-	sv:{
-		sub:"Passivt aggressiv ljudkontroll i kollektivtrafiken",
-		phraseLabel:"Vad som sägs",defaultMode:"Standard",customMode:"Anpassad",
-		customPlaceholder:"Skriv din anpassade fras…",
-		defaultCustomPhrase:"Kan du tysta telefonen, tack?",
-		where:"Vilket transportmedel använder du?",
-		tn:{train:"Tåg",bus:"Buss",tram:"Spårvagn",plane:"Flyg",subway:"Tunnelbana",ferry:"Färja",cablecar:"Linbana"},
-		lang:"Språk",voice:"Röst",interval:"Paus mellan yttranden",
-		fast:"Snabbt",slow:"Långsamt",
-		stopped:"⏹ Stoppad",loading:"⏳ Laddar…",speaking:"🔊 Talar…",paused:"⏸ Paus mellan slingorna…",
-		play:"▶ Spela upp",stop:"⏹ Stoppa",
-		share:"Dela denna app",showQr:"Visa QR-kod",hideQr:"Dölj QR-kod",
-		noVoices:"Inga röster tillgängliga för detta språk",loadingVoices:"Laddar röster…",
-		toDarkMode:"Byt till mörkt läge",toLightMode:"Byt till ljust läge",
-		install:"📲 Installera appen"
-	},
-	tr:{
-		sub:"Toplu taşıma için pasif-agresif ses denetimi",
-		phraseLabel:"Ne söyleneceği",defaultMode:"Varsayılan",customMode:"Özel",
-		customPlaceholder:"Özel cümlenizi yazın…",
-		defaultCustomPhrase:"Lütfen telefonunuzu sessize alır mısınız?",
-		where:"Hangi taşıtla seyahat ediyorsunuz?",
-		tn:{train:"Tren",bus:"Otobüs",tram:"Tramvay",plane:"Uçak",subway:"Metro",ferry:"Feribot",cablecar:"Teleferik"},
-		lang:"Dil",voice:"Ses",interval:"Konuşmalar arası duraklama",
-		fast:"Hızlı",slow:"Yavaş",
-		stopped:"⏹ Durduruldu",loading:"⏳ Yükleniyor…",speaking:"🔊 Konuşuyor…",paused:"⏸ Döngüler arası duraklıyor…",
-		play:"▶ Oynat",stop:"⏹ Durdur",
-		share:"Bu uygulamayı paylaş",showQr:"QR Kodu Göster",hideQr:"QR Kodu Gizle",
-		noVoices:"Bu dil için ses yok",loadingVoices:"Sesler yükleniyor…",
-		toDarkMode:"Karanlık moda geç",toLightMode:"Aydınlık moda geç",
-		install:"📲 Uygulamayı yükle"
-	},
-	uk:{
-		sub:"Пасивно-агресивний звуковий контроль у громадському транспорті",
-		phraseLabel:"Що сказати",defaultMode:"За замовчуванням",customMode:"Власний",
-		customPlaceholder:"Введіть власну фразу…",
-		defaultCustomPhrase:"Будь ласка, поставте телефон на беззвучний режим.",
-		where:"Чим ви їдете?",
-		tn:{train:"Поїзд",bus:"Автобус",tram:"Трамвай",plane:"Літак",subway:"Метро",ferry:"Пором",cablecar:"Канатна дорога"},
-		lang:"Мова",voice:"Голос",interval:"Пауза між фразами",
-		fast:"Швидко",slow:"Повільно",
-		stopped:"⏹ Зупинено",loading:"⏳ Завантаження…",speaking:"🔊 Відтворює…",paused:"⏸ Пауза між циклами…",
-		play:"▶ Відтворити",stop:"⏹ Зупинити",
-		share:"Поділитися цим додатком",showQr:"Показати QR-код",hideQr:"Приховати QR-код",
-		noVoices:"Для цієї мови немає доступних голосів",loadingVoices:"Завантаження голосів…",
-		toDarkMode:"Переключити на темну тему",toLightMode:"Переключити на світлу тему",
-		install:"📲 Встановити додаток"
-	},
-	ar:{
-		dir:"rtl",
-		sub:"تنبيه مهذّب على وسائل النقل العام",
-		phraseLabel:"ما يجب قوله",defaultMode:"افتراضي",customMode:"مخصّص",
-		customPlaceholder:"اكتب عبارتك المخصّصة…",
-		defaultCustomPhrase:"هل يمكنك كتم صوت هاتفك من فضلك؟",
-		where:"أين أنت الآن؟",
-		tn:{train:"قطار",bus:"حافلة",tram:"ترام",plane:"طائرة",subway:"مترو",ferry:"عبّارة",cablecar:"تلفريك"},
-		lang:"اللغة",voice:"الصوت",interval:"توقف بين العبارات",
-		fast:"سريع",slow:"بطيء",
-		stopped:"⏹ متوقف",loading:"⏳ جارٍ التحميل…",speaking:"🔊 يتكلم…",paused:"⏸ متوقف مؤقتاً…",
-		play:"▶ تشغيل",stop:"⏹ إيقاف",
-		share:"مشاركة هذا التطبيق",showQr:"إظهار رمز QR",hideQr:"إخفاء رمز QR",
-		noVoices:"لا توجد أصوات متاحة لهذه اللغة",loadingVoices:"جارٍ تحميل الأصوات…",
-		toDarkMode:"التبديل إلى الوضع المظلم",toLightMode:"التبديل إلى الوضع المضيء",
-		install:"📲 تثبيت التطبيق"
-	},
-	he:{
-		dir:"rtl",
-		sub:"תזכורת מנומסת בתחבורה הציבורית",
-		phraseLabel:"מה לומר",defaultMode:"ברירת מחדל",customMode:"מותאם אישית",
-		customPlaceholder:"הקלד את הביטוי המותאם אישית שלך…",
-		defaultCustomPhrase:"אפשר להעביר את הטלפון לשקט, בבקשה?",
-		where:"במה אתה נוסע?",
-		tn:{train:"רכבת",bus:"אוטובוס",tram:"טרם",plane:"מטוס",subway:"רכבת תחתית",ferry:"מעבורת",cablecar:"טלפריק"},
-		lang:"שפה",voice:"קול",interval:"הפסקה בין הודעות",
-		fast:"מהיר",slow:"איטי",
-		stopped:"⏹ עצור",loading:"⏳ טוען…",speaking:"🔊 מדבר…",paused:"⏸ מושהה בין לולאות…",
-		play:"▶ הפעל",stop:"⏹ עצור",
-		share:"שתף אפליקציה זו",showQr:"הצג קוד QR",hideQr:"הסתר קוד QR",
-		noVoices:"אין קולות זמינים לשפה זו",loadingVoices:"טוען קולות…",
-		toDarkMode:"עבור למצב כהה",toLightMode:"עבור למצב בהיר",
-		install:"📲 התקן אפליקציה"
-	},
-	hi:{
-		sub:"सार्वजनिक परिवहन पर एक विनम्र अनुरोध",
-		phraseLabel:"क्या कहना है",defaultMode:"डिफ़ॉल्ट",customMode:"कस्टम",
-		customPlaceholder:"अपना कस्टम वाक्यांश टाइप करें…",
-		defaultCustomPhrase:"क्या आप अपने फ़ोन को साइलेंट कर सकते हैं, कृपया?",
-		where:"आप किस पर सफ़र कर रहे हैं?",
-		tn:{train:"ट्रेन",bus:"बस",tram:"ट्राम",plane:"विमान",subway:"मेट्रो",ferry:"फ़ेरी",cablecar:"केबल कार"},
-		lang:"भाषा",voice:"आवाज़",interval:"वाक्यों के बीच विराम",
-		fast:"तेज़",slow:"धीमा",
-		stopped:"⏹ रुका हुआ",loading:"⏳ लोड हो रहा है…",speaking:"🔊 बोल रहा है…",paused:"⏸ लूप के बीच रुका…",
-		play:"▶ चलाएँ",stop:"⏹ रोकें",
-		share:"यह ऐप शेयर करें",showQr:"QR कोड दिखाएँ",hideQr:"QR कोड छुपाएँ",
-		noVoices:"इस भाषा के लिए कोई आवाज़ उपलब्ध नहीं",loadingVoices:"आवाज़ें लोड हो रही हैं…",
-		toDarkMode:"डार्क मोड पर जाएँ",toLightMode:"लाइट मोड पर जाएँ",
-		install:"📲 ऐप इंस्टॉल करें"
-	},
-	id:{
-		sub:"Pengingat sopan di transportasi umum",
-		phraseLabel:"Yang akan dikatakan",defaultMode:"Bawaan",customMode:"Kustom",
-		customPlaceholder:"Ketik kalimat kustom Anda…",
-		defaultCustomPhrase:"Bisakah Anda mengaktifkan mode senyap ponsel Anda?",
-		where:"Anda naik apa?",
-		tn:{train:"Kereta",bus:"Bus",tram:"Trem",plane:"Pesawat",subway:"Kereta Bawah Tanah",ferry:"Feri",cablecar:"Kereta Gantung"},
-		lang:"Bahasa",voice:"Suara",interval:"Jeda antar ucapan",
-		fast:"Cepat",slow:"Lambat",
-		stopped:"⏹ Berhenti",loading:"⏳ Memuat…",speaking:"🔊 Berbicara…",paused:"⏸ Jeda antar putaran…",
-		play:"▶ Putar",stop:"⏹ Hentikan",
-		share:"Bagikan aplikasi ini",showQr:"Tampilkan kode QR",hideQr:"Sembunyikan kode QR",
-		noVoices:"Tidak ada suara tersedia untuk bahasa ini",loadingVoices:"Memuat suara…",
-		toDarkMode:"Beralih ke mode gelap",toLightMode:"Beralih ke mode terang",
-		install:"📲 Pasang aplikasi"
-	},
-	ja:{
-		sub:"公共交通機関でのマナーモードのお願い",
-		phraseLabel:"言うこと",defaultMode:"デフォルト",customMode:"カスタム",
-		customPlaceholder:"カスタムフレーズを入力…",
-		defaultCustomPhrase:"すみません、スマートフォンをマナーモードにしていただけますか？",
-		where:"どの交通機関に乗っていますか？",
-		tn:{train:"電車",bus:"バス",tram:"路面電車",plane:"飛行機",subway:"地下鉄",ferry:"フェリー",cablecar:"ケーブルカー"},
-		lang:"言語",voice:"音声",interval:"発話間の休止",
-		fast:"速い",slow:"遅い",
-		stopped:"⏹ 停止",loading:"⏳ 読み込み中…",speaking:"🔊 再生中…",paused:"⏸ ループ間の一時停止…",
-		play:"▶ 再生",stop:"⏹ 停止",
-		share:"このアプリをシェア",showQr:"QRコードを表示",hideQr:"QRコードを非表示",
-		noVoices:"この言語に利用可能な音声はありません",loadingVoices:"音声を読み込み中…",
-		toDarkMode:"ダークモードに切り替え",toLightMode:"ライトモードに切り替え",
-		install:"📲 アプリをインストール"
-	},
-	ko:{
-		sub:"대중교통에서의 정중한 안내",
-		phraseLabel:"말할 내용",defaultMode:"기본",customMode:"사용자 정의",
-		customPlaceholder:"사용자 정의 문구를 입력하세요…",
-		defaultCustomPhrase:"죄송하지만 휴대폰을 무음으로 해주시겠어요?",
-		where:"어디에 타고 계신가요?",
-		tn:{train:"기차",bus:"버스",tram:"트램",plane:"비행기",subway:"지하철",ferry:"페리",cablecar:"케이블카"},
-		lang:"언어",voice:"음성",interval:"발화 사이 일시정지",
-		fast:"빠름",slow:"느림",
-		stopped:"⏹ 정지됨",loading:"⏳ 로딩 중…",speaking:"🔊 재생 중…",paused:"⏸ 루프 사이 일시정지…",
-		play:"▶ 재생",stop:"⏹ 정지",
-		share:"앱 공유하기",showQr:"QR 코드 보기",hideQr:"QR 코드 숨기기",
-		noVoices:"이 언어에 사용 가능한 음성이 없습니다",loadingVoices:"음성 로딩 중…",
-		toDarkMode:"다크 모드로 전환",toLightMode:"라이트 모드로 전환",
-		install:"📲 앱 설치"
-	},
-	th:{
-		sub:"การเตือนอย่างสุภาพบนระบบขนส่งสาธารณะ",
-		phraseLabel:"สิ่งที่จะพูด",defaultMode:"ค่าเริ่มต้น",customMode:"กำหนดเอง",
-		customPlaceholder:"พิมพ์ประโยคที่กำหนดเอง…",
-		defaultCustomPhrase:"ช่วยปิดเสียงโทรศัพท์ด้วยได้ไหมคะ?",
-		where:"คุณกำลังนั่งอะไรอยู่?",
-		tn:{train:"รถไฟ",bus:"รถบัส",tram:"รถราง",plane:"เครื่องบิน",subway:"รถไฟฟ้าใต้ดิน",ferry:"เรือเฟอร์รี่",cablecar:"กระเช้าไฟฟ้า"},
-		lang:"ภาษา",voice:"เสียง",interval:"หยุดพักระหว่างประโยค",
-		fast:"เร็ว",slow:"ช้า",
-		stopped:"⏹ หยุดแล้ว",loading:"⏳ กำลังโหลด…",speaking:"🔊 กำลังพูด…",paused:"⏸ หยุดระหว่างลูป…",
-		play:"▶ เล่น",stop:"⏹ หยุด",
-		share:"แชร์แอปนี้",showQr:"แสดงรหัส QR",hideQr:"ซ่อนรหัส QR",
-		noVoices:"ไม่มีเสียงสำหรับภาษานี้",loadingVoices:"กำลังโหลดเสียง…",
-		toDarkMode:"เปลี่ยนเป็นโหมดมืด",toLightMode:"เปลี่ยนเป็นโหมดสว่าง",
-		install:"📲 ติดตั้งแอป"
-	},
-	vi:{
-		sub:"Nhắc nhở lịch sự trên phương tiện giao thông công cộng",
-		phraseLabel:"Nội dung thông báo",defaultMode:"Mặc định",customMode:"Tùy chỉnh",
-		customPlaceholder:"Nhập câu tùy chỉnh của bạn…",
-		defaultCustomPhrase:"Bạn có thể tắt tiếng điện thoại không, làm ơn?",
-		where:"Bạn đang đi phương tiện gì?",
-		tn:{train:"Tàu",bus:"Xe buýt",tram:"Tàu điện",plane:"Máy bay",subway:"Tàu điện ngầm",ferry:"Phà",cablecar:"Cáp treo"},
-		lang:"Ngôn ngữ",voice:"Giọng đọc",interval:"Khoảng dừng giữa các câu",
-		fast:"Nhanh",slow:"Chậm",
-		stopped:"⏹ Đã dừng",loading:"⏳ Đang tải…",speaking:"🔊 Đang phát…",paused:"⏸ Tạm dừng giữa các vòng…",
-		play:"▶ Phát",stop:"⏹ Dừng",
-		share:"Chia sẻ ứng dụng này",showQr:"Hiện mã QR",hideQr:"Ẩn mã QR",
-		noVoices:"Không có giọng đọc nào cho ngôn ngữ này",loadingVoices:"Đang tải giọng đọc…",
-		toDarkMode:"Chuyển sang chế độ tối",toLightMode:"Chuyển sang chế độ sáng",
-		install:"📲 Cài đặt ứng dụng"
-	},
-	zh:{
-		sub:"乘坐公共交通时的温馨提示",
-		phraseLabel:"播报内容",defaultMode:"默认",customMode:"自定义",
-		customPlaceholder:"输入自定义短语…",
-		defaultCustomPhrase:"请把您的手机调成静音，谢谢。",
-		where:"您在乘坐什么交通工具？",
-		tn:{train:"火车",bus:"公交车",tram:"有轨电车",plane:"飞机",subway:"地铁",ferry:"渡轮",cablecar:"缆车"},
-		lang:"语言",voice:"声音",interval:"语句间停顿",
-		fast:"快",slow:"慢",
-		stopped:"⏹ 已停止",loading:"⏳ 加载中…",speaking:"🔊 播放中…",paused:"⏸ 循环间暂停…",
-		play:"▶ 播放",stop:"⏹ 停止",
-		share:"分享此应用",showQr:"显示二维码",hideQr:"隐藏二维码",
-		noVoices:"该语言没有可用的语音",loadingVoices:"加载语音中…",
-		toDarkMode:"切换到深色模式",toLightMode:"切换到浅色模式",
-		install:"📲 安装应用"
-	},
-	zhtw:{
-		sub:"搭乘大眾運輸時的貼心提示",
-		phraseLabel:"播報內容",defaultMode:"預設",customMode:"自訂",
-		customPlaceholder:"輸入自訂短語…",
-		defaultCustomPhrase:"請把您的手機調成靜音，謝謝。",
-		where:"您在乘坐什麼交通工具？",
-		tn:{train:"火車",bus:"公車",tram:"有軌電車",plane:"飛機",subway:"捷運",ferry:"渡輪",cablecar:"纜車"},
-		lang:"語言",voice:"聲音",interval:"語句間停頓",
-		fast:"快",slow:"慢",
-		stopped:"⏹ 已停止",loading:"⏳ 載入中…",speaking:"🔊 播放中…",paused:"⏸ 循環間暫停…",
-		play:"▶ 播放",stop:"⏹ 停止",
-		share:"分享此應用",showQr:"顯示二維碼",hideQr:"隱藏二維碼",
-		noVoices:"該語言沒有可用的語音",loadingVoices:"載入語音中…",
-		toDarkMode:"切換到深色模式",toLightMode:"切換到淺色模式",
-		install:"📲 安裝應用"
-	}
+  en: {
+    sub: 'Passive-aggressive audio policing for public transport',
+    phraseLabel: 'What to say',
+    defaultMode: 'Default',
+    customMode: 'Custom',
+    customPlaceholder: 'Type your custom phrase…',
+    defaultCustomPhrase: 'Can you just mute your phone, please?',
+    where: 'Where are you commuting?',
+    tn: {
+      train: 'Train',
+      bus: 'Bus',
+      tram: 'Tram',
+      plane: 'Plane',
+      subway: 'Subway',
+      ferry: 'Ferry',
+      cablecar: 'Cable car',
+    },
+    lang: 'Language',
+    voice: 'Voice',
+    interval: 'Pause between utterances',
+    fast: 'Fast',
+    slow: 'Slow',
+    stopped: '⏹ Stopped',
+    loading: '⏳ Loading…',
+    speaking: '🔊 Speaking…',
+    paused: '⏸ Paused between loops…',
+    play: '▶ Play',
+    stop: '⏹ Stop',
+    share: 'Share this app',
+    showQr: 'Show QR Code',
+    hideQr: 'Hide QR Code',
+    noVoices: 'No voices available for this language',
+    loadingVoices: 'Loading voices…',
+    toDarkMode: 'Switch to dark mode',
+    toLightMode: 'Switch to light mode',
+    install: '📲 Install app',
+  },
+  bg: {
+    sub: 'Пасивно-агресивен звуков контрол в обществения транспорт',
+    phraseLabel: 'Какво да се каже',
+    defaultMode: 'По подразбиране',
+    customMode: 'По избор',
+    customPlaceholder: 'Въведете своята фраза…',
+    defaultCustomPhrase: 'Можете ли да заглушите телефона си, моля?',
+    where: 'С какво пътувате?',
+    tn: {
+      train: 'Влак',
+      bus: 'Автобус',
+      tram: 'Трамвай',
+      plane: 'Самолет',
+      subway: 'Метро',
+      ferry: 'Ферибот',
+      cablecar: 'Въжена линия',
+    },
+    lang: 'Език',
+    voice: 'Глас',
+    interval: 'Пауза между изреченията',
+    fast: 'Бързо',
+    slow: 'Бавно',
+    stopped: '⏹ Спряно',
+    loading: '⏳ Зарежда…',
+    speaking: '🔊 Говори…',
+    paused: '⏸ Пауза между цикли…',
+    play: '▶ Пусни',
+    stop: '⏹ Спри',
+    share: 'Сподели приложението',
+    showQr: 'Покажи QR код',
+    hideQr: 'Скрий QR код',
+    noVoices: 'Няма налични гласове за този език',
+    loadingVoices: 'Зареждане на гласовете…',
+    toDarkMode: 'Превключи към тъмен режим',
+    toLightMode: 'Превключи към светъл режим',
+    install: '📲 Инсталирай приложението',
+  },
+  ca: {
+    sub: "Polícia d'àudio passiva-agressiva per al transport públic",
+    phraseLabel: 'Què cal dir',
+    defaultMode: 'Per defecte',
+    customMode: 'Personalitzat',
+    customPlaceholder: 'Escriviu la vostra frase personalitzada…',
+    defaultCustomPhrase: 'Pots silenciar el telèfon, si us plau?',
+    where: 'On viatgeu?',
+    tn: {
+      train: 'Tren',
+      bus: 'Autobús',
+      tram: 'Tramvia',
+      plane: 'Avió',
+      subway: 'Metro',
+      ferry: 'Ferri',
+      cablecar: 'Telefèric',
+    },
+    lang: 'Idioma',
+    voice: 'Veu',
+    interval: 'Pausa entre locucions',
+    fast: 'Ràpid',
+    slow: 'Lent',
+    stopped: '⏹ Aturat',
+    loading: '⏳ Carregant…',
+    speaking: '🔊 Parlant…',
+    paused: '⏸ Pausat entre bucles…',
+    play: '▶ Reproduir',
+    stop: '⏹ Parar',
+    share: 'Comparteix aquesta app',
+    showQr: 'Mostra el codi QR',
+    hideQr: 'Amaga el codi QR',
+    noVoices: 'No hi ha veus disponibles per a aquest idioma',
+    loadingVoices: 'Carregant veus…',
+    toDarkMode: 'Canvia al mode fosc',
+    toLightMode: 'Canvia al mode clar',
+    install: "📲 Instal·la l'app",
+  },
+  hr: {
+    sub: 'Pasivno-agresivna audio kontrola u javnom prijevozu',
+    phraseLabel: 'Što reći',
+    defaultMode: 'Zadano',
+    customMode: 'Prilagođeno',
+    customPlaceholder: 'Upišite svoju prilagođenu frazu…',
+    defaultCustomPhrase: 'Možete li utišati telefon, molim vas?',
+    where: 'Čime putujete?',
+    tn: {
+      train: 'Vlak',
+      bus: 'Autobus',
+      tram: 'Tramvaj',
+      plane: 'Avion',
+      subway: 'Metro',
+      ferry: 'Trajekt',
+      cablecar: 'Žičara',
+    },
+    lang: 'Jezik',
+    voice: 'Glas',
+    interval: 'Pauza između izgovora',
+    fast: 'Brzo',
+    slow: 'Sporo',
+    stopped: '⏹ Zaustavljeno',
+    loading: '⏳ Učitavanje…',
+    speaking: '🔊 Govori…',
+    paused: '⏸ Pauza između petlji…',
+    play: '▶ Reproduciraj',
+    stop: '⏹ Zaustavi',
+    share: 'Podijeli ovu aplikaciju',
+    showQr: 'Prikaži QR kod',
+    hideQr: 'Sakrij QR kod',
+    noVoices: 'Nema dostupnih glasova za ovaj jezik',
+    loadingVoices: 'Učitavanje glasova…',
+    toDarkMode: 'Prebaci na tamni način',
+    toLightMode: 'Prebaci na svijetli način',
+    install: '📲 Instaliraj aplikaciju',
+  },
+  cs: {
+    sub: 'Pasivně-agresivní zvuková kontrola ve veřejné dopravě',
+    phraseLabel: 'Co říci',
+    defaultMode: 'Výchozí',
+    customMode: 'Vlastní',
+    customPlaceholder: 'Napište svou vlastní frázi…',
+    defaultCustomPhrase: 'Mohli byste prosím ztlumit svůj telefon?',
+    where: 'Čím cestujete?',
+    tn: {
+      train: 'Vlak',
+      bus: 'Autobus',
+      tram: 'Tramvaj',
+      plane: 'Letadlo',
+      subway: 'Metro',
+      ferry: 'Trajekt',
+      cablecar: 'Lanovka',
+    },
+    lang: 'Jazyk',
+    voice: 'Hlas',
+    interval: 'Pauza mezi promluvami',
+    fast: 'Rychle',
+    slow: 'Pomalu',
+    stopped: '⏹ Zastaveno',
+    loading: '⏳ Načítání…',
+    speaking: '🔊 Mluví…',
+    paused: '⏸ Pauza mezi smyčkami…',
+    play: '▶ Přehrát',
+    stop: '⏹ Zastavit',
+    share: 'Sdílej tuto aplikaci',
+    showQr: 'Zobrazit QR kód',
+    hideQr: 'Skrýt QR kód',
+    noVoices: 'Pro tento jazyk nejsou dostupné žádné hlasy',
+    loadingVoices: 'Načítání hlasů…',
+    toDarkMode: 'Přepnout na tmavý režim',
+    toLightMode: 'Přepnout na světlý režim',
+    install: '📲 Nainstalovat aplikaci',
+  },
+  da: {
+    sub: 'Passiv-aggressiv lydkontrol i den offentlige transport',
+    phraseLabel: 'Hvad skal der siges',
+    defaultMode: 'Standard',
+    customMode: 'Tilpasset',
+    customPlaceholder: 'Skriv din tilpassede sætning…',
+    defaultCustomPhrase: 'Kan du slå lyden fra på din telefon?',
+    where: 'Hvad pendler du med?',
+    tn: {
+      train: 'Tog',
+      bus: 'Bus',
+      tram: 'Sporvogn',
+      plane: 'Fly',
+      subway: 'Metro',
+      ferry: 'Færge',
+      cablecar: 'Kabelbane',
+    },
+    lang: 'Sprog',
+    voice: 'Stemme',
+    interval: 'Pause mellem ytringer',
+    fast: 'Hurtigt',
+    slow: 'Langsomt',
+    stopped: '⏹ Stoppet',
+    loading: '⏳ Indlæser…',
+    speaking: '🔊 Taler…',
+    paused: '⏸ Pause mellem sløjfer…',
+    play: '▶ Afspil',
+    stop: '⏹ Stop',
+    share: 'Del denne app',
+    showQr: 'Vis QR-kode',
+    hideQr: 'Skjul QR-kode',
+    noVoices: 'Ingen stemmer tilgængelige for dette sprog',
+    loadingVoices: 'Indlæser stemmer…',
+    toDarkMode: 'Skift til mørk tilstand',
+    toLightMode: 'Skift til lys tilstand',
+    install: '📲 Installer app',
+  },
+  nl: {
+    sub: 'Passief-agressieve geluidscontrole in het openbaar vervoer',
+    phraseLabel: 'Wat te zeggen',
+    defaultMode: 'Standaard',
+    customMode: 'Aangepast',
+    customPlaceholder: 'Typ uw aangepaste zin…',
+    defaultCustomPhrase: 'Kun jij je telefoon op stil zetten, alsjeblieft?',
+    where: 'Waarmee reist u?',
+    tn: {
+      train: 'Trein',
+      bus: 'Bus',
+      tram: 'Tram',
+      plane: 'Vliegtuig',
+      subway: 'Metro',
+      ferry: 'Veerboot',
+      cablecar: 'Kabelbaan',
+    },
+    lang: 'Taal',
+    voice: 'Stem',
+    interval: 'Pauze tussen uitingen',
+    fast: 'Snel',
+    slow: 'Langzaam',
+    stopped: '⏹ Gestopt',
+    loading: '⏳ Laden…',
+    speaking: '🔊 Spreekt…',
+    paused: '⏸ Pauze tussen lussen…',
+    play: '▶ Afspelen',
+    stop: '⏹ Stoppen',
+    share: 'Deel deze app',
+    showQr: 'QR-code tonen',
+    hideQr: 'QR-code verbergen',
+    noVoices: 'Geen stemmen beschikbaar voor deze taal',
+    loadingVoices: 'Stemmen laden…',
+    toDarkMode: 'Overschakelen naar donkere modus',
+    toLightMode: 'Overschakelen naar lichte modus',
+    install: '📲 App installeren',
+  },
+  et: {
+    sub: 'Passiiv-agressiivne helipolitsei ühistranspordis',
+    phraseLabel: 'Mida öelda',
+    defaultMode: 'Vaikimisi',
+    customMode: 'Kohandatud',
+    customPlaceholder: 'Sisestage oma kohandatud fraas…',
+    defaultCustomPhrase: 'Kas saaksid oma telefoni vaigistada, palun?',
+    where: 'Millega sõidate?',
+    tn: {
+      train: 'Rong',
+      bus: 'Buss',
+      tram: 'Tramm',
+      plane: 'Lennuk',
+      subway: 'Metro',
+      ferry: 'Parvlaev',
+      cablecar: 'Köistee',
+    },
+    lang: 'Keel',
+    voice: 'Hääl',
+    interval: 'Paus lausungite vahel',
+    fast: 'Kiiresti',
+    slow: 'Aeglaselt',
+    stopped: '⏹ Peatatud',
+    loading: '⏳ Laadimine…',
+    speaking: '🔊 Räägib…',
+    paused: '⏸ Paus tsüklite vahel…',
+    play: '▶ Esita',
+    stop: '⏹ Peata',
+    share: 'Jaga seda rakendust',
+    showQr: 'Näita QR-koodi',
+    hideQr: 'Peida QR-kood',
+    noVoices: 'Selle keele jaoks pole hääli saadaval',
+    loadingVoices: 'Laen hääli…',
+    toDarkMode: 'Lülita tumedasse režiimi',
+    toLightMode: 'Lülita heledasse režiimi',
+    install: '📲 Installi rakendus',
+  },
+  fi: {
+    sub: 'Passiivisaggressiivinen äänivalvonta julkisessa liikenteessä',
+    phraseLabel: 'Mitä sanoa',
+    defaultMode: 'Oletus',
+    customMode: 'Mukautettu',
+    customPlaceholder: 'Kirjoita oma lauseesi…',
+    defaultCustomPhrase: 'Laittaisitko puhelimesi äänettömälle, kiitos?',
+    where: 'Millä kuljet?',
+    tn: {
+      train: 'Juna',
+      bus: 'Bussi',
+      tram: 'Raitiovaunu',
+      plane: 'Lentokone',
+      subway: 'Metro',
+      ferry: 'Lautta',
+      cablecar: 'Köysirata',
+    },
+    lang: 'Kieli',
+    voice: 'Ääni',
+    interval: 'Tauko lausumien välillä',
+    fast: 'Nopeasti',
+    slow: 'Hitaasti',
+    stopped: '⏹ Pysäytetty',
+    loading: '⏳ Ladataan…',
+    speaking: '🔊 Puhuu…',
+    paused: '⏸ Tauko kierrosten välillä…',
+    play: '▶ Toista',
+    stop: '⏹ Pysäytä',
+    share: 'Jaa tämä sovellus',
+    showQr: 'Näytä QR-koodi',
+    hideQr: 'Piilota QR-koodi',
+    noVoices: 'Tälle kielelle ei ole ääniä saatavilla',
+    loadingVoices: 'Ladataan ääniä…',
+    toDarkMode: 'Vaihda tummaan tilaan',
+    toLightMode: 'Vaihda vaaleaan tilaan',
+    install: '📲 Asenna sovellus',
+  },
+  fr: {
+    sub: 'Contrôle audio passif-agressif pour les transports en commun',
+    phraseLabel: 'Quoi dire',
+    defaultMode: 'Par défaut',
+    customMode: 'Personnalisé',
+    customPlaceholder: 'Saisissez votre phrase personnalisée…',
+    defaultCustomPhrase:
+      "Pourrais-tu mettre ton téléphone sur muet, s'il te plaît ?",
+    where: 'Quel moyen de transport utilisez-vous ?',
+    tn: {
+      train: 'Train',
+      bus: 'Bus',
+      tram: 'Tram',
+      plane: 'Avion',
+      subway: 'Métro',
+      ferry: 'Ferry',
+      cablecar: 'Téléphérique',
+    },
+    lang: 'Langue',
+    voice: 'Voix',
+    interval: 'Pause entre les annonces',
+    fast: 'Rapide',
+    slow: 'Lent',
+    stopped: '⏹ Arrêté',
+    loading: '⏳ Chargement…',
+    speaking: '🔊 En train de parler…',
+    paused: '⏸ Pause entre les boucles…',
+    play: '▶ Lancer',
+    stop: '⏹ Arrêter',
+    share: 'Partager cette application',
+    showQr: 'Afficher le QR code',
+    hideQr: 'Masquer le QR code',
+    noVoices: 'Aucune voix disponible pour cette langue',
+    loadingVoices: 'Chargement des voix…',
+    toDarkMode: 'Passer en mode sombre',
+    toLightMode: 'Passer en mode clair',
+    install: "📲 Installer l'application",
+  },
+  de: {
+    sub: 'Passiv-aggressive Audiokontrolle für den öffentlichen Nahverkehr',
+    phraseLabel: 'Was sagen',
+    defaultMode: 'Standard',
+    customMode: 'Benutzerdefiniert',
+    customPlaceholder: 'Geben Sie Ihren Text ein…',
+    defaultCustomPhrase: 'Könntest du bitte dein Telefon stummschalten?',
+    where: 'Womit fahren Sie?',
+    tn: {
+      train: 'Zug',
+      bus: 'Bus',
+      tram: 'Straßenbahn',
+      plane: 'Flugzeug',
+      subway: 'U-Bahn',
+      ferry: 'Fähre',
+      cablecar: 'Seilbahn',
+    },
+    lang: 'Sprache',
+    voice: 'Stimme',
+    interval: 'Pause zwischen Ansagen',
+    fast: 'Schnell',
+    slow: 'Langsam',
+    stopped: '⏹ Gestoppt',
+    loading: '⏳ Lädt…',
+    speaking: '🔊 Spricht…',
+    paused: '⏸ Pause zwischen den Schleifen…',
+    play: '▶ Abspielen',
+    stop: '⏹ Stoppen',
+    share: 'Diese App teilen',
+    showQr: 'QR-Code anzeigen',
+    hideQr: 'QR-Code ausblenden',
+    noVoices: 'Keine Stimmen für diese Sprache verfügbar',
+    loadingVoices: 'Stimmen werden geladen…',
+    toDarkMode: 'Zum Dunkelmodus wechseln',
+    toLightMode: 'Zum Hellmodus wechseln',
+    install: '📲 App installieren',
+  },
+  el: {
+    sub: 'Παθητικά-επιθετική ηχητική αστυνόμευση για δημόσιες μεταφορές',
+    phraseLabel: 'Τι να πείτε',
+    defaultMode: 'Προεπιλογή',
+    customMode: 'Προσαρμοσμένο',
+    customPlaceholder: 'Πληκτρολογήστε τη δική σας φράση…',
+    defaultCustomPhrase:
+      'Μπορείς να βάλεις το τηλέφωνό σου στη σίγαση, παρακαλώ;',
+    where: 'Με τι μετακινείστε;',
+    tn: {
+      train: 'Τρένο',
+      bus: 'Λεωφορείο',
+      tram: 'Τραμ',
+      plane: 'Αεροπλάνο',
+      subway: 'Μετρό',
+      ferry: 'Πλοίο',
+      cablecar: 'Τελεφερίκ',
+    },
+    lang: 'Γλώσσα',
+    voice: 'Φωνή',
+    interval: 'Παύση μεταξύ εκφωνήσεων',
+    fast: 'Γρήγορα',
+    slow: 'Αργά',
+    stopped: '⏹ Σταματημένο',
+    loading: '⏳ Φόρτωση…',
+    speaking: '🔊 Μιλάει…',
+    paused: '⏸ Παύση μεταξύ επαναλήψεων…',
+    play: '▶ Αναπαραγωγή',
+    stop: '⏹ Διακοπή',
+    share: 'Κοινοποίησε αυτήν την εφαρμογή',
+    showQr: 'Εμφάνιση QR κώδικα',
+    hideQr: 'Απόκρυψη QR κώδικα',
+    noVoices: 'Δεν υπάρχουν διαθέσιμες φωνές για αυτήν τη γλώσσα',
+    loadingVoices: 'Φόρτωση φωνών…',
+    toDarkMode: 'Μετάβαση σε σκοτεινή λειτουργία',
+    toLightMode: 'Μετάβαση σε φωτεινή λειτουργία',
+    install: '📲 Εγκατάσταση εφαρμογής',
+  },
+  hu: {
+    sub: 'Passzív-agresszív hangellenőrzés a tömegközlekedésben',
+    phraseLabel: 'Mit mondjon',
+    defaultMode: 'Alapértelmezett',
+    customMode: 'Egyéni',
+    customPlaceholder: 'Írja be a saját mondatát…',
+    defaultCustomPhrase: 'Kérlek, némítsd el a telefonod!',
+    where: 'Mivel ingázik?',
+    tn: {
+      train: 'Vonat',
+      bus: 'Busz',
+      tram: 'Villamos',
+      plane: 'Repülő',
+      subway: 'Metró',
+      ferry: 'Komp',
+      cablecar: 'Drótkötélpálya',
+    },
+    lang: 'Nyelv',
+    voice: 'Hang',
+    interval: 'Szünet a mondatok között',
+    fast: 'Gyors',
+    slow: 'Lassú',
+    stopped: '⏹ Megállítva',
+    loading: '⏳ Betöltés…',
+    speaking: '🔊 Beszél…',
+    paused: '⏸ Szünet a hurkok között…',
+    play: '▶ Lejátszás',
+    stop: '⏹ Leállítás',
+    share: 'Oszd meg ezt az alkalmazást',
+    showQr: 'QR-kód megjelenítése',
+    hideQr: 'QR-kód elrejtése',
+    noVoices: 'Ehhez a nyelvhez nem áll rendelkezésre hang',
+    loadingVoices: 'Hangok betöltése…',
+    toDarkMode: 'Váltás sötét módra',
+    toLightMode: 'Váltás világos módra',
+    install: '📲 Alkalmazás telepítése',
+  },
+  it: {
+    sub: 'Controllo audio passivo-aggressivo per i trasporti pubblici',
+    phraseLabel: 'Cosa dire',
+    defaultMode: 'Predefinito',
+    customMode: 'Personalizzato',
+    customPlaceholder: 'Scrivi la tua frase personalizzata…',
+    defaultCustomPhrase: 'Puoi mettere il telefono in silenzioso, per favore?',
+    where: 'Con quale mezzo stai viaggiando?',
+    tn: {
+      train: 'Treno',
+      bus: 'Autobus',
+      tram: 'Tram',
+      plane: 'Aereo',
+      subway: 'Metro',
+      ferry: 'Traghetto',
+      cablecar: 'Funivia',
+    },
+    lang: 'Lingua',
+    voice: 'Voce',
+    interval: 'Pausa tra le frasi',
+    fast: 'Veloce',
+    slow: 'Lento',
+    stopped: '⏹ Fermo',
+    loading: '⏳ Caricamento…',
+    speaking: '🔊 In riproduzione…',
+    paused: '⏸ Pausa tra i loop…',
+    play: '▶ Avvia',
+    stop: '⏹ Ferma',
+    share: 'Condividi questa app',
+    showQr: 'Mostra QR Code',
+    hideQr: 'Nascondi QR Code',
+    noVoices: 'Nessuna voce disponibile per questa lingua',
+    loadingVoices: 'Caricamento voci…',
+    toDarkMode: 'Passa alla modalità scura',
+    toLightMode: 'Passa alla modalità chiara',
+    install: "📲 Installa l'app",
+  },
+  lv: {
+    sub: 'Pasīvi-agresīva skaņu kontrole sabiedriskajā transportā',
+    phraseLabel: 'Ko teikt',
+    defaultMode: 'Noklusējums',
+    customMode: 'Pielāgots',
+    customPlaceholder: 'Ierakstiet savu frāzi…',
+    defaultCustomPhrase: 'Vai varētu apklusināt savu tālruni, lūdzu?',
+    where: 'Ar ko jūs braucat?',
+    tn: {
+      train: 'Vilciens',
+      bus: 'Autobuss',
+      tram: 'Tramvajs',
+      plane: 'Lidmašīna',
+      subway: 'Metro',
+      ferry: 'Prāmis',
+      cablecar: 'Gaisa tramvajs',
+    },
+    lang: 'Valoda',
+    voice: 'Balss',
+    interval: 'Pauze starp teikumiem',
+    fast: 'Ātri',
+    slow: 'Lēni',
+    stopped: '⏹ Apturēts',
+    loading: '⏳ Ielāde…',
+    speaking: '🔊 Runā…',
+    paused: '⏸ Pauze starp cilpām…',
+    play: '▶ Atskaņot',
+    stop: '⏹ Apturēt',
+    share: 'Kopīgot šo lietotni',
+    showQr: 'Rādīt QR kodu',
+    hideQr: 'Paslēpt QR kodu',
+    noVoices: 'Šai valodai nav pieejamu balsu',
+    loadingVoices: 'Ielādē balsis…',
+    toDarkMode: 'Pārslēgties uz tumšo režīmu',
+    toLightMode: 'Pārslēgties uz gaišo režīmu',
+    install: '📲 Instalēt lietotni',
+  },
+  lt: {
+    sub: 'Pasyviai agresyvi garso kontrolė viešajame transporte',
+    phraseLabel: 'Ką sakyti',
+    defaultMode: 'Numatytasis',
+    customMode: 'Pasirinktinis',
+    customPlaceholder: 'Įveskite savo frazę…',
+    defaultCustomPhrase: 'Ar galite nutildyti telefoną, prašau?',
+    where: 'Kuo keliaujate?',
+    tn: {
+      train: 'Traukinys',
+      bus: 'Autobusas',
+      tram: 'Tramvajus',
+      plane: 'Lėktuvas',
+      subway: 'Metro',
+      ferry: 'Keltas',
+      cablecar: 'Lynų kelias',
+    },
+    lang: 'Kalba',
+    voice: 'Balsas',
+    interval: 'Pauzė tarp sakinių',
+    fast: 'Greitai',
+    slow: 'Lėtai',
+    stopped: '⏹ Sustabdyta',
+    loading: '⏳ Kraunama…',
+    speaking: '🔊 Kalba…',
+    paused: '⏸ Pauzė tarp kilpų…',
+    play: '▶ Leisti',
+    stop: '⏹ Sustabdyti',
+    share: 'Dalintis šia programa',
+    showQr: 'Rodyti QR kodą',
+    hideQr: 'Slėpti QR kodą',
+    noVoices: 'Šiai kalbai nėra balso',
+    loadingVoices: 'Kraunami balsai…',
+    toDarkMode: 'Perjungti į tamsų režimą',
+    toLightMode: 'Perjungti į šviesų režimą',
+    install: '📲 Įdiegti programą',
+  },
+  nb: {
+    sub: 'Passiv-aggressiv lydkontroll i kollektivtrafikken',
+    phraseLabel: 'Hva som sies',
+    defaultMode: 'Standard',
+    customMode: 'Tilpasset',
+    customPlaceholder: 'Skriv din egne setning…',
+    defaultCustomPhrase: 'Kan du dempe telefonen?',
+    where: 'Hva reiser du med?',
+    tn: {
+      train: 'Tog',
+      bus: 'Buss',
+      tram: 'Trikk',
+      plane: 'Fly',
+      subway: 'T-bane',
+      ferry: 'Ferje',
+      cablecar: 'Taubane',
+    },
+    lang: 'Språk',
+    voice: 'Stemme',
+    interval: 'Pause mellom ytringer',
+    fast: 'Raskt',
+    slow: 'Sakte',
+    stopped: '⏹ Stoppet',
+    loading: '⏳ Laster…',
+    speaking: '🔊 Snakker…',
+    paused: '⏸ Pause mellom sløyfene…',
+    play: '▶ Spill av',
+    stop: '⏹ Stopp',
+    share: 'Del denne appen',
+    showQr: 'Vis QR-kode',
+    hideQr: 'Skjul QR-kode',
+    noVoices: 'Ingen stemmer tilgjengelige for dette språket',
+    loadingVoices: 'Laster inn stemmer…',
+    toDarkMode: 'Bytt til mørk modus',
+    toLightMode: 'Bytt til lys modus',
+    install: '📲 Installer app',
+  },
+  pl: {
+    sub: 'Pasywno-agresywna kontrola dźwięku w transporcie publicznym',
+    phraseLabel: 'Co powiedzieć',
+    defaultMode: 'Domyślna',
+    customMode: 'Niestandardowa',
+    customPlaceholder: 'Wpisz swoją frazę…',
+    defaultCustomPhrase: 'Czy możesz wyciszyć swój telefon?',
+    where: 'Czym podróżujesz?',
+    tn: {
+      train: 'Pociąg',
+      bus: 'Autobus',
+      tram: 'Tramwaj',
+      plane: 'Samolot',
+      subway: 'Metro',
+      ferry: 'Prom',
+      cablecar: 'Kolejka linowa',
+    },
+    lang: 'Język',
+    voice: 'Głos',
+    interval: 'Przerwa między wypowiedziami',
+    fast: 'Szybko',
+    slow: 'Wolno',
+    stopped: '⏹ Zatrzymano',
+    loading: '⏳ Ładowanie…',
+    speaking: '🔊 Mówi…',
+    paused: '⏸ Pauza między pętlami…',
+    play: '▶ Odtwórz',
+    stop: '⏹ Zatrzymaj',
+    share: 'Udostępnij tę aplikację',
+    showQr: 'Pokaż kod QR',
+    hideQr: 'Ukryj kod QR',
+    noVoices: 'Brak głosów dostępnych dla tego języka',
+    loadingVoices: 'Ładowanie głosów…',
+    toDarkMode: 'Przełącz na tryb ciemny',
+    toLightMode: 'Przełącz na tryb jasny',
+    install: '📲 Zainstaluj aplikację',
+  },
+  pt: {
+    sub: 'Controlo de áudio passivo-agressivo para transportes públicos',
+    phraseLabel: 'O que dizer',
+    defaultMode: 'Padrão',
+    customMode: 'Personalizado',
+    customPlaceholder: 'Escreva a sua frase personalizada…',
+    defaultCustomPhrase: 'Podes silenciar o teu telemóvel, por favor?',
+    where: 'Em que transporte vai?',
+    tn: {
+      train: 'Comboio',
+      bus: 'Autocarro',
+      tram: 'Elétrico',
+      plane: 'Avião',
+      subway: 'Metro',
+      ferry: 'Ferry',
+      cablecar: 'Teleférico',
+    },
+    lang: 'Idioma',
+    voice: 'Voz',
+    interval: 'Pausa entre anúncios',
+    fast: 'Rápido',
+    slow: 'Lento',
+    stopped: '⏹ Parado',
+    loading: '⏳ A carregar…',
+    speaking: '🔊 A falar…',
+    paused: '⏸ Pausa entre ciclos…',
+    play: '▶ Reproduzir',
+    stop: '⏹ Parar',
+    share: 'Partilhar esta aplicação',
+    showQr: 'Mostrar QR Code',
+    hideQr: 'Esconder QR Code',
+    noVoices: 'Sem vozes disponíveis para este idioma',
+    loadingVoices: 'A carregar vozes…',
+    toDarkMode: 'Mudar para modo escuro',
+    toLightMode: 'Mudar para modo claro',
+    install: '📲 Instalar aplicação',
+  },
+  ro: {
+    sub: 'Control audio pasiv-agresiv pentru transportul public',
+    phraseLabel: 'Ce să spui',
+    defaultMode: 'Implicit',
+    customMode: 'Personalizat',
+    customPlaceholder: 'Scrieți fraza dvs. personalizată…',
+    defaultCustomPhrase: 'Poți pune telefonul pe silențios, te rog?',
+    where: 'Cu ce călătoriți?',
+    tn: {
+      train: 'Tren',
+      bus: 'Autobuz',
+      tram: 'Tramvai',
+      plane: 'Avion',
+      subway: 'Metrou',
+      ferry: 'Feribot',
+      cablecar: 'Telecabină',
+    },
+    lang: 'Limbă',
+    voice: 'Voce',
+    interval: 'Pauză între enunțuri',
+    fast: 'Repede',
+    slow: 'Lent',
+    stopped: '⏹ Oprit',
+    loading: '⏳ Se încarcă…',
+    speaking: '🔊 Vorbește…',
+    paused: '⏸ Pauză între bucle…',
+    play: '▶ Redare',
+    stop: '⏹ Oprire',
+    share: 'Partajează această aplicație',
+    showQr: 'Arată codul QR',
+    hideQr: 'Ascunde codul QR',
+    noVoices: 'Nu există voci disponibile pentru această limbă',
+    loadingVoices: 'Se încarcă vocile…',
+    toDarkMode: 'Comutare la modul întunecat',
+    toLightMode: 'Comutare la modul luminos',
+    install: '📲 Instalează aplicația',
+  },
+  ru: {
+    sub: 'Пассивно-агрессивный звуковой контроль в общественном транспорте',
+    phraseLabel: 'Что сказать',
+    defaultMode: 'По умолчанию',
+    customMode: 'Свой текст',
+    customPlaceholder: 'Введите свою фразу…',
+    defaultCustomPhrase: 'Пожалуйста, поставьте телефон на беззвучный режим.',
+    where: 'На чём вы едете?',
+    tn: {
+      train: 'Поезд',
+      bus: 'Автобус',
+      tram: 'Трамвай',
+      plane: 'Самолёт',
+      subway: 'Метро',
+      ferry: 'Паром',
+      cablecar: 'Канатная дорога',
+    },
+    lang: 'Язык',
+    voice: 'Голос',
+    interval: 'Пауза между фразами',
+    fast: 'Быстро',
+    slow: 'Медленно',
+    stopped: '⏹ Остановлено',
+    loading: '⏳ Загрузка…',
+    speaking: '🔊 Воспроизводит…',
+    paused: '⏸ Пауза между повторами…',
+    play: '▶ Воспроизвести',
+    stop: '⏹ Остановить',
+    share: 'Поделиться этим приложением',
+    showQr: 'Показать QR-код',
+    hideQr: 'Скрыть QR-код',
+    noVoices: 'Для этого языка голоса недоступны',
+    loadingVoices: 'Загрузка голосов…',
+    toDarkMode: 'Переключить на тёмную тему',
+    toLightMode: 'Переключить на светлую тему',
+    install: '📲 Установить приложение',
+  },
+  sk: {
+    sub: 'Pasívno-agresívna zvuková kontrola vo verejnej doprave',
+    phraseLabel: 'Čo povedať',
+    defaultMode: 'Predvolené',
+    customMode: 'Vlastná',
+    customPlaceholder: 'Napíšte svoju vlastnú frázu…',
+    defaultCustomPhrase: 'Mohli by ste prosím stlmiť telefón?',
+    where: 'Čím cestujete?',
+    tn: {
+      train: 'Vlak',
+      bus: 'Autobus',
+      tram: 'Električka',
+      plane: 'Lietadlo',
+      subway: 'Metro',
+      ferry: 'Trajekt',
+      cablecar: 'Lanovka',
+    },
+    lang: 'Jazyk',
+    voice: 'Hlas',
+    interval: 'Pauza medzi výrokmi',
+    fast: 'Rýchlo',
+    slow: 'Pomaly',
+    stopped: '⏹ Zastavené',
+    loading: '⏳ Načítanie…',
+    speaking: '🔊 Hovorí…',
+    paused: '⏸ Pauza medzi slučkami…',
+    play: '▶ Prehrať',
+    stop: '⏹ Zastaviť',
+    share: 'Zdieľaj túto aplikáciu',
+    showQr: 'Zobraziť QR kód',
+    hideQr: 'Skryť QR kód',
+    noVoices: 'Pre tento jazyk nie sú k dispozícii žiadne hlasy',
+    loadingVoices: 'Načítanie hlasov…',
+    toDarkMode: 'Prepnúť na tmavý režim',
+    toLightMode: 'Prepnúť na svetlý režim',
+    install: '📲 Nainštalovať aplikáciu',
+  },
+  sl: {
+    sub: 'Pasivno-agresivni zvočni nadzor v javnem prevozu',
+    phraseLabel: 'Kaj reči',
+    defaultMode: 'Privzeto',
+    customMode: 'Po meri',
+    customPlaceholder: 'Vnesite svojo frazo…',
+    defaultCustomPhrase: 'Bi prosil, da utišate telefon?',
+    where: 'S čim potujete?',
+    tn: {
+      train: 'Vlak',
+      bus: 'Avtobus',
+      tram: 'Tramvaj',
+      plane: 'Letalo',
+      subway: 'Metro',
+      ferry: 'Trajekt',
+      cablecar: 'Žičnica',
+    },
+    lang: 'Jezik',
+    voice: 'Glas',
+    interval: 'Premor med izjavami',
+    fast: 'Hitro',
+    slow: 'Počasi',
+    stopped: '⏹ Ustavljeno',
+    loading: '⏳ Nalaganje…',
+    speaking: '🔊 Govori…',
+    paused: '⏸ Pavza med zankami…',
+    play: '▶ Predvajaj',
+    stop: '⏹ Ustavi',
+    share: 'Deli to aplikacijo',
+    showQr: 'Prikaži QR kodo',
+    hideQr: 'Skrij QR kodo',
+    noVoices: 'Za ta jezik ni razpoložljivih glasov',
+    loadingVoices: 'Nalaganje glasov…',
+    toDarkMode: 'Preklopi na temni način',
+    toLightMode: 'Preklopi na svetli način',
+    install: '📲 Namesti aplikacijo',
+  },
+  es: {
+    sub: 'Control de audio pasivo-agresivo para el transporte público',
+    phraseLabel: 'Qué decir',
+    defaultMode: 'Por defecto',
+    customMode: 'Personalizado',
+    customPlaceholder: 'Escribe tu frase personalizada…',
+    defaultCustomPhrase: '¿Puedes silenciar tu teléfono, por favor?',
+    where: '¿En qué transporte vas?',
+    tn: {
+      train: 'Tren',
+      bus: 'Autobús',
+      tram: 'Tranvía',
+      plane: 'Avión',
+      subway: 'Metro',
+      ferry: 'Ferry',
+      cablecar: 'Teleférico',
+    },
+    lang: 'Idioma',
+    voice: 'Voz',
+    interval: 'Pausa entre anuncios',
+    fast: 'Rápido',
+    slow: 'Lento',
+    stopped: '⏹ Detenido',
+    loading: '⏳ Cargando…',
+    speaking: '🔊 Hablando…',
+    paused: '⏸ Pausa entre bucles…',
+    play: '▶ Reproducir',
+    stop: '⏹ Detener',
+    share: 'Comparte esta aplicación',
+    showQr: 'Mostrar código QR',
+    hideQr: 'Ocultar código QR',
+    noVoices: 'No hay voces disponibles para este idioma',
+    loadingVoices: 'Cargando voces…',
+    toDarkMode: 'Cambiar al modo oscuro',
+    toLightMode: 'Cambiar al modo claro',
+    install: '📲 Instalar la app',
+  },
+  sv: {
+    sub: 'Passivt aggressiv ljudkontroll i kollektivtrafiken',
+    phraseLabel: 'Vad som sägs',
+    defaultMode: 'Standard',
+    customMode: 'Anpassad',
+    customPlaceholder: 'Skriv din anpassade fras…',
+    defaultCustomPhrase: 'Kan du tysta telefonen, tack?',
+    where: 'Vilket transportmedel använder du?',
+    tn: {
+      train: 'Tåg',
+      bus: 'Buss',
+      tram: 'Spårvagn',
+      plane: 'Flyg',
+      subway: 'Tunnelbana',
+      ferry: 'Färja',
+      cablecar: 'Linbana',
+    },
+    lang: 'Språk',
+    voice: 'Röst',
+    interval: 'Paus mellan yttranden',
+    fast: 'Snabbt',
+    slow: 'Långsamt',
+    stopped: '⏹ Stoppad',
+    loading: '⏳ Laddar…',
+    speaking: '🔊 Talar…',
+    paused: '⏸ Paus mellan slingorna…',
+    play: '▶ Spela upp',
+    stop: '⏹ Stoppa',
+    share: 'Dela denna app',
+    showQr: 'Visa QR-kod',
+    hideQr: 'Dölj QR-kod',
+    noVoices: 'Inga röster tillgängliga för detta språk',
+    loadingVoices: 'Laddar röster…',
+    toDarkMode: 'Byt till mörkt läge',
+    toLightMode: 'Byt till ljust läge',
+    install: '📲 Installera appen',
+  },
+  tr: {
+    sub: 'Toplu taşıma için pasif-agresif ses denetimi',
+    phraseLabel: 'Ne söyleneceği',
+    defaultMode: 'Varsayılan',
+    customMode: 'Özel',
+    customPlaceholder: 'Özel cümlenizi yazın…',
+    defaultCustomPhrase: 'Lütfen telefonunuzu sessize alır mısınız?',
+    where: 'Hangi taşıtla seyahat ediyorsunuz?',
+    tn: {
+      train: 'Tren',
+      bus: 'Otobüs',
+      tram: 'Tramvay',
+      plane: 'Uçak',
+      subway: 'Metro',
+      ferry: 'Feribot',
+      cablecar: 'Teleferik',
+    },
+    lang: 'Dil',
+    voice: 'Ses',
+    interval: 'Konuşmalar arası duraklama',
+    fast: 'Hızlı',
+    slow: 'Yavaş',
+    stopped: '⏹ Durduruldu',
+    loading: '⏳ Yükleniyor…',
+    speaking: '🔊 Konuşuyor…',
+    paused: '⏸ Döngüler arası duraklıyor…',
+    play: '▶ Oynat',
+    stop: '⏹ Durdur',
+    share: 'Bu uygulamayı paylaş',
+    showQr: 'QR Kodu Göster',
+    hideQr: 'QR Kodu Gizle',
+    noVoices: 'Bu dil için ses yok',
+    loadingVoices: 'Sesler yükleniyor…',
+    toDarkMode: 'Karanlık moda geç',
+    toLightMode: 'Aydınlık moda geç',
+    install: '📲 Uygulamayı yükle',
+  },
+  uk: {
+    sub: 'Пасивно-агресивний звуковий контроль у громадському транспорті',
+    phraseLabel: 'Що сказати',
+    defaultMode: 'За замовчуванням',
+    customMode: 'Власний',
+    customPlaceholder: 'Введіть власну фразу…',
+    defaultCustomPhrase: 'Будь ласка, поставте телефон на беззвучний режим.',
+    where: 'Чим ви їдете?',
+    tn: {
+      train: 'Поїзд',
+      bus: 'Автобус',
+      tram: 'Трамвай',
+      plane: 'Літак',
+      subway: 'Метро',
+      ferry: 'Пором',
+      cablecar: 'Канатна дорога',
+    },
+    lang: 'Мова',
+    voice: 'Голос',
+    interval: 'Пауза між фразами',
+    fast: 'Швидко',
+    slow: 'Повільно',
+    stopped: '⏹ Зупинено',
+    loading: '⏳ Завантаження…',
+    speaking: '🔊 Відтворює…',
+    paused: '⏸ Пауза між циклами…',
+    play: '▶ Відтворити',
+    stop: '⏹ Зупинити',
+    share: 'Поділитися цим додатком',
+    showQr: 'Показати QR-код',
+    hideQr: 'Приховати QR-код',
+    noVoices: 'Для цієї мови немає доступних голосів',
+    loadingVoices: 'Завантаження голосів…',
+    toDarkMode: 'Переключити на темну тему',
+    toLightMode: 'Переключити на світлу тему',
+    install: '📲 Встановити додаток',
+  },
+  ar: {
+    dir: 'rtl',
+    sub: 'تنبيه مهذّب على وسائل النقل العام',
+    phraseLabel: 'ما يجب قوله',
+    defaultMode: 'افتراضي',
+    customMode: 'مخصّص',
+    customPlaceholder: 'اكتب عبارتك المخصّصة…',
+    defaultCustomPhrase: 'هل يمكنك كتم صوت هاتفك من فضلك؟',
+    where: 'أين أنت الآن؟',
+    tn: {
+      train: 'قطار',
+      bus: 'حافلة',
+      tram: 'ترام',
+      plane: 'طائرة',
+      subway: 'مترو',
+      ferry: 'عبّارة',
+      cablecar: 'تلفريك',
+    },
+    lang: 'اللغة',
+    voice: 'الصوت',
+    interval: 'توقف بين العبارات',
+    fast: 'سريع',
+    slow: 'بطيء',
+    stopped: '⏹ متوقف',
+    loading: '⏳ جارٍ التحميل…',
+    speaking: '🔊 يتكلم…',
+    paused: '⏸ متوقف مؤقتاً…',
+    play: '▶ تشغيل',
+    stop: '⏹ إيقاف',
+    share: 'مشاركة هذا التطبيق',
+    showQr: 'إظهار رمز QR',
+    hideQr: 'إخفاء رمز QR',
+    noVoices: 'لا توجد أصوات متاحة لهذه اللغة',
+    loadingVoices: 'جارٍ تحميل الأصوات…',
+    toDarkMode: 'التبديل إلى الوضع المظلم',
+    toLightMode: 'التبديل إلى الوضع المضيء',
+    install: '📲 تثبيت التطبيق',
+  },
+  he: {
+    dir: 'rtl',
+    sub: 'תזכורת מנומסת בתחבורה הציבורית',
+    phraseLabel: 'מה לומר',
+    defaultMode: 'ברירת מחדל',
+    customMode: 'מותאם אישית',
+    customPlaceholder: 'הקלד את הביטוי המותאם אישית שלך…',
+    defaultCustomPhrase: 'אפשר להעביר את הטלפון לשקט, בבקשה?',
+    where: 'במה אתה נוסע?',
+    tn: {
+      train: 'רכבת',
+      bus: 'אוטובוס',
+      tram: 'טרם',
+      plane: 'מטוס',
+      subway: 'רכבת תחתית',
+      ferry: 'מעבורת',
+      cablecar: 'טלפריק',
+    },
+    lang: 'שפה',
+    voice: 'קול',
+    interval: 'הפסקה בין הודעות',
+    fast: 'מהיר',
+    slow: 'איטי',
+    stopped: '⏹ עצור',
+    loading: '⏳ טוען…',
+    speaking: '🔊 מדבר…',
+    paused: '⏸ מושהה בין לולאות…',
+    play: '▶ הפעל',
+    stop: '⏹ עצור',
+    share: 'שתף אפליקציה זו',
+    showQr: 'הצג קוד QR',
+    hideQr: 'הסתר קוד QR',
+    noVoices: 'אין קולות זמינים לשפה זו',
+    loadingVoices: 'טוען קולות…',
+    toDarkMode: 'עבור למצב כהה',
+    toLightMode: 'עבור למצב בהיר',
+    install: '📲 התקן אפליקציה',
+  },
+  hi: {
+    sub: 'सार्वजनिक परिवहन पर एक विनम्र अनुरोध',
+    phraseLabel: 'क्या कहना है',
+    defaultMode: 'डिफ़ॉल्ट',
+    customMode: 'कस्टम',
+    customPlaceholder: 'अपना कस्टम वाक्यांश टाइप करें…',
+    defaultCustomPhrase: 'क्या आप अपने फ़ोन को साइलेंट कर सकते हैं, कृपया?',
+    where: 'आप किस पर सफ़र कर रहे हैं?',
+    tn: {
+      train: 'ट्रेन',
+      bus: 'बस',
+      tram: 'ट्राम',
+      plane: 'विमान',
+      subway: 'मेट्रो',
+      ferry: 'फ़ेरी',
+      cablecar: 'केबल कार',
+    },
+    lang: 'भाषा',
+    voice: 'आवाज़',
+    interval: 'वाक्यों के बीच विराम',
+    fast: 'तेज़',
+    slow: 'धीमा',
+    stopped: '⏹ रुका हुआ',
+    loading: '⏳ लोड हो रहा है…',
+    speaking: '🔊 बोल रहा है…',
+    paused: '⏸ लूप के बीच रुका…',
+    play: '▶ चलाएँ',
+    stop: '⏹ रोकें',
+    share: 'यह ऐप शेयर करें',
+    showQr: 'QR कोड दिखाएँ',
+    hideQr: 'QR कोड छुपाएँ',
+    noVoices: 'इस भाषा के लिए कोई आवाज़ उपलब्ध नहीं',
+    loadingVoices: 'आवाज़ें लोड हो रही हैं…',
+    toDarkMode: 'डार्क मोड पर जाएँ',
+    toLightMode: 'लाइट मोड पर जाएँ',
+    install: '📲 ऐप इंस्टॉल करें',
+  },
+  id: {
+    sub: 'Pengingat sopan di transportasi umum',
+    phraseLabel: 'Yang akan dikatakan',
+    defaultMode: 'Bawaan',
+    customMode: 'Kustom',
+    customPlaceholder: 'Ketik kalimat kustom Anda…',
+    defaultCustomPhrase: 'Bisakah Anda mengaktifkan mode senyap ponsel Anda?',
+    where: 'Anda naik apa?',
+    tn: {
+      train: 'Kereta',
+      bus: 'Bus',
+      tram: 'Trem',
+      plane: 'Pesawat',
+      subway: 'Kereta Bawah Tanah',
+      ferry: 'Feri',
+      cablecar: 'Kereta Gantung',
+    },
+    lang: 'Bahasa',
+    voice: 'Suara',
+    interval: 'Jeda antar ucapan',
+    fast: 'Cepat',
+    slow: 'Lambat',
+    stopped: '⏹ Berhenti',
+    loading: '⏳ Memuat…',
+    speaking: '🔊 Berbicara…',
+    paused: '⏸ Jeda antar putaran…',
+    play: '▶ Putar',
+    stop: '⏹ Hentikan',
+    share: 'Bagikan aplikasi ini',
+    showQr: 'Tampilkan kode QR',
+    hideQr: 'Sembunyikan kode QR',
+    noVoices: 'Tidak ada suara tersedia untuk bahasa ini',
+    loadingVoices: 'Memuat suara…',
+    toDarkMode: 'Beralih ke mode gelap',
+    toLightMode: 'Beralih ke mode terang',
+    install: '📲 Pasang aplikasi',
+  },
+  ja: {
+    sub: '公共交通機関でのマナーモードのお願い',
+    phraseLabel: '言うこと',
+    defaultMode: 'デフォルト',
+    customMode: 'カスタム',
+    customPlaceholder: 'カスタムフレーズを入力…',
+    defaultCustomPhrase:
+      'すみません、スマートフォンをマナーモードにしていただけますか？',
+    where: 'どの交通機関に乗っていますか？',
+    tn: {
+      train: '電車',
+      bus: 'バス',
+      tram: '路面電車',
+      plane: '飛行機',
+      subway: '地下鉄',
+      ferry: 'フェリー',
+      cablecar: 'ケーブルカー',
+    },
+    lang: '言語',
+    voice: '音声',
+    interval: '発話間の休止',
+    fast: '速い',
+    slow: '遅い',
+    stopped: '⏹ 停止',
+    loading: '⏳ 読み込み中…',
+    speaking: '🔊 再生中…',
+    paused: '⏸ ループ間の一時停止…',
+    play: '▶ 再生',
+    stop: '⏹ 停止',
+    share: 'このアプリをシェア',
+    showQr: 'QRコードを表示',
+    hideQr: 'QRコードを非表示',
+    noVoices: 'この言語に利用可能な音声はありません',
+    loadingVoices: '音声を読み込み中…',
+    toDarkMode: 'ダークモードに切り替え',
+    toLightMode: 'ライトモードに切り替え',
+    install: '📲 アプリをインストール',
+  },
+  ko: {
+    sub: '대중교통에서의 정중한 안내',
+    phraseLabel: '말할 내용',
+    defaultMode: '기본',
+    customMode: '사용자 정의',
+    customPlaceholder: '사용자 정의 문구를 입력하세요…',
+    defaultCustomPhrase: '죄송하지만 휴대폰을 무음으로 해주시겠어요?',
+    where: '어디에 타고 계신가요?',
+    tn: {
+      train: '기차',
+      bus: '버스',
+      tram: '트램',
+      plane: '비행기',
+      subway: '지하철',
+      ferry: '페리',
+      cablecar: '케이블카',
+    },
+    lang: '언어',
+    voice: '음성',
+    interval: '발화 사이 일시정지',
+    fast: '빠름',
+    slow: '느림',
+    stopped: '⏹ 정지됨',
+    loading: '⏳ 로딩 중…',
+    speaking: '🔊 재생 중…',
+    paused: '⏸ 루프 사이 일시정지…',
+    play: '▶ 재생',
+    stop: '⏹ 정지',
+    share: '앱 공유하기',
+    showQr: 'QR 코드 보기',
+    hideQr: 'QR 코드 숨기기',
+    noVoices: '이 언어에 사용 가능한 음성이 없습니다',
+    loadingVoices: '음성 로딩 중…',
+    toDarkMode: '다크 모드로 전환',
+    toLightMode: '라이트 모드로 전환',
+    install: '📲 앱 설치',
+  },
+  th: {
+    sub: 'การเตือนอย่างสุภาพบนระบบขนส่งสาธารณะ',
+    phraseLabel: 'สิ่งที่จะพูด',
+    defaultMode: 'ค่าเริ่มต้น',
+    customMode: 'กำหนดเอง',
+    customPlaceholder: 'พิมพ์ประโยคที่กำหนดเอง…',
+    defaultCustomPhrase: 'ช่วยปิดเสียงโทรศัพท์ด้วยได้ไหมคะ?',
+    where: 'คุณกำลังนั่งอะไรอยู่?',
+    tn: {
+      train: 'รถไฟ',
+      bus: 'รถบัส',
+      tram: 'รถราง',
+      plane: 'เครื่องบิน',
+      subway: 'รถไฟฟ้าใต้ดิน',
+      ferry: 'เรือเฟอร์รี่',
+      cablecar: 'กระเช้าไฟฟ้า',
+    },
+    lang: 'ภาษา',
+    voice: 'เสียง',
+    interval: 'หยุดพักระหว่างประโยค',
+    fast: 'เร็ว',
+    slow: 'ช้า',
+    stopped: '⏹ หยุดแล้ว',
+    loading: '⏳ กำลังโหลด…',
+    speaking: '🔊 กำลังพูด…',
+    paused: '⏸ หยุดระหว่างลูป…',
+    play: '▶ เล่น',
+    stop: '⏹ หยุด',
+    share: 'แชร์แอปนี้',
+    showQr: 'แสดงรหัส QR',
+    hideQr: 'ซ่อนรหัส QR',
+    noVoices: 'ไม่มีเสียงสำหรับภาษานี้',
+    loadingVoices: 'กำลังโหลดเสียง…',
+    toDarkMode: 'เปลี่ยนเป็นโหมดมืด',
+    toLightMode: 'เปลี่ยนเป็นโหมดสว่าง',
+    install: '📲 ติดตั้งแอป',
+  },
+  vi: {
+    sub: 'Nhắc nhở lịch sự trên phương tiện giao thông công cộng',
+    phraseLabel: 'Nội dung thông báo',
+    defaultMode: 'Mặc định',
+    customMode: 'Tùy chỉnh',
+    customPlaceholder: 'Nhập câu tùy chỉnh của bạn…',
+    defaultCustomPhrase: 'Bạn có thể tắt tiếng điện thoại không, làm ơn?',
+    where: 'Bạn đang đi phương tiện gì?',
+    tn: {
+      train: 'Tàu',
+      bus: 'Xe buýt',
+      tram: 'Tàu điện',
+      plane: 'Máy bay',
+      subway: 'Tàu điện ngầm',
+      ferry: 'Phà',
+      cablecar: 'Cáp treo',
+    },
+    lang: 'Ngôn ngữ',
+    voice: 'Giọng đọc',
+    interval: 'Khoảng dừng giữa các câu',
+    fast: 'Nhanh',
+    slow: 'Chậm',
+    stopped: '⏹ Đã dừng',
+    loading: '⏳ Đang tải…',
+    speaking: '🔊 Đang phát…',
+    paused: '⏸ Tạm dừng giữa các vòng…',
+    play: '▶ Phát',
+    stop: '⏹ Dừng',
+    share: 'Chia sẻ ứng dụng này',
+    showQr: 'Hiện mã QR',
+    hideQr: 'Ẩn mã QR',
+    noVoices: 'Không có giọng đọc nào cho ngôn ngữ này',
+    loadingVoices: 'Đang tải giọng đọc…',
+    toDarkMode: 'Chuyển sang chế độ tối',
+    toLightMode: 'Chuyển sang chế độ sáng',
+    install: '📲 Cài đặt ứng dụng',
+  },
+  zh: {
+    sub: '乘坐公共交通时的温馨提示',
+    phraseLabel: '播报内容',
+    defaultMode: '默认',
+    customMode: '自定义',
+    customPlaceholder: '输入自定义短语…',
+    defaultCustomPhrase: '请把您的手机调成静音，谢谢。',
+    where: '您在乘坐什么交通工具？',
+    tn: {
+      train: '火车',
+      bus: '公交车',
+      tram: '有轨电车',
+      plane: '飞机',
+      subway: '地铁',
+      ferry: '渡轮',
+      cablecar: '缆车',
+    },
+    lang: '语言',
+    voice: '声音',
+    interval: '语句间停顿',
+    fast: '快',
+    slow: '慢',
+    stopped: '⏹ 已停止',
+    loading: '⏳ 加载中…',
+    speaking: '🔊 播放中…',
+    paused: '⏸ 循环间暂停…',
+    play: '▶ 播放',
+    stop: '⏹ 停止',
+    share: '分享此应用',
+    showQr: '显示二维码',
+    hideQr: '隐藏二维码',
+    noVoices: '该语言没有可用的语音',
+    loadingVoices: '加载语音中…',
+    toDarkMode: '切换到深色模式',
+    toLightMode: '切换到浅色模式',
+    install: '📲 安装应用',
+  },
+  zhtw: {
+    sub: '搭乘大眾運輸時的貼心提示',
+    phraseLabel: '播報內容',
+    defaultMode: '預設',
+    customMode: '自訂',
+    customPlaceholder: '輸入自訂短語…',
+    defaultCustomPhrase: '請把您的手機調成靜音，謝謝。',
+    where: '您在乘坐什麼交通工具？',
+    tn: {
+      train: '火車',
+      bus: '公車',
+      tram: '有軌電車',
+      plane: '飛機',
+      subway: '捷運',
+      ferry: '渡輪',
+      cablecar: '纜車',
+    },
+    lang: '語言',
+    voice: '聲音',
+    interval: '語句間停頓',
+    fast: '快',
+    slow: '慢',
+    stopped: '⏹ 已停止',
+    loading: '⏳ 載入中…',
+    speaking: '🔊 播放中…',
+    paused: '⏸ 循環間暫停…',
+    play: '▶ 播放',
+    stop: '⏹ 停止',
+    share: '分享此應用',
+    showQr: '顯示二維碼',
+    hideQr: '隱藏二維碼',
+    noVoices: '該語言沒有可用的語音',
+    loadingVoices: '載入語音中…',
+    toDarkMode: '切換到深色模式',
+    toLightMode: '切換到淺色模式',
+    install: '📲 安裝應用',
+  },
 };
 
 // Footer templates — each receives the GitHub URL and links its own translated word for "coded"
-(function() {
-	const m = `(<a href="https://toot.cafe/@tomayac">@tomayac@toot.cafe</a>)`;
-	const a = (u, w) => `<a href="${u}">${w}</a>`;
-	const T = {
-		en:   (u)=>`Rage-${a(u,"coded")} by Thomas Steiner ${m} on a noisy commuter train, but with love ❤️.`,
-		bg:   (u)=>`В ярост ${a(u,"кодирано")} от Thomas Steiner ${m} в шумен влак, но с любов ❤️.`,
-		ca:   (u)=>`${a(u,"Programat")} amb ràbia per Thomas Steiner ${m} en un tren de rodalia sorollós, però amb amor ❤️.`,
-		hr:   (u)=>`Bijesno ${a(u,"kodiran")} od Thomasa Steinera ${m} u bučnom prigradskom vlaku, ali s ljubavlju ❤️.`,
-		cs:   (u)=>`Vztekem ${a(u,"zakódováno")} od Thomase Steinera ${m} v hlučném příměstském vlaku, ale s láskou ❤️.`,
-		da:   (u)=>`Rasende ${a(u,"kodet")} af Thomas Steiner ${m} i et støjende pendlertog, men med kærlighed ❤️.`,
-		nl:   (u)=>`Woedend ${a(u,"gecodeerd")} door Thomas Steiner ${m} in een lawaaierige trein, maar met liefde ❤️.`,
-		et:   (u)=>`Vihas ${a(u,"kodeeritud")} Thomas Steineri ${m} poolt mürarikkas pendelrongis, aga armastusega ❤️.`,
-		fi:   (u)=>`Raivoisasti ${a(u,"koodattu")} Thomas Steinerin ${m} toimesta meluisassa lähijunassa, mutta rakkaudella ❤️.`,
-		fr:   (u)=>`${a(u,"Codé")} dans un accès de rage par Thomas Steiner ${m} dans un train de banlieue bruyant, mais avec amour ❤️.`,
-		de:   (u)=>`Wut-${a(u,"gecodet")} von Thomas Steiner ${m} im lauten Pendlerzug, aber mit Liebe ❤️.`,
-		el:   (u)=>`${a(u,"Κωδικοποιημένο")} εν οργή από τον Thomas Steiner ${m} σε θορυβώδες τρένο, αλλά με αγάπη ❤️.`,
-		hu:   (u)=>`Dühből ${a(u,"kódolva")} Thomas Steiner ${m} által zajos ingázóvonaton, de szeretettel ❤️.`,
-		it:   (u)=>`${a(u,"Codificato")} con rabbia da Thomas Steiner ${m} su un treno pendolari rumoroso, ma con amore ❤️.`,
-		lv:   (u)=>`Dusmās ${a(u,"kodēts")} no Thomas Steinera ${m} trokšņainā vilcienā, bet ar mīlestību ❤️.`,
-		lt:   (u)=>`Įsiutęs ${a(u,"sukodavo")} Thomas Steineras ${m} triukšmingame priemiesčio traukinyje, bet su meile ❤️.`,
-		nb:   (u)=>`Rasende ${a(u,"kodet")} av Thomas Steiner ${m} i et støyende pendlertog, men med kjærlighet ❤️.`,
-		pl:   (u)=>`Ze wściekłością ${a(u,"zakodowane")} przez Thomasa Steinera ${m} w hałaśliwym pociągu podmiejskim, ale z miłością ❤️.`,
-		pt:   (u)=>`${a(u,"Programado")} com raiva por Thomas Steiner ${m} num comboio de subúrbio barulhento, mas com amor ❤️.`,
-		ro:   (u)=>`${a(u,"Codat")} cu furie de Thomas Steiner ${m} într-un tren suburban zgomotos, dar cu dragoste ❤️.`,
-		ru:   (u)=>`В ярости ${a(u,"закодировано")} Thomas Steiner ${m} в шумной электричке, но с любовью ❤️.`,
-		sk:   (u)=>`V zúrivosti ${a(u,"nakódované")} od Thomasa Steinera ${m} v hlučnom prímestskom vlaku, ale s láskou ❤️.`,
-		sl:   (u)=>`V besu ${a(u,"zakodiran")} od Thomasa Steinera ${m} v hrupnem primestnem vlaku, a z ljubeznijo ❤️.`,
-		es:   (u)=>`${a(u,"Programado")} con rabia por Thomas Steiner ${m} en un tren de cercanías ruidoso, pero con amor ❤️.`,
-		sv:   (u)=>`Rasande ${a(u,"kodad")} av Thomas Steiner ${m} på ett bullrigt pendeltåg, men med kärlek ❤️.`,
-		tr:   (u)=>`Öfkeyle ${a(u,"kodlanmış")} Thomas Steiner ${m} tarafından gürültülü bir banliyö treninde, ama sevgiyle ❤️.`,
-		uk:   (u)=>`У злості ${a(u,"закодовано")} від Thomas Steiner ${m} у галасливій приміській електричці, але з любов'ю ❤️.`,
-		ar:   (u)=>`${a(u,"بُرمج")} بغضب بقلم Thomas Steiner ${m} في قطار مزدحم وصاخب، لكن بمحبة ❤️.`,
-		he:   (u)=>`${a(u,"קוּדד")} בזעם מאת Thomas Steiner ${m} ברכבת רועשת של נוסעי פרברים, אבל באהבה ❤️.`,
-		hi:   (u)=>`गुस्से में ${a(u,"कोड किया")} Thomas Steiner ${m} ने एक शोरगुल भरी लोकल ट्रेन में, लेकिन प्यार के साथ ❤️.`,
-		id:   (u)=>`${a(u,"Dikodekan")} dengan marah oleh Thomas Steiner ${m} di kereta komuter yang bising, tapi dengan cinta ❤️.`,
-		ja:   (u)=>`怒りに任せて${a(u,"コードした")} Thomas Steiner ${m}、うるさい通勤電車の中で、でも愛を込めて ❤️.`,
-		ko:   (u)=>`분노로 ${a(u,"코딩한")} Thomas Steiner ${m}, 시끄러운 통근 열차에서, 하지만 사랑을 담아 ❤️.`,
-		th:   (u)=>`${a(u,"เขียนโค้ด")}ด้วยความโกรธโดย Thomas Steiner ${m} บนรถไฟชานเมืองที่วุ่นวาย แต่ด้วยความรัก ❤️.`,
-		vi:   (u)=>`${a(u,"Lập trình")} trong cơn thịnh nộ bởi Thomas Steiner ${m} trên chuyến tàu ồn ào, nhưng với tình yêu ❤️.`,
-		zh:   (u)=>`愤怒${a(u,"编码")}，作者 Thomas Steiner ${m}，在嘈杂的通勤列车上，但带着爱 ❤️.`,
-		zhtw: (u)=>`憤怒${a(u,"編碼")}，作者 Thomas Steiner ${m}，在嘈雜的通勤列車上，但帶著愛 ❤️.`
-	};
-	Object.keys(T).forEach(k => { if (UI_STRINGS[k]) UI_STRINGS[k].footer = T[k]; });
+(function () {
+  const m = `(<a href="https://toot.cafe/@tomayac">@tomayac@toot.cafe</a>)`;
+  const a = (u, w) => `<a href="${u}">${w}</a>`;
+  const T = {
+    en: (u) =>
+      `Rage-${a(u, 'coded')} by Thomas Steiner ${m} on a noisy commuter train, but with love ❤️.`,
+    bg: (u) =>
+      `В ярост ${a(u, 'кодирано')} от Thomas Steiner ${m} в шумен влак, но с любов ❤️.`,
+    ca: (u) =>
+      `${a(u, 'Programat')} amb ràbia per Thomas Steiner ${m} en un tren de rodalia sorollós, però amb amor ❤️.`,
+    hr: (u) =>
+      `Bijesno ${a(u, 'kodiran')} od Thomasa Steinera ${m} u bučnom prigradskom vlaku, ali s ljubavlju ❤️.`,
+    cs: (u) =>
+      `Vztekem ${a(u, 'zakódováno')} od Thomase Steinera ${m} v hlučném příměstském vlaku, ale s láskou ❤️.`,
+    da: (u) =>
+      `Rasende ${a(u, 'kodet')} af Thomas Steiner ${m} i et støjende pendlertog, men med kærlighed ❤️.`,
+    nl: (u) =>
+      `Woedend ${a(u, 'gecodeerd')} door Thomas Steiner ${m} in een lawaaierige trein, maar met liefde ❤️.`,
+    et: (u) =>
+      `Vihas ${a(u, 'kodeeritud')} Thomas Steineri ${m} poolt mürarikkas pendelrongis, aga armastusega ❤️.`,
+    fi: (u) =>
+      `Raivoisasti ${a(u, 'koodattu')} Thomas Steinerin ${m} toimesta meluisassa lähijunassa, mutta rakkaudella ❤️.`,
+    fr: (u) =>
+      `${a(u, 'Codé')} dans un accès de rage par Thomas Steiner ${m} dans un train de banlieue bruyant, mais avec amour ❤️.`,
+    de: (u) =>
+      `Wut-${a(u, 'gecodet')} von Thomas Steiner ${m} im lauten Pendlerzug, aber mit Liebe ❤️.`,
+    el: (u) =>
+      `${a(u, 'Κωδικοποιημένο')} εν οργή από τον Thomas Steiner ${m} σε θορυβώδες τρένο, αλλά με αγάπη ❤️.`,
+    hu: (u) =>
+      `Dühből ${a(u, 'kódolva')} Thomas Steiner ${m} által zajos ingázóvonaton, de szeretettel ❤️.`,
+    it: (u) =>
+      `${a(u, 'Codificato')} con rabbia da Thomas Steiner ${m} su un treno pendolari rumoroso, ma con amore ❤️.`,
+    lv: (u) =>
+      `Dusmās ${a(u, 'kodēts')} no Thomas Steinera ${m} trokšņainā vilcienā, bet ar mīlestību ❤️.`,
+    lt: (u) =>
+      `Įsiutęs ${a(u, 'sukodavo')} Thomas Steineras ${m} triukšmingame priemiesčio traukinyje, bet su meile ❤️.`,
+    nb: (u) =>
+      `Rasende ${a(u, 'kodet')} av Thomas Steiner ${m} i et støyende pendlertog, men med kjærlighet ❤️.`,
+    pl: (u) =>
+      `Ze wściekłością ${a(u, 'zakodowane')} przez Thomasa Steinera ${m} w hałaśliwym pociągu podmiejskim, ale z miłością ❤️.`,
+    pt: (u) =>
+      `${a(u, 'Programado')} com raiva por Thomas Steiner ${m} num comboio de subúrbio barulhento, mas com amor ❤️.`,
+    ro: (u) =>
+      `${a(u, 'Codat')} cu furie de Thomas Steiner ${m} într-un tren suburban zgomotos, dar cu dragoste ❤️.`,
+    ru: (u) =>
+      `В ярости ${a(u, 'закодировано')} Thomas Steiner ${m} в шумной электричке, но с любовью ❤️.`,
+    sk: (u) =>
+      `V zúrivosti ${a(u, 'nakódované')} od Thomasa Steinera ${m} v hlučnom prímestskom vlaku, ale s láskou ❤️.`,
+    sl: (u) =>
+      `V besu ${a(u, 'zakodiran')} od Thomasa Steinera ${m} v hrupnem primestnem vlaku, a z ljubeznijo ❤️.`,
+    es: (u) =>
+      `${a(u, 'Programado')} con rabia por Thomas Steiner ${m} en un tren de cercanías ruidoso, pero con amor ❤️.`,
+    sv: (u) =>
+      `Rasande ${a(u, 'kodad')} av Thomas Steiner ${m} på ett bullrigt pendeltåg, men med kärlek ❤️.`,
+    tr: (u) =>
+      `Öfkeyle ${a(u, 'kodlanmış')} Thomas Steiner ${m} tarafından gürültülü bir banliyö treninde, ama sevgiyle ❤️.`,
+    uk: (u) =>
+      `У злості ${a(u, 'закодовано')} від Thomas Steiner ${m} у галасливій приміській електричці, але з любов'ю ❤️.`,
+    ar: (u) =>
+      `${a(u, 'بُرمج')} بغضب بقلم Thomas Steiner ${m} في قطار مزدحم وصاخب، لكن بمحبة ❤️.`,
+    he: (u) =>
+      `${a(u, 'קוּדד')} בזעם מאת Thomas Steiner ${m} ברכבת רועשת של נוסעי פרברים, אבל באהבה ❤️.`,
+    hi: (u) =>
+      `गुस्से में ${a(u, 'कोड किया')} Thomas Steiner ${m} ने एक शोरगुल भरी लोकल ट्रेन में, लेकिन प्यार के साथ ❤️.`,
+    id: (u) =>
+      `${a(u, 'Dikodekan')} dengan marah oleh Thomas Steiner ${m} di kereta komuter yang bising, tapi dengan cinta ❤️.`,
+    ja: (u) =>
+      `怒りに任せて${a(u, 'コードした')} Thomas Steiner ${m}、うるさい通勤電車の中で、でも愛を込めて ❤️.`,
+    ko: (u) =>
+      `분노로 ${a(u, '코딩한')} Thomas Steiner ${m}, 시끄러운 통근 열차에서, 하지만 사랑을 담아 ❤️.`,
+    th: (u) =>
+      `${a(u, 'เขียนโค้ด')}ด้วยความโกรธโดย Thomas Steiner ${m} บนรถไฟชานเมืองที่วุ่นวาย แต่ด้วยความรัก ❤️.`,
+    vi: (u) =>
+      `${a(u, 'Lập trình')} trong cơn thịnh nộ bởi Thomas Steiner ${m} trên chuyến tàu ồn ào, nhưng với tình yêu ❤️.`,
+    zh: (u) =>
+      `愤怒${a(u, '编码')}，作者 Thomas Steiner ${m}，在嘈杂的通勤列车上，但带着爱 ❤️.`,
+    zhtw: (u) =>
+      `憤怒${a(u, '編碼')}，作者 Thomas Steiner ${m}，在嘈雜的通勤列車上，但帶著愛 ❤️.`,
+  };
+  Object.keys(T).forEach((k) => {
+    if (UI_STRINGS[k]) UI_STRINGS[k].footer = T[k];
+  });
 })();
 
 let S = UI_STRINGS.en;
@@ -826,10 +2008,10 @@ let voices = [];
 let currentUtterance = null;
 let loopTimer = null;
 let isPlaying = false;
-let phraseMode = "default";
-let customPhraseText = "";
-let currentTransport = "train";
-let currentLang = "en";
+let phraseMode = 'default';
+let customPhraseText = '';
+let currentTransport = 'train';
+let currentLang = 'en';
 let intervalSeconds = 15;
 let speakGen = 0;
 let countdownTimer = null;
@@ -840,603 +2022,670 @@ let kokoroSource = null;
 let kokoroAudioCtx = null;
 
 // DOM refs
-const langSelect      = document.getElementById("lang-select");
-const voiceSelect     = document.getElementById("voice-select");
-const btnPlay         = document.getElementById("btn-play");
-const btnStop         = document.getElementById("btn-stop");
-const btnInstall      = document.getElementById("btn-install");
-const statusDisplay   = document.getElementById("status-display");
-const currentTextEl   = document.getElementById("current-text");
-const intervalRange   = document.getElementById("interval-range");
-const intervalValue   = document.getElementById("interval-value");
-const btnQr           = document.getElementById("btn-qr");
-const qrContainer     = document.getElementById("qr-container");
-const themeToggle     = document.getElementById("theme-toggle");
-const root            = document.documentElement;
-const modeDefaultBtn  = document.getElementById("mode-default");
-const modeCustomBtn   = document.getElementById("mode-custom");
-const transportSection= document.getElementById("transport-section");
-const customSection   = document.getElementById("custom-section");
-const customPhraseEl  = document.getElementById("custom-phrase");
-const btnUnlock       = document.getElementById("btn-unlock");
-const premiumActive   = document.getElementById("premium-active");
-const premiumDialog   = document.getElementById("premium-dialog");
-const btnBuy          = document.getElementById("btn-buy");
-const licenseInput    = document.getElementById("license-input");
-const licenseMsg      = document.getElementById("license-msg");
-const btnActivate     = document.getElementById("btn-activate");
+const langSelect = document.getElementById('lang-select');
+const voiceSelect = document.getElementById('voice-select');
+const btnPlay = document.getElementById('btn-play');
+const btnStop = document.getElementById('btn-stop');
+const btnInstall = document.getElementById('btn-install');
+const statusDisplay = document.getElementById('status-display');
+const currentTextEl = document.getElementById('current-text');
+const intervalRange = document.getElementById('interval-range');
+const intervalValue = document.getElementById('interval-value');
+const btnQr = document.getElementById('btn-qr');
+const qrContainer = document.getElementById('qr-container');
+const themeToggle = document.getElementById('theme-toggle');
+const root = document.documentElement;
+const modeDefaultBtn = document.getElementById('mode-default');
+const modeCustomBtn = document.getElementById('mode-custom');
+const transportSection = document.getElementById('transport-section');
+const customSection = document.getElementById('custom-section');
+const customPhraseEl = document.getElementById('custom-phrase');
+const kokoroProgressEl = document.getElementById('kokoro-progress');
+const kokoroProgressBar = document.getElementById('kokoro-progress-bar');
+const kokoroProgressLabel = document.getElementById('kokoro-progress-label');
+const btnUnlock = document.getElementById('btn-unlock');
+const premiumActive = document.getElementById('premium-active');
+const premiumDialog = document.getElementById('premium-dialog');
+const btnBuy = document.getElementById('btn-buy');
+const licenseInput = document.getElementById('license-input');
+const licenseMsg = document.getElementById('license-msg');
+const btnActivate = document.getElementById('btn-activate');
+
+// ── Kokoro progress UI ───────────────────────────────────────────────
+
+const PROGRESS_LABELS = {
+  model: 'Downloading AI model for voice generation',
+  voice: 'Downloading voice data',
+  generating: 'Generating voice',
+};
+
+function showKokoroProgress(phase, value) {
+  kokoroProgressLabel.textContent = PROGRESS_LABELS[phase] ?? phase;
+  if (value !== null && value !== undefined) {
+    kokoroProgressBar.value = value;
+    kokoroProgressBar.max = 100;
+  } else {
+    kokoroProgressBar.removeAttribute('value');
+  }
+  kokoroProgressEl.hidden = false;
+}
+
+function hideKokoroProgress() {
+  kokoroProgressEl.hidden = true;
+}
 
 // ── Premium / Lemon Squeezy ──────────────────────────────────────────
 
 function isPremiumUnlocked() {
-	return !!localStorage.getItem("ls_instance_id");
+  return !!localStorage.getItem('ls_instance_id');
 }
 
 function updatePremiumUI() {
-	const unlocked = isPremiumUnlocked();
-	btnUnlock.hidden    = unlocked;
-	premiumActive.hidden = !unlocked;
+  const unlocked = isPremiumUnlocked();
+  btnUnlock.hidden = unlocked;
+  premiumActive.hidden = !unlocked;
 }
 
 async function activateLicense(key) {
-	const instanceId = crypto.randomUUID();
-	const res = await fetch(LS_ACTIVATE_URL, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ license_key: key.trim(), instance_name: `just-mute-${instanceId}` }),
-	});
-	const data = await res.json();
-	if (!data.activated) throw new Error(data.error || "Activation failed");
-	localStorage.setItem("ls_license_key", key.trim());
-	localStorage.setItem("ls_instance_id", data.instance.id);
+  const instanceId = crypto.randomUUID();
+  const res = await fetch(LS_ACTIVATE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      license_key: key.trim(),
+      instance_name: `just-mute-${instanceId}`,
+    }),
+  });
+  const data = await res.json();
+  if (!data.activated) throw new Error(data.error || 'Activation failed');
+  localStorage.setItem('ls_license_key', key.trim());
+  localStorage.setItem('ls_instance_id', data.instance.id);
 }
 
 async function validateStoredLicense() {
-	const key        = localStorage.getItem("ls_license_key");
-	const instanceId = localStorage.getItem("ls_instance_id");
-	if (!key || !instanceId) return;
-	try {
-		const res = await fetch(LS_VALIDATE_URL, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ license_key: key, instance_id: instanceId }),
-		});
-		const data = await res.json();
-		if (!data.valid) {
-			localStorage.removeItem("ls_license_key");
-			localStorage.removeItem("ls_instance_id");
-			updatePremiumUI();
-			populateVoiceOptions();
-		}
-	} catch {
-		// Network error — trust stored state
-	}
+  const key = localStorage.getItem('ls_license_key');
+  const instanceId = localStorage.getItem('ls_instance_id');
+  if (!key || !instanceId) return;
+  try {
+    const res = await fetch(LS_VALIDATE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ license_key: key, instance_id: instanceId }),
+    });
+    const data = await res.json();
+    if (!data.valid) {
+      localStorage.removeItem('ls_license_key');
+      localStorage.removeItem('ls_instance_id');
+      updatePremiumUI();
+      populateVoiceOptions();
+    }
+  } catch {
+    // Network error — trust stored state
+  }
 }
 
 // ── Voices ──────────────────────────────────────────────────────────
 
 function loadVoices() {
-	voices = speechSynthesis.getVoices();
-	populateVoiceOptions();
+  voices = speechSynthesis.getVoices();
+  populateVoiceOptions();
 }
 
 if (speechSynthesis.onvoiceschanged !== undefined) {
-	speechSynthesis.onvoiceschanged = loadVoices;
+  speechSynthesis.onvoiceschanged = loadVoices;
 }
 
 function populateVoiceOptions() {
-	const lang = langSelect.value;
-	const langCode = LOCALES[lang].split("-")[0];
+  const lang = langSelect.value;
+  const langCode = LOCALES[lang].split('-')[0];
 
-	const kokoroForLang = KOKORO_VOICE_MAP[lang] || [];
+  const kokoroForLang = KOKORO_VOICE_MAP[lang] || [];
 
-	if (voices.length === 0 && kokoroForLang.length === 0) {
-		voiceSelect.innerHTML = `<option value="">${S.loadingVoices}</option>`;
-		return;
-	}
+  if (voices.length === 0 && kokoroForLang.length === 0) {
+    voiceSelect.innerHTML = `<option value="">${S.loadingVoices}</option>`;
+    return;
+  }
 
-	const matching = voices
-		.filter(v => v.lang.startsWith(langCode))
-		.sort((a, b) => {
-			const aG = a.name.startsWith("Google") ? 1 : 0;
-			const bG = b.name.startsWith("Google") ? 1 : 0;
-			return bG - aG || a.name.localeCompare(b.name);
-		});
+  const matching = voices
+    .filter((v) => v.lang.startsWith(langCode))
+    .sort((a, b) => {
+      const aG = a.name.startsWith('Google') ? 1 : 0;
+      const bG = b.name.startsWith('Google') ? 1 : 0;
+      return bG - aG || a.name.localeCompare(b.name);
+    });
 
-	voiceSelect.innerHTML = "";
+  voiceSelect.innerHTML = '';
 
-	if (matching.length === 0 && kokoroForLang.length === 0) {
-		voiceSelect.innerHTML = `<option value="">${S.noVoices}</option>`;
-		return;
-	}
+  if (matching.length === 0 && kokoroForLang.length === 0) {
+    voiceSelect.innerHTML = `<option value="">${S.noVoices}</option>`;
+    return;
+  }
 
-	if (kokoroForLang.length > 0) {
-		const unlocked = isPremiumUnlocked();
-		const grp = document.createElement("optgroup");
-		grp.label = unlocked ? "✨ Premium (Kokoro AI)" : "🔒 Premium (Kokoro AI)";
-		kokoroForLang.forEach(v => {
-			const opt = document.createElement("option");
-			opt.value = `kokoro:${v.id}`;
-			const g = v.gender === "F" ? "♀" : "♂";
-			opt.textContent = unlocked ? `✨ ${v.name} (${g})` : `🔒 ${v.name} (${g})`;
-			opt.disabled = !unlocked;
-			grp.appendChild(opt);
-		});
-		voiceSelect.appendChild(grp);
-	}
+  if (kokoroForLang.length > 0) {
+    const unlocked = isPremiumUnlocked();
+    const grp = document.createElement('optgroup');
+    grp.label = unlocked ? '✨ Premium (Kokoro AI)' : '🔒 Premium (Kokoro AI)';
+    kokoroForLang.forEach((v) => {
+      const opt = document.createElement('option');
+      opt.value = `kokoro:${v.id}`;
+      const g = v.gender === 'F' ? '♀' : '♂';
+      opt.textContent = unlocked
+        ? `✨ ${v.name} (${g})`
+        : `🔒 ${v.name} (${g})`;
+      opt.disabled = !unlocked;
+      grp.appendChild(opt);
+    });
+    voiceSelect.appendChild(grp);
+  }
 
-	if (matching.length > 0) {
-		const grp = document.createElement("optgroup");
-		grp.label = "System Voices";
-		matching.forEach(voice => {
-			const idx = voices.indexOf(voice);
-			const opt = document.createElement("option");
-			opt.value = idx;
-			const star = voice.name.startsWith("Google") ? "⭐ " : "";
-			const shortName = voice.name.replace(/\s*\(.*$/, '').trim() || voice.name;
-			opt.textContent = `${star}${shortName} (${voice.lang})`;
-			grp.appendChild(opt);
-		});
-		voiceSelect.appendChild(grp);
-	}
+  if (matching.length > 0) {
+    const grp = document.createElement('optgroup');
+    grp.label = 'System Voices';
+    matching.forEach((voice) => {
+      const idx = voices.indexOf(voice);
+      const opt = document.createElement('option');
+      opt.value = idx;
+      const star = voice.name.startsWith('Google') ? '⭐ ' : '';
+      const shortName = voice.name.replace(/\s*\(.*$/, '').trim() || voice.name;
+      opt.textContent = `${star}${shortName} (${voice.lang})`;
+      grp.appendChild(opt);
+    });
+    voiceSelect.appendChild(grp);
+  }
 
-	const savedVal = localStorage.getItem("voice_" + lang);
-	if (savedVal) {
-		if (savedVal.startsWith("kokoro:") && isPremiumUnlocked()) {
-			const found = kokoroForLang.find(v => `kokoro:${v.id}` === savedVal);
-			if (found) { voiceSelect.value = savedVal; return; }
-		} else if (!savedVal.startsWith("kokoro:")) {
-			const saved = matching.find(v => v.name === savedVal);
-			if (saved) { voiceSelect.value = voices.indexOf(saved); return; }
-		}
-	}
-	const google = matching.find(v => v.name.startsWith("Google"));
-	if (google) voiceSelect.value = voices.indexOf(google);
+  const savedVal = localStorage.getItem('voice_' + lang);
+  if (savedVal) {
+    if (savedVal.startsWith('kokoro:') && isPremiumUnlocked()) {
+      const found = kokoroForLang.find((v) => `kokoro:${v.id}` === savedVal);
+      if (found) {
+        voiceSelect.value = savedVal;
+        return;
+      }
+    } else if (!savedVal.startsWith('kokoro:')) {
+      const saved = matching.find((v) => v.name === savedVal);
+      if (saved) {
+        voiceSelect.value = voices.indexOf(saved);
+        return;
+      }
+    }
+  }
+  const google = matching.find((v) => v.name.startsWith('Google'));
+  if (google) voiceSelect.value = voices.indexOf(google);
 }
 
-voiceSelect.addEventListener("change", () => {
-	const val = voiceSelect.value;
-	if (val.startsWith("kokoro:")) {
-		localStorage.setItem("voice_" + currentLang, val);
-	} else {
-		const v = voices[val];
-		if (v) localStorage.setItem("voice_" + currentLang, v.name);
-	}
-	if (isPlaying) speak();
+voiceSelect.addEventListener('change', () => {
+  const val = voiceSelect.value;
+  if (val.startsWith('kokoro:')) {
+    localStorage.setItem('voice_' + currentLang, val);
+  } else {
+    const v = voices[val];
+    if (v) localStorage.setItem('voice_' + currentLang, v.name);
+  }
+  if (isPlaying) speak();
 });
 
 // ── Phrase helpers ───────────────────────────────────────────────────
 
 function getCurrentPhrase() {
-	return phraseMode === "custom"
-		? customPhraseText
-		: getDefaultPhrase(currentLang, currentTransport);
+  return phraseMode === 'custom'
+    ? customPhraseText
+    : getDefaultPhrase(currentLang, currentTransport);
 }
 
 function updateCurrentText() {
-	if (phraseMode === "custom") {
-		currentTextEl.textContent = customPhraseText || "…";
-	} else {
-		currentTextEl.textContent =
-			`${TRANSPORT_EMOJI[currentTransport]} ${getDefaultPhrase(currentLang, currentTransport)}`;
-	}
-	if (isPlaying) updateMediaMetadata();
+  if (phraseMode === 'custom') {
+    currentTextEl.textContent = customPhraseText || '…';
+  } else {
+    currentTextEl.textContent = `${TRANSPORT_EMOJI[currentTransport]} ${getDefaultPhrase(currentLang, currentTransport)}`;
+  }
+  if (isPlaying) updateMediaMetadata();
 }
 
 // ── Mode toggle ──────────────────────────────────────────────────────
 
 function applyMode(mode) {
-	phraseMode = mode;
-	localStorage.setItem("phraseMode", mode);
-	modeDefaultBtn.classList.toggle("active", mode === "default");
-	modeCustomBtn.classList.toggle("active", mode === "custom");
-	transportSection.hidden = mode === "custom";
-	customSection.hidden    = mode === "default";
-	updateCurrentText();
-	if (isPlaying) speak();
+  phraseMode = mode;
+  localStorage.setItem('phraseMode', mode);
+  modeDefaultBtn.classList.toggle('active', mode === 'default');
+  modeCustomBtn.classList.toggle('active', mode === 'custom');
+  transportSection.hidden = mode === 'custom';
+  customSection.hidden = mode === 'default';
+  updateCurrentText();
+  if (isPlaying) speak();
 }
 
-modeDefaultBtn.addEventListener("click", () => applyMode("default"));
-modeCustomBtn.addEventListener("click",  () => applyMode("custom"));
+modeDefaultBtn.addEventListener('click', () => applyMode('default'));
+modeCustomBtn.addEventListener('click', () => applyMode('custom'));
 
-customPhraseEl.addEventListener("input", () => {
-	customPhraseText = customPhraseEl.value;
-	localStorage.setItem("customPhrase", customPhraseText);
-	updateCurrentText();
+customPhraseEl.addEventListener('input', () => {
+  customPhraseText = customPhraseEl.value;
+  localStorage.setItem('customPhrase', customPhraseText);
+  updateCurrentText();
 });
 
 // ── Transport buttons ────────────────────────────────────────────────
 
-document.querySelectorAll(".transport-btn").forEach(btn => {
-	btn.addEventListener("click", () => {
-		document.querySelectorAll(".transport-btn").forEach(b => b.classList.remove("active"));
-		btn.classList.add("active");
-		currentTransport = btn.dataset.transport;
-		localStorage.setItem("transport", currentTransport);
-		updateCurrentText();
-		if (isPlaying) speak();
-	});
+document.querySelectorAll('.transport-btn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document
+      .querySelectorAll('.transport-btn')
+      .forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTransport = btn.dataset.transport;
+    localStorage.setItem('transport', currentTransport);
+    updateCurrentText();
+    if (isPlaying) speak();
+  });
 });
 
 // ── Language ─────────────────────────────────────────────────────────
 
-langSelect.addEventListener("change", () => {
-	currentLang = langSelect.value;
-	localStorage.setItem("lang", currentLang);
-	applyUILanguage(currentLang);
-	populateVoiceOptions();
-	updateCurrentText();
-	if (isPlaying) speak();
+langSelect.addEventListener('change', () => {
+  currentLang = langSelect.value;
+  localStorage.setItem('lang', currentLang);
+  applyUILanguage(currentLang);
+  populateVoiceOptions();
+  updateCurrentText();
+  if (isPlaying) speak();
 });
 
 // ── Interval ─────────────────────────────────────────────────────────
 
-intervalRange.addEventListener("input", () => {
-	intervalSeconds = parseInt(intervalRange.value);
-	intervalValue.textContent = `${intervalSeconds}s`;
-	localStorage.setItem("interval", intervalSeconds);
-	if (isPlaying) speak();
+intervalRange.addEventListener('input', () => {
+  intervalSeconds = parseInt(intervalRange.value);
+  intervalValue.textContent = `${intervalSeconds}s`;
+  localStorage.setItem('interval', intervalSeconds);
+  if (isPlaying) speak();
 });
 
 // ── Play state helper ────────────────────────────────────────────────
 
 function setPlayState(state) {
-	if (state === "stopped") {
-		btnPlay.textContent = S.play;
-		btnPlay.disabled    = false;
-		btnStop.disabled    = true;
-		statusDisplay.className   = "status-display stopped";
-		statusDisplay.textContent = S.stopped;
-	} else if (state === "loading") {
-		btnPlay.disabled    = true;
-		btnStop.disabled    = false;
-		statusDisplay.className   = "status-display loading";
-		statusDisplay.textContent = S.loading;
-	} else if (state === "speaking") {
-		btnPlay.disabled    = true;
-		btnStop.disabled    = false;
-		statusDisplay.className   = "status-display playing";
-		statusDisplay.textContent = S.speaking;
-	} else if (state === "paused") {
-		btnPlay.disabled    = true;
-		btnStop.disabled    = false;
-		statusDisplay.className   = "status-display stopped";
-	}
-	if ("mediaSession" in navigator) {
-		navigator.mediaSession.playbackState =
-			state === "speaking" ? "playing" : "paused";
-	}
+  if (state === 'stopped') {
+    btnPlay.textContent = S.play;
+    btnPlay.disabled = false;
+    btnStop.disabled = true;
+    statusDisplay.className = 'status-display stopped';
+    statusDisplay.textContent = S.stopped;
+  } else if (state === 'loading') {
+    btnPlay.disabled = true;
+    btnStop.disabled = false;
+    statusDisplay.className = 'status-display loading';
+    statusDisplay.textContent = S.loading;
+  } else if (state === 'speaking') {
+    btnPlay.disabled = true;
+    btnStop.disabled = false;
+    statusDisplay.className = 'status-display playing';
+    statusDisplay.textContent = S.speaking;
+  } else if (state === 'paused') {
+    btnPlay.disabled = true;
+    btnStop.disabled = false;
+    statusDisplay.className = 'status-display stopped';
+  }
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.playbackState =
+      state === 'speaking' ? 'playing' : 'paused';
+  }
 }
 
 function clearCountdown() {
-	clearInterval(countdownTimer);
-	countdownTimer = null;
+  clearInterval(countdownTimer);
+  countdownTimer = null;
 }
 
 function startCountdown(seconds) {
-	clearCountdown();
-	let remaining = seconds;
-	const tick = () => {
-		statusDisplay.textContent = `${S.paused.replace(/…$/, '')} — ${remaining}s`;
-		if (remaining > 0) remaining--;
-	};
-	tick();
-	countdownTimer = setInterval(tick, 1000);
+  clearCountdown();
+  let remaining = seconds;
+  const tick = () => {
+    statusDisplay.textContent = `${S.paused.replace(/…$/, '')} — ${remaining}s`;
+    if (remaining > 0) remaining--;
+  };
+  tick();
+  countdownTimer = setInterval(tick, 1000);
 }
 
 // ── Speech ───────────────────────────────────────────────────────────
 
 function stopKokoroSource() {
-	if (kokoroSource) {
-		try { kokoroSource.stop(); } catch (_) {}
-		kokoroSource = null;
-	}
+  if (kokoroSource) {
+    try {
+      kokoroSource.stop();
+    } catch (_) {}
+    kokoroSource = null;
+  }
 }
 
 function speak() {
-	clearCountdown();
-	clearTimeout(loopTimer);
-	loopTimer = null;
-	speechSynthesis.cancel();
-	stopKokoroSource();
+  clearCountdown();
+  clearTimeout(loopTimer);
+  loopTimer = null;
+  speechSynthesis.cancel();
+  stopKokoroSource();
 
-	const voiceVal = voiceSelect.value;
-	if (voiceVal.startsWith("kokoro:")) {
-		speakKokoro(voiceVal.slice(7));
-	} else {
-		speakWebSpeech();
-	}
+  const voiceVal = voiceSelect.value;
+  if (voiceVal.startsWith('kokoro:')) {
+    speakKokoro(voiceVal.slice(7));
+  } else {
+    speakWebSpeech();
+  }
 }
 
 function speakWebSpeech() {
-	const phrase = getCurrentPhrase().trim();
-	if (!phrase) return;
+  const phrase = getCurrentPhrase().trim();
+  if (!phrase) return;
 
-	setPlayState("loading");
+  setPlayState('loading');
 
-	const gen = ++speakGen;
-	const utterance = new SpeechSynthesisUtterance(phrase);
-	utterance.lang = LOCALES[currentLang];
+  const gen = ++speakGen;
+  const utterance = new SpeechSynthesisUtterance(phrase);
+  utterance.lang = LOCALES[currentLang];
 
-	const idx = voiceSelect.value;
-	if (idx !== "" && voices[idx]) utterance.voice = voices[idx];
+  const idx = voiceSelect.value;
+  if (idx !== '' && voices[idx]) utterance.voice = voices[idx];
 
-	utterance.rate  = 0.9;
-	utterance.pitch = 1.0;
+  utterance.rate = 0.9;
+  utterance.pitch = 1.0;
 
-	utterance.onstart = () => {
-		if (gen !== speakGen) return;
-		setPlayState("speaking");
-	};
+  utterance.onstart = () => {
+    if (gen !== speakGen) return;
+    setPlayState('speaking');
+  };
 
-	utterance.onend = () => {
-		if (!isPlaying || gen !== speakGen) return;
-		setPlayState("paused");
-		startCountdown(intervalSeconds);
-		loopTimer = setTimeout(() => {
-			if (isPlaying && gen === speakGen) speak();
-		}, intervalSeconds * 1000);
-	};
+  utterance.onend = () => {
+    if (!isPlaying || gen !== speakGen) return;
+    setPlayState('paused');
+    startCountdown(intervalSeconds);
+    loopTimer = setTimeout(() => {
+      if (isPlaying && gen === speakGen) speak();
+    }, intervalSeconds * 1000);
+  };
 
-	currentUtterance = utterance;
-	speechSynthesis.speak(utterance);
-	updateCurrentText();
+  currentUtterance = utterance;
+  speechSynthesis.speak(utterance);
+  updateCurrentText();
 }
 
 function getKokoroWorker() {
-	if (kokoroWorker) return kokoroWorker;
-	kokoroWorker = new Worker(
-		new URL('./kokoro.worker.js', import.meta.url),
-		{ type: 'module' }
-	);
-	kokoroWorker.addEventListener('message', ({ data: { id, audio, sampling_rate, error } }) => {
-		const pending = kokoroRequests.get(id);
-		if (!pending) return;
-		kokoroRequests.delete(id);
-		if (error) pending.reject(new Error(error));
-		else pending.resolve({ audio, sampling_rate });
-	});
-	kokoroWorker.addEventListener('error', (e) => {
-		// The worker calls e.preventDefault() on internal errors and routes them
-		// back as message replies, so this only fires for worker bootstrap failures
-		// (e.g. syntax error during module parse) where the worker never ran.
-		e.preventDefault();
-		const msg = e.message || "Worker failed to start";
-		console.error("[main] kokoro worker error event:", msg);
-		for (const { reject } of kokoroRequests.values()) reject(new Error(msg));
-		kokoroRequests.clear();
-		kokoroWorker = null;
-	});
-	return kokoroWorker;
+  if (kokoroWorker) return kokoroWorker;
+  kokoroWorker = new Worker(new URL('./kokoro.worker.js', import.meta.url), {
+    type: 'module',
+  });
+  kokoroWorker.addEventListener('message', ({ data }) => {
+    if (data.type === 'progress') {
+      showKokoroProgress(data.phase, data.value);
+      return;
+    }
+    const { id, audio, sampling_rate, error } = data;
+    const pending = kokoroRequests.get(id);
+    if (!pending) return;
+    kokoroRequests.delete(id);
+    if (error) pending.reject(new Error(error));
+    else pending.resolve({ audio, sampling_rate });
+  });
+  kokoroWorker.addEventListener('error', (e) => {
+    // The worker calls e.preventDefault() on internal errors and routes them
+    // back as message replies, so this only fires for worker bootstrap failures
+    // (e.g. syntax error during module parse) where the worker never ran.
+    e.preventDefault();
+    const msg = e.message || 'Worker failed to start';
+    console.error('[main] kokoro worker error event:', msg);
+    for (const { reject } of kokoroRequests.values()) reject(new Error(msg));
+    kokoroRequests.clear();
+    kokoroWorker = null;
+  });
+  return kokoroWorker;
 }
 
 function generateWithKokoro(text, voice) {
-	return new Promise((resolve, reject) => {
-		const id = ++kokoroRequestId;
-		kokoroRequests.set(id, { resolve, reject });
-		getKokoroWorker().postMessage({ id, text, voice });
-	});
+  return new Promise((resolve, reject) => {
+    const id = ++kokoroRequestId;
+    kokoroRequests.set(id, { resolve, reject });
+    getKokoroWorker().postMessage({ id, text, voice });
+  });
 }
 
 function getAudioContext() {
-	if (!kokoroAudioCtx || kokoroAudioCtx.state === "closed") {
-		kokoroAudioCtx = new AudioContext();
-	}
-	if (kokoroAudioCtx.state === "suspended") {
-		kokoroAudioCtx.resume();
-	}
-	return kokoroAudioCtx;
+  if (!kokoroAudioCtx || kokoroAudioCtx.state === 'closed') {
+    kokoroAudioCtx = new AudioContext();
+  }
+  if (kokoroAudioCtx.state === 'suspended') {
+    kokoroAudioCtx.resume();
+  }
+  return kokoroAudioCtx;
 }
 
 async function speakKokoro(voiceId) {
-	const phrase = getCurrentPhrase().trim();
-	if (!phrase) return;
+  const phrase = getCurrentPhrase().trim();
+  if (!phrase) return;
 
-	setPlayState("loading");
+  setPlayState('loading');
 
-	const gen = ++speakGen;
-	try {
-		const output = await generateWithKokoro(phrase, voiceId);
-		if (gen !== speakGen || !isPlaying) return;
+  const gen = ++speakGen;
+  try {
+    const output = await generateWithKokoro(phrase, voiceId);
+    if (gen !== speakGen || !isPlaying) return;
 
-		setPlayState("speaking");
-		updateCurrentText();
+    hideKokoroProgress();
+    setPlayState('speaking');
+    updateCurrentText();
 
-		const ctx = getAudioContext();
-		const buf = ctx.createBuffer(1, output.audio.length, output.sampling_rate);
-		buf.copyToChannel(output.audio, 0);
-		const source = ctx.createBufferSource();
-		source.buffer = buf;
-		source.connect(ctx.destination);
-		kokoroSource = source;
+    const ctx = getAudioContext();
+    const buf = ctx.createBuffer(1, output.audio.length, output.sampling_rate);
+    buf.copyToChannel(output.audio, 0);
+    const source = ctx.createBufferSource();
+    source.buffer = buf;
+    source.connect(ctx.destination);
+    kokoroSource = source;
 
-		source.onended = () => {
-			if (gen !== speakGen) return;
-			kokoroSource = null;
-			if (!isPlaying) return;
-			setPlayState("paused");
-			startCountdown(intervalSeconds);
-			loopTimer = setTimeout(() => {
-				if (isPlaying && gen === speakGen) speak();
-			}, intervalSeconds * 1000);
-		};
+    source.onended = () => {
+      if (gen !== speakGen) return;
+      kokoroSource = null;
+      if (!isPlaying) return;
+      setPlayState('paused');
+      startCountdown(intervalSeconds);
+      loopTimer = setTimeout(() => {
+        if (isPlaying && gen === speakGen) speak();
+      }, intervalSeconds * 1000);
+    };
 
-		source.start();
-	} catch (err) {
-		if (gen === speakGen) {
-			console.error("Kokoro TTS error:", err);
-			isPlaying = false;
-			setPlayState("stopped");
-		}
-	}
+    source.start();
+  } catch (err) {
+    if (gen === speakGen) {
+      console.error('Kokoro TTS error:', err);
+      hideKokoroProgress();
+      isPlaying = false;
+      setPlayState('stopped');
+    }
+  }
 }
 
 function updateMediaMetadata() {
-	if (!("mediaSession" in navigator)) return;
-	navigator.mediaSession.metadata = new MediaMetadata({
-		title:  getCurrentPhrase(),
-		artist: "Just Mute",
-		artwork: [{ src: "icon.svg", type: "image/svg+xml", sizes: "any" }],
-	});
+  if (!('mediaSession' in navigator)) return;
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: getCurrentPhrase(),
+    artist: 'Just Mute',
+    artwork: [{ src: 'icon.svg', type: 'image/svg+xml', sizes: 'any' }],
+  });
 }
 
 function setupMediaSession() {
-	if (!("mediaSession" in navigator)) return;
-	navigator.mediaSession.setActionHandler("play",  () => startLoop());
-	navigator.mediaSession.setActionHandler("pause", () => stopLoop());
-	navigator.mediaSession.setActionHandler("stop",  () => stopLoop());
-	navigator.mediaSession.setActionHandler("nexttrack", () => {
-		if (!isPlaying) return;
-		clearCountdown();
-		clearTimeout(loopTimer);
-		loopTimer = null;
-		speechSynthesis.cancel();
-		stopKokoroSource();
-		speak();
-	});
+  if (!('mediaSession' in navigator)) return;
+  navigator.mediaSession.setActionHandler('play', () => startLoop());
+  navigator.mediaSession.setActionHandler('pause', () => stopLoop());
+  navigator.mediaSession.setActionHandler('stop', () => stopLoop());
+  navigator.mediaSession.setActionHandler('nexttrack', () => {
+    if (!isPlaying) return;
+    clearCountdown();
+    clearTimeout(loopTimer);
+    loopTimer = null;
+    speechSynthesis.cancel();
+    stopKokoroSource();
+    speak();
+  });
 }
 
 function startLoop() {
-	if (phraseMode === "custom" && !customPhraseText.trim()) {
-		customPhraseEl.focus();
-		return;
-	}
-	isPlaying = true;
-	updateMediaMetadata();
-	speak();
+  if (phraseMode === 'custom' && !customPhraseText.trim()) {
+    customPhraseEl.focus();
+    return;
+  }
+  isPlaying = true;
+  updateMediaMetadata();
+  speak();
 }
 
 function stopLoop() {
-	clearCountdown();
-	isPlaying = false;
-	clearTimeout(loopTimer);
-	loopTimer = null;
-	speechSynthesis.cancel();
-	stopKokoroSource();
-	setPlayState("stopped");
+  clearCountdown();
+  isPlaying = false;
+  clearTimeout(loopTimer);
+  loopTimer = null;
+  speechSynthesis.cancel();
+  stopKokoroSource();
+  hideKokoroProgress();
+  setPlayState('stopped');
 }
 
-btnPlay.addEventListener("click", startLoop);
-btnStop.addEventListener("click", stopLoop);
+btnPlay.addEventListener('click', startLoop);
+btnStop.addEventListener('click', stopLoop);
 
 setInterval(() => {
-	if (isPlaying && speechSynthesis.speaking) {
-		speechSynthesis.pause();
-		speechSynthesis.resume();
-	}
+  if (isPlaying && speechSynthesis.speaking) {
+    speechSynthesis.pause();
+    speechSynthesis.resume();
+  }
 }, 10000);
 
 // ── QR code ──────────────────────────────────────────────────────────
 
 let qrRendered = false;
 
-btnQr.addEventListener("click", () => {
-	const visible = qrContainer.classList.toggle("visible");
-	btnQr.textContent = visible ? S.hideQr : S.showQr;
-	if (visible && !qrRendered) {
-		const url = window.location.href;
-		document.getElementById("qr-url").textContent = url;
-		QrCreator.render({
-			text: url, radius: 0, ecLevel: "M",
-			fill: "#000000", background: "#ffffff", size: 200
-		}, document.getElementById("qrcode"));
-		qrRendered = true;
-	}
+btnQr.addEventListener('click', () => {
+  const visible = qrContainer.classList.toggle('visible');
+  btnQr.textContent = visible ? S.hideQr : S.showQr;
+  if (visible && !qrRendered) {
+    const url = window.location.href;
+    document.getElementById('qr-url').textContent = url;
+    QrCreator.render(
+      {
+        text: url,
+        radius: 0,
+        ecLevel: 'M',
+        fill: '#000000',
+        background: '#ffffff',
+        size: 200,
+      },
+      document.getElementById('qrcode')
+    );
+    qrRendered = true;
+  }
 });
 
 // ── Dark mode ─────────────────────────────────────────────────────────
 
 function isDarkActive() {
-	return root.dataset.theme === "dark" ||
-		(!root.dataset.theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  return (
+    root.dataset.theme === 'dark' ||
+    (!root.dataset.theme &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
+  );
 }
 
 function updateThemeIcon() {
-	themeToggle.textContent = isDarkActive() ? "☀️" : "🌙";
-	themeToggle.title = isDarkActive() ? S.toLightMode : S.toDarkMode;
-	themeToggle.setAttribute("aria-label", isDarkActive() ? S.toLightMode : S.toDarkMode);
+  themeToggle.textContent = isDarkActive() ? '☀️' : '🌙';
+  themeToggle.title = isDarkActive() ? S.toLightMode : S.toDarkMode;
+  themeToggle.setAttribute(
+    'aria-label',
+    isDarkActive() ? S.toLightMode : S.toDarkMode
+  );
 }
 
-themeToggle.addEventListener("click", () => {
-	root.dataset.theme = isDarkActive() ? "light" : "dark";
-	localStorage.setItem("theme", root.dataset.theme);
-	updateThemeIcon();
+themeToggle.addEventListener('click', () => {
+  root.dataset.theme = isDarkActive() ? 'light' : 'dark';
+  localStorage.setItem('theme', root.dataset.theme);
+  updateThemeIcon();
 });
 
-const savedTheme = localStorage.getItem("theme");
+const savedTheme = localStorage.getItem('theme');
 if (savedTheme) root.dataset.theme = savedTheme;
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", updateThemeIcon);
+window
+  .matchMedia('(prefers-color-scheme: dark)')
+  .addEventListener('change', updateThemeIcon);
 
 // ── Install prompt ───────────────────────────────────────────────────
 
 let deferredPrompt = null;
 
-window.addEventListener("beforeinstallprompt", e => {
-	e.preventDefault();
-	deferredPrompt = e;
-	btnInstall.classList.add("visible");
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  btnInstall.classList.add('visible');
 });
 
-btnInstall.addEventListener("click", async () => {
-	if (!deferredPrompt) return;
-	deferredPrompt.prompt();
-	const { outcome } = await deferredPrompt.userChoice;
-	deferredPrompt = null;
-	if (outcome === "accepted") btnInstall.classList.remove("visible");
+btnInstall.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  if (outcome === 'accepted') btnInstall.classList.remove('visible');
 });
 
-window.addEventListener("appinstalled", () => {
-	btnInstall.classList.remove("visible");
-	deferredPrompt = null;
+window.addEventListener('appinstalled', () => {
+  btnInstall.classList.remove('visible');
+  deferredPrompt = null;
 });
 
 // ── applyUILanguage ───────────────────────────────────────────────────
 
 function applyUILanguage(lang) {
-	S = UI_STRINGS[lang] || UI_STRINGS.en;
-	document.documentElement.lang = LOCALES[lang] || lang;
-	document.documentElement.dir = S.dir || "ltr";
-	customPhraseEl.dir = S.dir || "ltr";
+  S = UI_STRINGS[lang] || UI_STRINGS.en;
+  document.documentElement.lang = LOCALES[lang] || lang;
+  document.documentElement.dir = S.dir || 'ltr';
+  customPhraseEl.dir = S.dir || 'ltr';
 
-	document.querySelector(".subtitle").textContent = S.sub;
-	document.getElementById("phrase-label").textContent    = S.phraseLabel;
-	document.getElementById("mode-default").textContent    = S.defaultMode;
-	document.getElementById("mode-custom").textContent     = S.customMode;
-	customPhraseEl.placeholder = S.customPlaceholder;
-	document.getElementById("transport-grid").setAttribute("aria-label", S.where);
+  document.querySelector('.subtitle').textContent = S.sub;
+  document.getElementById('phrase-label').textContent = S.phraseLabel;
+  document.getElementById('mode-default').textContent = S.defaultMode;
+  document.getElementById('mode-custom').textContent = S.customMode;
+  customPhraseEl.placeholder = S.customPlaceholder;
+  document.getElementById('transport-grid').setAttribute('aria-label', S.where);
 
-	document.querySelectorAll(".transport-btn").forEach(btn => {
-		const name = S.tn[btn.dataset.transport];
-		btn.querySelector(".transport-label").textContent = name;
-		btn.setAttribute("aria-label", name);
-	});
+  document.querySelectorAll('.transport-btn').forEach((btn) => {
+    const name = S.tn[btn.dataset.transport];
+    btn.querySelector('.transport-label').textContent = name;
+    btn.setAttribute('aria-label', name);
+  });
 
-	document.querySelector("label[for='lang-select']").textContent    = S.lang;
-	document.querySelector("label[for='voice-select']").textContent   = S.voice;
-	document.querySelector("label[for='interval-range']").textContent = S.interval;
-	document.getElementById("label-fast").textContent = S.fast;
-	document.getElementById("label-slow").textContent = S.slow;
-	document.getElementById("btn-stop").textContent  = S.stop;
-	document.querySelector(".qr-row span").textContent = S.share;
-	btnQr.textContent = qrContainer.classList.contains("visible") ? S.hideQr : S.showQr;
-	btnInstall.textContent = S.install;
+  document.querySelector("label[for='lang-select']").textContent = S.lang;
+  document.querySelector("label[for='voice-select']").textContent = S.voice;
+  document.querySelector("label[for='interval-range']").textContent =
+    S.interval;
+  document.getElementById('label-fast').textContent = S.fast;
+  document.getElementById('label-slow').textContent = S.slow;
+  document.getElementById('btn-stop').textContent = S.stop;
+  document.querySelector('.qr-row span').textContent = S.share;
+  btnQr.textContent = qrContainer.classList.contains('visible')
+    ? S.hideQr
+    : S.showQr;
+  btnInstall.textContent = S.install;
 
-	document.querySelector("footer").innerHTML = S.footer("https://github.com/tomayac/just-mute");
+  document.querySelector('footer').innerHTML = S.footer(
+    'https://github.com/tomayac/just-mute'
+  );
 
-	if (!isPlaying) setPlayState("stopped");
-	updateThemeIcon();
+  if (!isPlaying) setPlayState('stopped');
+  updateThemeIcon();
 }
 
 // ── Init ─────────────────────────────────────────────────────────────
 
 function getInitialLang() {
-	const saved = localStorage.getItem("lang");
-	if (saved && UI_STRINGS[saved]) return saved;
-	const navFull = (navigator.language || "en").toLowerCase();
-	const navBase = navFull.split("-")[0];
-	if (navFull === "zh-tw" || navFull === "zh-hant") return "zhtw";
-	const mapped = navBase === "no" ? "nb" : navBase;
-	return UI_STRINGS[mapped] ? mapped : "en";
+  const saved = localStorage.getItem('lang');
+  if (saved && UI_STRINGS[saved]) return saved;
+  const navFull = (navigator.language || 'en').toLowerCase();
+  const navBase = navFull.split('-')[0];
+  if (navFull === 'zh-tw' || navFull === 'zh-hant') return 'zhtw';
+  const mapped = navBase === 'no' ? 'nb' : navBase;
+  return UI_STRINGS[mapped] ? mapped : 'en';
 }
 
 const initialLang = getInitialLang();
@@ -1445,29 +2694,29 @@ langSelect.value = initialLang;
 applyUILanguage(initialLang);
 
 // Restore transport
-const savedTransport = localStorage.getItem("transport");
+const savedTransport = localStorage.getItem('transport');
 if (savedTransport && TRANSPORT_EMOJI[savedTransport]) {
-	currentTransport = savedTransport;
-	document.querySelectorAll(".transport-btn").forEach(btn => {
-		btn.classList.toggle("active", btn.dataset.transport === savedTransport);
-	});
+  currentTransport = savedTransport;
+  document.querySelectorAll('.transport-btn').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.transport === savedTransport);
+  });
 }
 
 // Restore interval
-const savedInterval = parseInt(localStorage.getItem("interval"));
+const savedInterval = parseInt(localStorage.getItem('interval'));
 if (savedInterval >= 5 && savedInterval <= 60) {
-	intervalSeconds = savedInterval;
-	intervalRange.value = savedInterval;
-	intervalValue.textContent = `${savedInterval}s`;
+  intervalSeconds = savedInterval;
+  intervalRange.value = savedInterval;
+  intervalValue.textContent = `${savedInterval}s`;
 }
 
 // Restore phrase mode + custom text
 // Pre-fill with the language-appropriate default custom phrase if never set
-const savedMode   = localStorage.getItem("phraseMode");
-const savedCustom = localStorage.getItem("customPhrase");
-customPhraseText  = savedCustom !== null ? savedCustom : S.defaultCustomPhrase;
+const savedMode = localStorage.getItem('phraseMode');
+const savedCustom = localStorage.getItem('customPhrase');
+customPhraseText = savedCustom !== null ? savedCustom : S.defaultCustomPhrase;
 customPhraseEl.value = customPhraseText;
-if (savedMode === "custom") applyMode("custom");
+if (savedMode === 'custom') applyMode('custom');
 
 updateCurrentText();
 loadVoices();
@@ -1480,43 +2729,51 @@ validateStoredLicense();
 setupMediaSession();
 updateMediaMetadata();
 
-btnUnlock.addEventListener("click", () => {
-	licenseMsg.hidden = true;
-	licenseMsg.className = "license-msg";
-	licenseInput.value = "";
-	premiumDialog.showModal();
+btnUnlock.addEventListener('click', () => {
+  licenseMsg.hidden = true;
+  licenseMsg.className = 'license-msg';
+  licenseInput.value = '';
+  premiumDialog.showModal();
 });
 
-btnActivate.addEventListener("click", async () => {
-	const key = licenseInput.value.trim();
-	if (!key) return;
-	btnActivate.disabled = true;
-	btnActivate.textContent = "Activating…";
-	licenseMsg.hidden = true;
-	try {
-		await activateLicense(key);
-		licenseMsg.textContent = "✓ License activated! Premium voices unlocked.";
-		licenseMsg.className = "license-msg success";
-		licenseMsg.hidden = false;
-		updatePremiumUI();
-		populateVoiceOptions();
-		setTimeout(() => premiumDialog.close(), 1800);
-	} catch (err) {
-		licenseMsg.textContent = err.message || "Activation failed. Check your license key and try again.";
-		licenseMsg.className = "license-msg error";
-		licenseMsg.hidden = false;
-	} finally {
-		btnActivate.disabled = false;
-		btnActivate.textContent = "Activate";
-	}
+btnActivate.addEventListener('click', async () => {
+  const key = licenseInput.value.trim();
+  if (!key) return;
+  btnActivate.disabled = true;
+  btnActivate.textContent = 'Activating…';
+  licenseMsg.hidden = true;
+  try {
+    await activateLicense(key);
+    licenseMsg.textContent = '✓ License activated! Premium voices unlocked.';
+    licenseMsg.className = 'license-msg success';
+    licenseMsg.hidden = false;
+    updatePremiumUI();
+    populateVoiceOptions();
+    setTimeout(() => premiumDialog.close(), 1800);
+  } catch (err) {
+    licenseMsg.textContent =
+      err.message || 'Activation failed. Check your license key and try again.';
+    licenseMsg.className = 'license-msg error';
+    licenseMsg.hidden = false;
+  } finally {
+    btnActivate.disabled = false;
+    btnActivate.textContent = 'Activate';
+  }
 });
 
 // ── Service Worker ────────────────────────────────────────────────────
 
-if ("serviceWorker" in navigator) {
-	window.addEventListener("load", () => {
-		navigator.serviceWorker.register("./sw.js")
-			.then(reg => console.log("SW registered", reg))
-			.catch(err => console.error("SW failed", err));
-	});
+if ('serviceWorker' in navigator) {
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (hadController) document.getElementById('update-banner').hidden = false;
+  });
+  document.getElementById('btn-update-reload').addEventListener('click', () => {
+    window.location.reload();
+  });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('./sw.js')
+      .catch((err) => console.error('SW failed', err));
+  });
 }
