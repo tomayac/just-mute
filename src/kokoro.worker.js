@@ -10,6 +10,24 @@ import phonemeCache from './phoneme-cache.json';
 const MODEL_ID = 'onnx-community/Kokoro-82M-v1.0-ONNX';
 env.experimental_useCrossOriginStorage = true;
 
+// When a response lacks Content-Length, transformers.js expands its buffer
+// dynamically, which causes the COS hash verification to fail. Patch fetch
+// globally so any response missing the header gets it filled in from the
+// actual body length.
+const _origFetch = self.fetch.bind(self);
+self.fetch = async (...args) => {
+  const res = await _origFetch(...args);
+  if (res.headers.get('content-length')) return res;
+  const buffer = await res.arrayBuffer();
+  const headers = new Headers(res.headers);
+  headers.set('content-length', String(buffer.byteLength));
+  return new Response(buffer, {
+    status: res.status,
+    statusText: res.statusText,
+    headers,
+  });
+};
+
 // Maps the first letter of a Kokoro voice ID to an eSpeak language code.
 // eSpeak processes accented characters only when given the correct language —
 // passing French text with "en-us" causes a WASM abort on characters like é/à/ç.
