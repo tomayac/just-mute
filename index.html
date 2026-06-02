@@ -108,6 +108,8 @@
 				<div class="card">
 					<label for="voice-select">Voice</label>
 					<select id="voice-select"><option value="">Loading voices…</option></select>
+					<button id="btn-unlock" class="unlock-btn" hidden>🔒 Unlock Premium Voices</button>
+					<p id="premium-active" class="premium-active" hidden>✨ Premium active</p>
 				</div>
 
 				<!-- Interval -->
@@ -134,6 +136,22 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Premium license dialog -->
+		<dialog id="premium-dialog">
+			<form method="dialog">
+				<h2>✨ Unlock Premium Voices</h2>
+				<p>Kokoro AI voices across 8 languages — pay once, unlock on this device forever.</p>
+				<a id="btn-buy" href="#" target="_blank" rel="noopener" class="btn-buy">Buy a license →</a>
+				<div class="dialog-divider">Already have a license key?</div>
+				<input type="text" id="license-input" autocomplete="off" spellcheck="false" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX">
+				<p id="license-msg" class="license-msg" hidden></p>
+				<div class="dialog-actions">
+					<button type="button" id="btn-activate">Activate</button>
+					<button type="submit" class="btn-secondary">Cancel</button>
+				</div>
+			</form>
+		</dialog>
 
 		<!-- Install (revealed by beforeinstallprompt) -->
 		<button id="btn-install">📲 Install app</button>

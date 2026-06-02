@@ -475,3 +475,106 @@ footer {
 }
 
 footer a { color: var(--primary); text-decoration: none; }
+
+/* Unlock premium button */
+.unlock-btn {
+	width: 100%;
+	margin-top: 10px;
+	padding: 10px 16px;
+	background: transparent;
+	border: 2px solid var(--primary);
+	color: var(--primary);
+	font-size: 0.9rem;
+	font-weight: 600;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: background 0.2s, color 0.2s;
+}
+.unlock-btn:hover { background: var(--primary); color: #fff; }
+
+.premium-active {
+	margin: 8px 0 0;
+	font-size: 0.85rem;
+	color: var(--primary);
+	font-weight: 600;
+	text-align: center;
+}
+
+/* Premium dialog */
+dialog {
+	border: none;
+	border-radius: var(--radius);
+	background: var(--card);
+	color: var(--text);
+	padding: 28px;
+	max-width: 380px;
+	width: calc(100vw - 48px);
+	box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+}
+dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+dialog h2 { margin: 0 0 8px; font-size: 1.15rem; }
+dialog > form > p { margin: 0 0 16px; color: var(--text-light); font-size: 0.9rem; line-height: 1.4; }
+
+.btn-buy {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 12px 16px;
+	background: var(--primary);
+	color: #fff;
+	font-weight: 700;
+	font-size: 0.95rem;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 10px;
+	margin-bottom: 20px;
+	transition: background 0.2s;
+}
+.btn-buy:hover { background: var(--primary-light); }
+
+.dialog-divider {
+	font-size: 0.8rem;
+	color: var(--text-light);
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+#license-input {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 14px;
+	border: 2px solid var(--border);
+	border-radius: 10px;
+	background: var(--bg-input);
+	color: var(--text);
+	font-size: 0.85rem;
+	font-family: monospace;
+	margin-bottom: 6px;
+}
+#license-input:focus { outline: none; border-color: var(--primary-light); }
+
+.license-msg {
+	font-size: 0.82rem;
+	margin: 4px 0 12px;
+	padding: 8px 12px;
+	border-radius: 8px;
+}
+.license-msg.error { background: #fde8e8; color: #b91c1c; }
+.license-msg.success { background: #d1fae5; color: #065f46; }
+[data-theme="dark"] .license-msg.error { background: #3f1212; color: #fca5a5; }
+[data-theme="dark"] .license-msg.success { background: #052e16; color: #6ee7b7; }
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) .license-msg.error { background: #3f1212; color: #fca5a5; }
+	:root:not([data-theme="light"]) .license-msg.success { background: #052e16; color: #6ee7b7; }
+}
+
+.dialog-actions {
+	display: flex;
+	gap: 10px;
+	margin-top: 12px;
+}
+.dialog-actions button { flex: 1; padding: 11px; font-size: 0.9rem; font-weight: 600; border-radius: 10px; }
+.dialog-actions #btn-activate { background: var(--primary); color: #fff; border: none; }
+.dialog-actions #btn-activate:hover { background: var(--primary-light); }
+.btn-secondary { background: transparent; border: 2px solid var(--border); color: var(--text); }
+.btn-secondary:hover { border-color: var(--primary-light); }

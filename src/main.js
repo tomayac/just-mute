@@ -1,5 +1,10 @@
 import QrCreator from 'qr-creator';
 
+// ── Lemon Squeezy ────────────────────────────────────────────────────
+const LS_CHECKOUT_URL  = "https://tomayac.lemonsqueezy.com/checkout/buy/c74744d3-0544-4d7d-ae71-f8d2c0a6e1d9";
+const LS_ACTIVATE_URL  = "https://api.lemonsqueezy.com/v1/licenses/activate";
+const LS_VALIDATE_URL  = "https://api.lemonsqueezy.com/v1/licenses/validate";
+
 const LOCALES = {
 	en:"en-US",bg:"bg-BG",ca:"ca-ES",hr:"hr-HR",cs:"cs-CZ",
 	da:"da-DK",nl:"nl-NL",et:"et-EE",fi:"fi-FI",fr:"fr-FR",
@@ -853,6 +858,60 @@ const modeCustomBtn   = document.getElementById("mode-custom");
 const transportSection= document.getElementById("transport-section");
 const customSection   = document.getElementById("custom-section");
 const customPhraseEl  = document.getElementById("custom-phrase");
+const btnUnlock       = document.getElementById("btn-unlock");
+const premiumActive   = document.getElementById("premium-active");
+const premiumDialog   = document.getElementById("premium-dialog");
+const btnBuy          = document.getElementById("btn-buy");
+const licenseInput    = document.getElementById("license-input");
+const licenseMsg      = document.getElementById("license-msg");
+const btnActivate     = document.getElementById("btn-activate");
+
+// ── Premium / Lemon Squeezy ──────────────────────────────────────────
+
+function isPremiumUnlocked() {
+	return !!localStorage.getItem("ls_instance_id");
+}
+
+function updatePremiumUI() {
+	const unlocked = isPremiumUnlocked();
+	btnUnlock.hidden    = unlocked;
+	premiumActive.hidden = !unlocked;
+}
+
+async function activateLicense(key) {
+	const instanceId = crypto.randomUUID();
+	const res = await fetch(LS_ACTIVATE_URL, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ license_key: key.trim(), instance_name: `just-mute-${instanceId}` }),
+	});
+	const data = await res.json();
+	if (!data.activated) throw new Error(data.error || "Activation failed");
+	localStorage.setItem("ls_license_key", key.trim());
+	localStorage.setItem("ls_instance_id", data.instance.id);
+}
+
+async function validateStoredLicense() {
+	const key        = localStorage.getItem("ls_license_key");
+	const instanceId = localStorage.getItem("ls_instance_id");
+	if (!key || !instanceId) return;
+	try {
+		const res = await fetch(LS_VALIDATE_URL, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ license_key: key, instance_id: instanceId }),
+		});
+		const data = await res.json();
+		if (!data.valid) {
+			localStorage.removeItem("ls_license_key");
+			localStorage.removeItem("ls_instance_id");
+			updatePremiumUI();
+			populateVoiceOptions();
+		}
+	} catch {
+		// Network error — trust stored state
+	}
+}
 
 // ── Voices ──────────────────────────────────────────────────────────
 
@@ -892,13 +951,15 @@ function populateVoiceOptions() {
 	}
 
 	if (kokoroForLang.length > 0) {
+		const unlocked = isPremiumUnlocked();
 		const grp = document.createElement("optgroup");
-		grp.label = "✨ Premium (Kokoro AI)";
+		grp.label = unlocked ? "✨ Premium (Kokoro AI)" : "🔒 Premium (Kokoro AI)";
 		kokoroForLang.forEach(v => {
 			const opt = document.createElement("option");
 			opt.value = `kokoro:${v.id}`;
 			const g = v.gender === "F" ? "♀" : "♂";
-			opt.textContent = `✨ ${v.name} (${g})`;
+			opt.textContent = unlocked ? `✨ ${v.name} (${g})` : `🔒 ${v.name} (${g})`;
+			opt.disabled = !unlocked;
 			grp.appendChild(opt);
 		});
 		voiceSelect.appendChild(grp);
@@ -921,10 +982,10 @@ function populateVoiceOptions() {
 
 	const savedVal = localStorage.getItem("voice_" + lang);
 	if (savedVal) {
-		if (savedVal.startsWith("kokoro:")) {
+		if (savedVal.startsWith("kokoro:") && isPremiumUnlocked()) {
 			const found = kokoroForLang.find(v => `kokoro:${v.id}` === savedVal);
 			if (found) { voiceSelect.value = savedVal; return; }
-		} else {
+		} else if (!savedVal.startsWith("kokoro:")) {
 			const saved = matching.find(v => v.name === savedVal);
 			if (saved) { voiceSelect.value = voices.indexOf(saved); return; }
 		}
@@ -1043,9 +1104,7 @@ function setPlayState(state) {
 	}
 	if ("mediaSession" in navigator) {
 		navigator.mediaSession.playbackState =
-			state === "speaking" ? "playing" :
-			state === "loading"  ? "paused"  :
-			state === "paused"   ? "paused"  : "none";
+			state === "speaking" ? "playing" : "paused";
 	}
 }
 
@@ -1259,7 +1318,6 @@ function stopLoop() {
 
 btnPlay.addEventListener("click", startLoop);
 btnStop.addEventListener("click", stopLoop);
-setupMediaSession();
 
 setInterval(() => {
 	if (isPlaying && speechSynthesis.speaking) {
@@ -1413,6 +1471,45 @@ if (savedMode === "custom") applyMode("custom");
 
 updateCurrentText();
 loadVoices();
+
+// ── Premium UI ───────────────────────────────────────────────────────
+
+btnBuy.href = LS_CHECKOUT_URL;
+updatePremiumUI();
+validateStoredLicense();
+setupMediaSession();
+updateMediaMetadata();
+
+btnUnlock.addEventListener("click", () => {
+	licenseMsg.hidden = true;
+	licenseMsg.className = "license-msg";
+	licenseInput.value = "";
+	premiumDialog.showModal();
+});
+
+btnActivate.addEventListener("click", async () => {
+	const key = licenseInput.value.trim();
+	if (!key) return;
+	btnActivate.disabled = true;
+	btnActivate.textContent = "Activating…";
+	licenseMsg.hidden = true;
+	try {
+		await activateLicense(key);
+		licenseMsg.textContent = "✓ License activated! Premium voices unlocked.";
+		licenseMsg.className = "license-msg success";
+		licenseMsg.hidden = false;
+		updatePremiumUI();
+		populateVoiceOptions();
+		setTimeout(() => premiumDialog.close(), 1800);
+	} catch (err) {
+		licenseMsg.textContent = err.message || "Activation failed. Check your license key and try again.";
+		licenseMsg.className = "license-msg error";
+		licenseMsg.hidden = false;
+	} finally {
+		btnActivate.disabled = false;
+		btnActivate.textContent = "Activate";
+	}
+});
 
 // ── Service Worker ────────────────────────────────────────────────────
 
