@@ -1,4 +1,8 @@
 <!doctype html>
+<!--
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -254,13 +258,13 @@
       <button id="btn-install">📲 Install app</button>
 
       <footer></footer>
-
-      <!-- Update banner (shown when a new SW takes over) -->
-      <div id="update-banner" hidden>
-        <span>A new version is available.</span>
-        <button id="btn-update-reload">Refresh</button>
-      </div>
     </main>
+
+    <!-- Update banner (shown when a new SW takes over) -->
+    <div id="update-banner" hidden>
+      <span>A new version is available.</span>
+      <button id="btn-update-reload">Refresh</button>
+    </div>
 
     <script type="module" src="./src/main.js"></script>
   </body>

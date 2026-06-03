@@ -1,4 +1,9 @@
 /**
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
  * Generates IPA phonemes for all non-English Kokoro default phrases using the
  * full eSpeak NG WASM build (@echogarden/espeak-ng-emscripten), which supports
  * French, Spanish, Italian, Portuguese, and Hindi — unlike the phonemizer npm
