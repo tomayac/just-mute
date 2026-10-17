@@ -10,9 +10,18 @@ import {
   env,
 } from '@huggingface/transformers';
 import { phonemize } from 'phonemizer';
+import { fetchShared, shareOnnxRuntime } from './cos.js';
 import phonemeCache from './phoneme-cache.json';
 
+// Runs on the main thread. Transformers.js and the phonemizer come from
+// Cross-Origin Storage through the import map the COS loader writes into the
+// page, which a worker cannot see. On the GPU
+// the work happens off the main thread anyway; on the CPU a phrase blocks it
+// for the moment it takes to synthesize, once, since results are cached.
+
 const MODEL_ID = 'onnx-community/Kokoro-82M-v1.0-ONNX';
+// The model and the ONNX Runtime go in Cross-Origin Storage, shared with every
+// site that loads the same files. Rummy McRummyface loads exactly these.
 env.experimental_useCrossOriginStorage = true;
 
 // Maps the first letter of a Kokoro voice ID to an eSpeak language code.
@@ -32,44 +41,32 @@ const PHONEME_LANG = {
 
 let model = null;
 let tokenizer = null;
+let loading = null;
 const voiceCache = new Map();
 const audioCache = new Map();
 
-// Requests currently in-flight: id → error-reporter fn.
-// Lets the global error handlers below reach the right caller.
-const pending = new Map();
+let reportProgress = () => {};
 
-function failPending(msg) {
-  for (const [id, report] of pending) {
-    report(msg);
-    pending.delete(id);
+// WebGPU when the browser has an adapter for it, the CPU otherwise.
+async function pickDevice() {
+  try {
+    if (await navigator.gpu?.requestAdapter()) return 'webgpu';
+  } catch {
+    // No usable GPU.
   }
+  return 'wasm';
 }
 
-// ONNX Runtime can throw from WASM callbacks that bypass the JS promise chain,
-// producing a messageless Worker error event on the main thread.  These two
-// handlers intercept those escapes and route them back as normal error replies.
-self.addEventListener('unhandledrejection', ({ reason }) => {
-  const msg = reason?.message || String(reason) || 'Unhandled rejection';
-  console.error('[kokoro-worker] unhandledrejection:', reason);
-  failPending(msg);
-});
-
-self.addEventListener('error', (e) => {
-  const msg = e.message || 'Worker error';
-  console.error('[kokoro-worker] error:', e.message, e.filename, e.lineno);
-  // Prevent the error from also firing as a Worker onerror on the main thread,
-  // which would produce a messageless rejection racing our proper error reply.
-  e.preventDefault();
-  failPending(msg);
-});
-
-function reportProgress(phase, value = null) {
-  self.postMessage({ type: 'progress', phase, value });
+function ensureModel() {
+  loading ??= loadModel().catch((err) => {
+    loading = null;
+    throw err;
+  });
+  return loading;
 }
 
-async function ensureModel() {
-  if (model && tokenizer) return;
+async function loadModel() {
+  await shareOnnxRuntime();
   // Track aggregate download progress across all model files.
   const fileProgress = new Map();
   const onProgress = ({ status, file, progress }) => {
@@ -83,7 +80,11 @@ async function ensureModel() {
   };
   [model, tokenizer] = await Promise.all([
     StyleTextToSpeech2Model.from_pretrained(MODEL_ID, {
-      dtype: 'q8',
+      // Four-bit weights, the same file Rummy McRummyface loads, so the two
+      // share one 305 MB download through Cross-Origin Storage. It is the
+      // fastest and cleanest build on the GPU and runs on the CPU as well.
+      dtype: 'q4',
+      device: await pickDevice(),
       progress_callback: onProgress,
     }),
     AutoTokenizer.from_pretrained(MODEL_ID, { progress_callback: onProgress }),
@@ -100,7 +101,7 @@ async function loadVoice(voiceId) {
     if (hit) {
       buffer = await hit.arrayBuffer();
     } else {
-      const res = await fetch(url);
+      const res = await fetchShared(url);
       if (!res.ok)
         throw new Error(`HTTP ${res.status} fetching ${voiceId}.bin`);
       buffer = await res.arrayBuffer();
@@ -202,25 +203,18 @@ async function generate(text, voiceId) {
   return { audio: waveform.data, sampling_rate: 24000 };
 }
 
-self.addEventListener('message', async ({ data: { id, text, voice } }) => {
-  const report = (msg) => self.postMessage({ id, error: msg });
-  pending.set(id, report);
-  try {
-    const key = `${voice}::${text}`;
-    let entry = audioCache.get(key);
-    if (!entry) {
-      entry = await generate(text, voice);
-      audioCache.set(key, entry);
-    }
-    pending.delete(id);
-    const copy = new Float32Array(entry.audio);
-    self.postMessage({ id, audio: copy, sampling_rate: entry.sampling_rate }, [
-      copy.buffer,
-    ]);
-  } catch (err) {
-    pending.delete(id);
-    const msg = err?.message || String(err) || 'Unknown error';
-    console.error('[kokoro-worker]', err);
-    report(msg);
+// Synthesizes `text` in `voice`, reporting each phase through `onProgress`.
+export async function generateWithKokoro(text, voice, onProgress) {
+  reportProgress = onProgress ?? (() => {});
+  const key = `${voice}::${text}`;
+  let entry = audioCache.get(key);
+  if (!entry) {
+    entry = await generate(text, voice);
+    audioCache.set(key, entry);
   }
-});
+  // A copy, so the cached samples survive whatever the caller does with them.
+  return {
+    audio: new Float32Array(entry.audio),
+    sampling_rate: entry.sampling_rate,
+  };
+}

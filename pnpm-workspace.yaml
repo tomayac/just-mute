@@ -1,0 +1,9 @@
+# The Cross-Origin Storage plugin, fixed to bundle each package as one chunk.
+# Rummy McRummyface carries the same patch: chunks only hash the same across
+# sites that build them the same way, so the two have to match.
+patchedDependencies:
+  vite-plugin-cross-origin-storage@2.0.3: patches/vite-plugin-cross-origin-storage@2.0.3.patch
+# Pulled in by Transformers.js for Node, which Just Mute never runs it in.
+allowBuilds:
+  onnxruntime-node: false
+  protobufjs: false

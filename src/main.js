@@ -2095,9 +2095,6 @@ let currentLang = 'en';
 let intervalSeconds = 15;
 let speakGen = 0;
 let countdownTimer = null;
-let kokoroWorker = null;
-let kokoroRequests = new Map();
-let kokoroRequestId = 0;
 let kokoroSource = null;
 let kokoroAudioCtx = null;
 
@@ -2485,43 +2482,11 @@ function speakWebSpeech() {
   updateCurrentText();
 }
 
-function getKokoroWorker() {
-  if (kokoroWorker) return kokoroWorker;
-  kokoroWorker = new Worker(new URL('./kokoro.worker.js', import.meta.url), {
-    type: 'module',
-  });
-  kokoroWorker.addEventListener('message', ({ data }) => {
-    if (data.type === 'progress') {
-      showKokoroProgress(data.phase, data.value);
-      return;
-    }
-    const { id, audio, sampling_rate, error } = data;
-    const pending = kokoroRequests.get(id);
-    if (!pending) return;
-    kokoroRequests.delete(id);
-    if (error) pending.reject(new Error(error));
-    else pending.resolve({ audio, sampling_rate });
-  });
-  kokoroWorker.addEventListener('error', (e) => {
-    // The worker calls e.preventDefault() on internal errors and routes them
-    // back as message replies, so this only fires for worker bootstrap failures
-    // (e.g. syntax error during module parse) where the worker never ran.
-    e.preventDefault();
-    const msg = e.message || 'Worker failed to start';
-    console.error('[main] kokoro worker error event:', msg);
-    for (const { reject } of kokoroRequests.values()) reject(new Error(msg));
-    kokoroRequests.clear();
-    kokoroWorker = null;
-  });
-  return kokoroWorker;
-}
-
-function generateWithKokoro(text, voice) {
-  return new Promise((resolve, reject) => {
-    const id = ++kokoroRequestId;
-    kokoroRequests.set(id, { resolve, reject });
-    getKokoroWorker().postMessage({ id, text, voice });
-  });
+// Imported on first use, so Transformers.js only starts up for premium voices.
+// Its code is in the page from the start, through the COS loader.
+async function generateWithKokoro(text, voice) {
+  const kokoro = await import('./kokoro.js');
+  return kokoro.generateWithKokoro(text, voice, showKokoroProgress);
 }
 
 function getAudioContext() {
