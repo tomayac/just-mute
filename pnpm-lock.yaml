@@ -17,9 +17,9 @@ importers:
       phonemizer:
         specifier: 1.2.1
         version: 1.2.1
-      qr-creator:
-        specifier: ^1.0.0
-        version: 1.0.0
+      qrcode-generator:
+        specifier: 2.0.4
+        version: 2.0.4
     devDependencies:
       '@echogarden/espeak-ng-emscripten':
         specifier: ^0.3.5
@@ -814,8 +814,8 @@ packages:
     resolution: {integrity: sha512-dvpCIeLPbXZS/Ete7yLaO7RenOdken2NHKykBXbsaGxZT0UTltcarBciw+A78SRQs9iMAAVpsYA+l8b1hTePIA==}
     engines: {node: '>=12.0.0'}
 
-  qr-creator@1.0.0:
-    resolution: {integrity: sha512-C0cqfbS1P5hfqN4NhsYsUXePlk9BO+a45bAQ3xLYjBL3bOIFzoVEjs79Fado9u9BPBD3buHi3+vY+C8tHh4qMQ==}
+  qrcode-generator@2.0.4:
+    resolution: {integrity: sha512-mZSiP6RnbHl4xL2Ap5HfkjLnmxfKcPWpWe/c+5XxCuetEenqmNFf1FH/ftXPCtFG5/TDobjsjz6sSNL0Sr8Z9g==}
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
@@ -1550,7 +1550,7 @@ snapshots:
       '@types/node': 25.8.0
       long: 5.3.2
 
-  qr-creator@1.0.0: {}
+  qrcode-generator@2.0.4: {}
 
   queue-microtask@1.2.3: {}
 

@@ -20,6 +20,6 @@
   "dependencies": {
     "@huggingface/transformers": "4.3.1",
     "phonemizer": "1.2.1",
-    "qr-creator": "^1.0.0"
+    "qrcode-generator": "2.0.4"
   }
 }

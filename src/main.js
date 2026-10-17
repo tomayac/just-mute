@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import QrCreator from 'qr-creator';
+import qrcode from 'qrcode-generator';
 
 // ── Lemon Squeezy ────────────────────────────────────────────────────
 const LS_CHECKOUT_URL =
@@ -2610,17 +2610,14 @@ btnQr.addEventListener('click', () => {
   if (visible && !qrRendered) {
     const url = window.location.href;
     document.getElementById('qr-url').textContent = url;
-    QrCreator.render(
-      {
-        text: url,
-        radius: 0,
-        ecLevel: 'M',
-        fill: '#000000',
-        background: '#ffffff',
-        size: 200,
-      },
-      document.getElementById('qrcode')
-    );
+    // Auto version, medium error correction, black on the white box.
+    const qr = qrcode(0, 'M');
+    qr.addData(url);
+    qr.make();
+    const box = document.getElementById('qrcode');
+    box.innerHTML = qr.createSvgTag({ margin: 0, scalable: true });
+    box.firstElementChild.setAttribute('width', 200);
+    box.firstElementChild.setAttribute('height', 200);
     qrRendered = true;
   }
 });
