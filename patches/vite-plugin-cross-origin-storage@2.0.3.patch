@@ -35,7 +35,7 @@ index cb57d4c5b23b8d3b90d478ca2d46019c89fe09c1..386a956d7d11a74a44efc6de0e948659
  								return {
  									id: `cos-dep:${dep.id}`,
 diff --git a/dist/loader.mjs b/dist/loader.mjs
-index 27ca1f6e180432aa7cf0eb9a2ac22c7c8457dae2..a6d7327b33655718ef6042a2d5f055a9cab563c4 100644
+index 27ca1f6e180432aa7cf0eb9a2ac22c7c8457dae2..993a722ad6eb73401565dc95dd2827a99b975647 100644
 --- a/dist/loader.mjs
 +++ b/dist/loader.mjs
 @@ -2,6 +2,7 @@
@@ -64,3 +64,12 @@ index 27ca1f6e180432aa7cf0eb9a2ac22c7c8457dae2..a6d7327b33655718ef6042a2d5f055a9
  					algorithm: "SHA-256",
  					value: hash
  				}, {
+@@ -44,7 +45,7 @@ async function runCosLoader(manifest) {
+ 	await Promise.all(Object.entries(manifest.chunks).map(async ([specifier, { file, hash }]) => {
+ 		imports[specifier] = await resolveChunk(hash, manifest.base + file);
+ 	}));
+-	imports[manifest.entry.specifier] = new URL(manifest.base + manifest.entry.file, location.origin).href;
++	imports[manifest.entry.specifier] = new URL(manifest.base + manifest.entry.file, document.baseURI).href;
+ 	const script = document.createElement("script");
+ 	script.type = "importmap";
+ 	script.textContent = JSON.stringify({ imports });

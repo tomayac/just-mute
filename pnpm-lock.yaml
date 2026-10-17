@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  vite-plugin-cross-origin-storage@2.0.3: bf8d5eb094d772e692f81b7494dc7be706706d740d1da759bc8c671331af1256
+  vite-plugin-cross-origin-storage@2.0.3: 742739347db5cbd8d39ad38706e8e71fb396f8f89c2d4044d753cdd94a694547
 
 importers:
 
@@ -35,7 +35,7 @@ importers:
         version: 8.3.4(@types/node@25.8.0)
       vite-plugin-cross-origin-storage:
         specifier: 2.0.3
-        version: 2.0.3(patch_hash=bf8d5eb094d772e692f81b7494dc7be706706d740d1da759bc8c671331af1256)(vite@8.3.4(@types/node@25.8.0))
+        version: 2.0.3(patch_hash=742739347db5cbd8d39ad38706e8e71fb396f8f89c2d4044d753cdd94a694547)(vite@8.3.4(@types/node@25.8.0))
 
 packages:
 
@@ -1683,7 +1683,7 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  vite-plugin-cross-origin-storage@2.0.3(patch_hash=bf8d5eb094d772e692f81b7494dc7be706706d740d1da759bc8c671331af1256)(vite@8.3.4(@types/node@25.8.0)):
+  vite-plugin-cross-origin-storage@2.0.3(patch_hash=742739347db5cbd8d39ad38706e8e71fb396f8f89c2d4044d753cdd94a694547)(vite@8.3.4(@types/node@25.8.0)):
     dependencies:
       magic-string: 0.30.21
       rolldown: 1.2.0
