@@ -46,8 +46,9 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   // Never intercept cross-origin requests.  Model files, WASM runtimes, and
-  // voice data are fetched directly from their CDN; transformers.js and the
-  // worker manage their own caches (transformers-cache, kokoro-voices).
+  // voice data are fetched directly from their CDN; transformers.js and
+  // src/kokoro.js manage their own caches (Cross-Origin Storage,
+  // kokoro-voices).
   if (!event.request.url.startsWith(self.location.origin)) return;
 
   // Navigation requests (HTML): network-first so every new deploy reaches
