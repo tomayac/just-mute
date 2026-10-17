@@ -12,7 +12,7 @@
 // finds what the other already stored. Without the API, or when any part of it
 // fails, everything falls back to the network.
 
-/* global __ONNX_RUNTIME_HASHES__ */
+import { NPMSHA256HashFetcher } from 'npm-sha256-hash-fetcher';
 
 // Transformers.js's own bucket for each URL's hash, copied because it is not
 // exported. The voices use it too, so their hashes are looked up once.
@@ -25,18 +25,39 @@ function getHandle() {
   return method ? method.bind(cos) : null;
 }
 
+const JSDELIVR_NPM = 'https://cdn.jsdelivr.net/npm/';
+
 // Tells Transformers.js the ONNX Runtime's hashes before it goes looking, so
 // it reads the runtime from Cross-Origin Storage when another site stored it.
-// Call before the first model loads.
-export async function shareOnnxRuntime() {
-  if (!getHandle()) return;
+// It only knows hashes up front for Hugging Face files; jsDelivr publishes the
+// hash of every file it serves, so one request for the package's file list
+// answers for all of them. Takes `env.backends.onnx.wasm.wasmPaths` as
+// Transformers.js set it on import; call before the first model loads.
+export async function shareOnnxRuntime(paths) {
+  if (!getHandle() || !paths || typeof paths !== 'object') return;
+  const urls = Object.values(paths).filter(
+    (url) => typeof url === 'string' && url.startsWith(JSDELIVR_NPM),
+  );
   try {
     const cache = await caches.open(HASH_CACHE);
-    for (const [url, hash] of Object.entries(__ONNX_RUNTIME_HASHES__)) {
-      if (!(await cache.match(url))) await cache.put(url, new Response(hash));
+    const missing = [];
+    for (const url of urls) if (!(await cache.match(url))) missing.push(url);
+    if (missing.length === 0) return;
+
+    // `onnxruntime-web@<version>`, the same package for every file.
+    const [pkg] = missing[0].slice(JSDELIVR_NPM.length).split('/dist/');
+    const [result] = await new NPMSHA256HashFetcher().getHexHashForResource(
+      pkg,
+    );
+    if (result.status !== 'fulfilled' || !result.value.files) return;
+    for (const url of missing) {
+      const path = url.slice(JSDELIVR_NPM.length + pkg.length);
+      const file = result.value.files.find((f) => f.path === path);
+      if (file) await cache.put(url, new Response(file.hexHash));
     }
   } catch {
-    // No Cache Storage: Transformers.js downloads the runtime as before.
+    // Offline, or no Cache Storage: Transformers.js downloads the runtime as
+    // before.
   }
 }
 

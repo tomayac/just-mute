@@ -5,17 +5,9 @@
 
 import { defineConfig } from 'vite';
 import { cosPlugin } from 'vite-plugin-cross-origin-storage';
-import { onnxRuntimeHashes } from './scripts/onnx-runtime.mjs';
 
-export default defineConfig(async () => ({
+export default defineConfig({
   base: './',
-  define: {
-    // So the page can tell Transformers.js where the ONNX Runtime already is
-    // in Cross-Origin Storage. See scripts/onnx-runtime.mjs.
-    __ONNX_RUNTIME_HASHES__: JSON.stringify(
-      await onnxRuntimeHashes(import.meta.dirname),
-    ),
-  },
   plugins: [
     // The premium voices' code and the QR code generator, built into chunks
     // named by the SHA-256 of their contents. Rummy McRummyface builds the
@@ -27,4 +19,4 @@ export default defineConfig(async () => ({
       packages: ['@huggingface/transformers', 'phonemizer', 'qrcode-generator'],
     }),
   ],
-}));
+});

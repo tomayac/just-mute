@@ -14,6 +14,9 @@ importers:
       '@huggingface/transformers':
         specifier: 4.3.1
         version: 4.3.1(@types/node@25.8.0)
+      npm-sha256-hash-fetcher:
+        specifier: 1.2.1
+        version: 1.2.1
       phonemizer:
         specifier: 1.2.1
         version: 1.2.1
@@ -743,6 +746,9 @@ packages:
     resolution: {integrity: sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
+
+  npm-sha256-hash-fetcher@1.2.1:
+    resolution: {integrity: sha512-HpjoSvSrjoSjRPRLfKnhTj0AV9zyMC7wd1rMNUh70UDktTbk0B2Wgrrg90HI/OUWsQ3iht1gmGg0WhyRIqslGg==}
 
   object-keys@1.1.1:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
@@ -1477,6 +1483,8 @@ snapshots:
       picomatch: 2.3.2
 
   nanoid@3.3.20: {}
+
+  npm-sha256-hash-fetcher@1.2.1: {}
 
   object-keys@1.1.1: {}
 

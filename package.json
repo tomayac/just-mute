@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@huggingface/transformers": "4.3.1",
+    "npm-sha256-hash-fetcher": "1.2.1",
     "phonemizer": "1.2.1",
     "qrcode-generator": "2.0.4"
   }

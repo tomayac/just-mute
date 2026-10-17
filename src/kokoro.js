@@ -15,9 +15,9 @@ import phonemeCache from './phoneme-cache.json';
 
 // Runs on the main thread. Transformers.js and the phonemizer come from
 // Cross-Origin Storage through the import map the COS loader writes into the
-// page, which a worker cannot see. On the GPU
-// the work happens off the main thread anyway; on the CPU a phrase blocks it
-// for the moment it takes to synthesize, once, since results are cached.
+// page, which a worker cannot see. On the GPU the work happens off the main
+// thread anyway, and on the CPU the ONNX Runtime's proxy runs inference in a
+// worker of its own (see `loadModel()`).
 
 const MODEL_ID = 'onnx-community/Kokoro-82M-v1.0-ONNX';
 // The model and the ONNX Runtime go in Cross-Origin Storage, shared with every
@@ -66,7 +66,13 @@ function ensureModel() {
 }
 
 async function loadModel() {
-  await shareOnnxRuntime();
+  const device = await pickDevice();
+  // On the CPU, a phrase takes seconds to synthesize, which would freeze the
+  // page for as long. The proxy moves that work into the ONNX Runtime's own
+  // worker, and measured faster too: 2.7 seconds for a phrase that took 5.8 on
+  // the main thread. It does not apply to WebGPU.
+  if (device === 'wasm') env.backends.onnx.wasm.proxy = true;
+  await shareOnnxRuntime(env.backends.onnx.wasm.wasmPaths);
   // Track aggregate download progress across all model files.
   const fileProgress = new Map();
   const onProgress = ({ status, file, progress }) => {
@@ -84,7 +90,7 @@ async function loadModel() {
       // share one 305 MB download through Cross-Origin Storage. It is the
       // fastest and cleanest build on the GPU and runs on the CPU as well.
       dtype: 'q4',
-      device: await pickDevice(),
+      device,
       progress_callback: onProgress,
     }),
     AutoTokenizer.from_pretrained(MODEL_ID, { progress_callback: onProgress }),
