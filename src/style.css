@@ -613,7 +613,10 @@ button:focus {
   flex-shrink: 0;
   width: 40px;
   height: 40px;
-  padding: 0;
+  /* The emoji's ink sits low in its line box, so centering the box leaves the
+     glyph about a pixel below the middle. The padding takes that pixel back. */
+  padding: 2px 0 0;
+  line-height: 1;
   border-radius: 50%;
   border: 2px solid var(--border);
   background: var(--card);
